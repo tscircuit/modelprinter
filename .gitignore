@@ -1,2 +1,12 @@
 node_modules
 *.tgz
+
+# Generated build and npm entrypoints
+/dist/
+/index.js
+/index.d.ts
+/index.js.map
+
+# Lockfile generation is disabled in bunfig.toml
+bun.lock
+bun.lockb
