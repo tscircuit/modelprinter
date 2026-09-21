@@ -3,6 +3,7 @@ import { z } from 'zod';
 declare const modelLengthSchema: z.ZodPipe<z.ZodUnion<readonly [z.ZodNumber, z.ZodString]>, z.ZodTransform<number, string | number>>;
 declare const positiveModelLengthSchema: z.ZodPipe<z.ZodUnion<readonly [z.ZodNumber, z.ZodString]>, z.ZodTransform<number, string | number>>;
 declare const nonnegativeModelLengthSchema: z.ZodPipe<z.ZodUnion<readonly [z.ZodNumber, z.ZodString]>, z.ZodTransform<number, string | number>>;
+
 declare const flexScreenOrientationSchema: z.ZodEnum<{
     sitsFlat: "sitsFlat";
     sitsFlatBelowBoard: "sitsFlatBelowBoard";
@@ -177,7 +178,7 @@ declare const flexScreenModelDefinitionSchema: z.ZodObject<{
     fn: z.ZodLiteral<"flexscreen">;
 }, z.core.$strict>;
 type FlexScreenModelDefinition = z.infer<typeof flexScreenModelDefinitionSchema>;
-declare const modelDefinitionSchema: z.ZodObject<{
+declare const modelDefinitionSchema: z.ZodDiscriminatedUnion<[z.ZodObject<{
     width: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodNumber, z.ZodString]>, z.ZodTransform<number, string | number>>>;
     height: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodNumber, z.ZodString]>, z.ZodTransform<number, string | number>>>;
     diagonal: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodNumber, z.ZodString]>, z.ZodTransform<number, string | number>>>;
@@ -254,7 +255,22 @@ declare const modelDefinitionSchema: z.ZodObject<{
         z: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodNumber, z.ZodString]>, z.ZodTransform<number, string | number>>>;
     }, z.core.$strict>>;
     fn: z.ZodLiteral<"flexscreen">;
-}, z.core.$strict>;
+}, z.core.$strict>, z.ZodObject<{
+    metricSize: z.ZodEnum<{
+        M2: "M2";
+        "M2.5": "M2.5";
+        M3: "M3";
+        M4: "M4";
+        M5: "M5";
+        M6: "M6";
+        M8: "M8";
+        M10: "M10";
+        M12: "M12";
+    }>;
+    length: z.ZodPipe<z.ZodUnion<readonly [z.ZodNumber, z.ZodString]>, z.ZodTransform<number, string | number>>;
+    showThreads: z.ZodDefault<z.ZodBoolean>;
+    fn: z.ZodLiteral<"hexsocketbolt">;
+}, z.core.$strict>], "fn">;
 type ModelDefinition = z.infer<typeof modelDefinitionSchema>;
 
 type RawModelprinterParams = {
@@ -272,6 +288,11 @@ declare const parseModelStringParams: (definition: string) => RawModelprinterPar
 declare const string: (value: string) => {
     params: () => RawModelprinterParams;
     json: () => {
+        metricSize: "M2" | "M2.5" | "M3" | "M4" | "M5" | "M6" | "M8" | "M10" | "M12";
+        length: number;
+        showThreads: boolean;
+        fn: "hexsocketbolt";
+    } | {
         fn: "flexscreen";
         width?: number | undefined;
         height?: number | undefined;
@@ -348,6 +369,11 @@ declare const modelprinter: {
     string: (value: string) => {
         params: () => RawModelprinterParams;
         json: () => {
+            metricSize: "M2" | "M2.5" | "M3" | "M4" | "M5" | "M6" | "M8" | "M10" | "M12";
+            length: number;
+            showThreads: boolean;
+            fn: "hexsocketbolt";
+        } | {
             fn: "flexscreen";
             width?: number | undefined;
             height?: number | undefined;
@@ -426,6 +452,11 @@ declare const mp: {
     string: (value: string) => {
         params: () => RawModelprinterParams;
         json: () => {
+            metricSize: "M2" | "M2.5" | "M3" | "M4" | "M5" | "M6" | "M8" | "M10" | "M12";
+            length: number;
+            showThreads: boolean;
+            fn: "hexsocketbolt";
+        } | {
             fn: "flexscreen";
             width?: number | undefined;
             height?: number | undefined;
@@ -500,4 +531,143 @@ declare const mp: {
     getModelNames: () => string[];
 };
 
-export { type FlexScreenAspectRatio, type FlexScreenModelDefinition, type FlexScreenModelProps, type FlexScreenModelPropsInput, type FlexScreenOrientation, type ModelDefinition, type RawModelprinterParams, flexScreenAspectRatioSchema, flexScreenModelDefinitionSchema, flexScreenModelPropsSchema, flexScreenOrientationSchema, modelDefinitionSchema, modelLengthSchema, modelprinter, mp, nonnegativeModelLengthSchema, parseModelString, parseModelStringParams, positiveModelLengthSchema, string };
+/** Nominal ISO 4762 / DIN 912 dimensions in millimeters (coarse thread).
+ * Head/socket dimensions: https://docs.rs-online.com/284d/A700000011319867.pdf
+ * Socket depth is the listed minimum. This is a visualization model, without
+ * manufacturing tolerances, root radii, or the socket's drill-point relief.
+ */
+declare const hexSocketBoltDimensions: {
+    readonly M2: {
+        readonly diameter: 2;
+        readonly threadPitch: 0.4;
+        readonly headDiameter: 3.8;
+        readonly headHeight: 2;
+        readonly socketWidth: 1.5;
+        readonly socketDepth: 1;
+    };
+    readonly "M2.5": {
+        readonly diameter: 2.5;
+        readonly threadPitch: 0.45;
+        readonly headDiameter: 4.5;
+        readonly headHeight: 2.5;
+        readonly socketWidth: 2;
+        readonly socketDepth: 1.1;
+    };
+    readonly M3: {
+        readonly diameter: 3;
+        readonly threadPitch: 0.5;
+        readonly headDiameter: 5.5;
+        readonly headHeight: 3;
+        readonly socketWidth: 2.5;
+        readonly socketDepth: 1.3;
+    };
+    readonly M4: {
+        readonly diameter: 4;
+        readonly threadPitch: 0.7;
+        readonly headDiameter: 7;
+        readonly headHeight: 4;
+        readonly socketWidth: 3;
+        readonly socketDepth: 2;
+    };
+    readonly M5: {
+        readonly diameter: 5;
+        readonly threadPitch: 0.8;
+        readonly headDiameter: 8.5;
+        readonly headHeight: 5;
+        readonly socketWidth: 4;
+        readonly socketDepth: 2.5;
+    };
+    readonly M6: {
+        readonly diameter: 6;
+        readonly threadPitch: 1;
+        readonly headDiameter: 10;
+        readonly headHeight: 6;
+        readonly socketWidth: 5;
+        readonly socketDepth: 3;
+    };
+    readonly M8: {
+        readonly diameter: 8;
+        readonly threadPitch: 1.25;
+        readonly headDiameter: 13;
+        readonly headHeight: 8;
+        readonly socketWidth: 6;
+        readonly socketDepth: 4;
+    };
+    readonly M10: {
+        readonly diameter: 10;
+        readonly threadPitch: 1.5;
+        readonly headDiameter: 16;
+        readonly headHeight: 10;
+        readonly socketWidth: 8;
+        readonly socketDepth: 5;
+    };
+    readonly M12: {
+        readonly diameter: 12;
+        readonly threadPitch: 1.75;
+        readonly headDiameter: 18;
+        readonly headHeight: 12;
+        readonly socketWidth: 10;
+        readonly socketDepth: 6;
+    };
+};
+declare const metricBoltSizeSchema: z.ZodEnum<{
+    M2: "M2";
+    "M2.5": "M2.5";
+    M3: "M3";
+    M4: "M4";
+    M5: "M5";
+    M6: "M6";
+    M8: "M8";
+    M10: "M10";
+    M12: "M12";
+}>;
+declare const hexSocketBoltModelPropsSchema: z.ZodObject<{
+    metricSize: z.ZodEnum<{
+        M2: "M2";
+        "M2.5": "M2.5";
+        M3: "M3";
+        M4: "M4";
+        M5: "M5";
+        M6: "M6";
+        M8: "M8";
+        M10: "M10";
+        M12: "M12";
+    }>;
+    length: z.ZodPipe<z.ZodUnion<readonly [z.ZodNumber, z.ZodString]>, z.ZodTransform<number, string | number>>;
+    showThreads: z.ZodDefault<z.ZodBoolean>;
+}, z.core.$strict>;
+declare const hexSocketBoltModelDefinitionSchema: z.ZodObject<{
+    metricSize: z.ZodEnum<{
+        M2: "M2";
+        "M2.5": "M2.5";
+        M3: "M3";
+        M4: "M4";
+        M5: "M5";
+        M6: "M6";
+        M8: "M8";
+        M10: "M10";
+        M12: "M12";
+    }>;
+    length: z.ZodPipe<z.ZodUnion<readonly [z.ZodNumber, z.ZodString]>, z.ZodTransform<number, string | number>>;
+    showThreads: z.ZodDefault<z.ZodBoolean>;
+    fn: z.ZodLiteral<"hexsocketbolt">;
+}, z.core.$strict>;
+type MetricBoltSize = z.infer<typeof metricBoltSizeSchema>;
+type HexSocketBoltModelPropsInput = z.input<typeof hexSocketBoltModelPropsSchema>;
+type HexSocketBoltModelProps = z.output<typeof hexSocketBoltModelPropsSchema>;
+type HexSocketBoltModelDefinition = z.infer<typeof hexSocketBoltModelDefinitionSchema>;
+
+/** Indexed triangles, counterclockwise from outside; millimeters, Z up. */
+interface HexSocketBoltMesh {
+    positions: number[];
+    indices: number[];
+}
+/**
+ * Head bearing plane at Z=0; tip at -length; head extends along +Z.
+ * Produces a closed surface with a blind hex socket and a right-hand,
+ * truncated 60-degree helical thread. Threads are a visual approximation.
+ * No renderer dependencies are needed to consume the indexed mesh.
+ */
+declare const createHexSocketBoltMesh: (input: HexSocketBoltModelPropsInput) => HexSocketBoltMesh;
+
+export { type FlexScreenAspectRatio, type FlexScreenModelDefinition, type FlexScreenModelProps, type FlexScreenModelPropsInput, type FlexScreenOrientation, type HexSocketBoltMesh, type HexSocketBoltModelDefinition, type HexSocketBoltModelProps, type HexSocketBoltModelPropsInput, type MetricBoltSize, type ModelDefinition, type RawModelprinterParams, createHexSocketBoltMesh, flexScreenAspectRatioSchema, flexScreenModelDefinitionSchema, flexScreenModelPropsSchema, flexScreenOrientationSchema, hexSocketBoltDimensions, hexSocketBoltModelDefinitionSchema, hexSocketBoltModelPropsSchema, metricBoltSizeSchema, modelDefinitionSchema, modelLengthSchema, modelprinter, mp, nonnegativeModelLengthSchema, parseModelString, parseModelStringParams, positiveModelLengthSchema, string };

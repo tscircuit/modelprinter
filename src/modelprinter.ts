@@ -1,4 +1,5 @@
 import type { ModelDefinition } from "./flex-screen-schema"
+import { parseHexSocketBoltModelParams } from "./parse-hex-socket-bolt-model-string"
 import { parseFlexScreenModelParams } from "./parse-flex-screen-model-string"
 import {
   parseModelStringParams,
@@ -7,6 +8,7 @@ import {
 
 const modelFunctions = {
   flexscreen: parseFlexScreenModelParams,
+  hexsocketbolt: parseHexSocketBoltModelParams,
 }
 
 const modelParamsToJson = (params: RawModelprinterParams): ModelDefinition => {
