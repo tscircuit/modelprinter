@@ -1,4 +1,10 @@
 // src/flex-screen-schema.ts
+import { z as z3 } from "zod";
+
+// src/hex-socket-bolt-schema.ts
+import { z as z2 } from "zod";
+
+// src/model-length-schema.ts
 import { mm } from "@tscircuit/mm";
 import { z } from "zod";
 var modelLengthSchema = z.union([z.number(), z.string()]).transform((value, context) => {
@@ -22,7 +28,107 @@ var nonnegativeModelLengthSchema = modelLengthSchema.refine(
   (value) => value >= 0,
   "Length cannot be negative"
 );
-var flexScreenOrientationSchema = z.enum([
+
+// src/hex-socket-bolt-schema.ts
+var hexSocketBoltDimensions = {
+  M2: {
+    diameter: 2,
+    threadPitch: 0.4,
+    headDiameter: 3.8,
+    headHeight: 2,
+    socketWidth: 1.5,
+    socketDepth: 1
+  },
+  "M2.5": {
+    diameter: 2.5,
+    threadPitch: 0.45,
+    headDiameter: 4.5,
+    headHeight: 2.5,
+    socketWidth: 2,
+    socketDepth: 1.1
+  },
+  M3: {
+    diameter: 3,
+    threadPitch: 0.5,
+    headDiameter: 5.5,
+    headHeight: 3,
+    socketWidth: 2.5,
+    socketDepth: 1.3
+  },
+  M4: {
+    diameter: 4,
+    threadPitch: 0.7,
+    headDiameter: 7,
+    headHeight: 4,
+    socketWidth: 3,
+    socketDepth: 2
+  },
+  M5: {
+    diameter: 5,
+    threadPitch: 0.8,
+    headDiameter: 8.5,
+    headHeight: 5,
+    socketWidth: 4,
+    socketDepth: 2.5
+  },
+  M6: {
+    diameter: 6,
+    threadPitch: 1,
+    headDiameter: 10,
+    headHeight: 6,
+    socketWidth: 5,
+    socketDepth: 3
+  },
+  M8: {
+    diameter: 8,
+    threadPitch: 1.25,
+    headDiameter: 13,
+    headHeight: 8,
+    socketWidth: 6,
+    socketDepth: 4
+  },
+  M10: {
+    diameter: 10,
+    threadPitch: 1.5,
+    headDiameter: 16,
+    headHeight: 10,
+    socketWidth: 8,
+    socketDepth: 5
+  },
+  M12: {
+    diameter: 12,
+    threadPitch: 1.75,
+    headDiameter: 18,
+    headHeight: 12,
+    socketWidth: 10,
+    socketDepth: 6
+  }
+};
+var metricBoltSizeSchema = z2.enum([
+  "M2",
+  "M2.5",
+  "M3",
+  "M4",
+  "M5",
+  "M6",
+  "M8",
+  "M10",
+  "M12"
+]);
+var hexSocketBoltModelPropsShape = {
+  metricSize: metricBoltSizeSchema,
+  /** Length under the head, excluding the head itself. */
+  length: positiveModelLengthSchema,
+  showThreads: z2.boolean().default(true)
+};
+var hexSocketBoltModelPropsSchema = z2.object(hexSocketBoltModelPropsShape).strict();
+var hexSocketBoltModelDefinitionSchema = z2.object({
+  fn: z2.literal("hexsocketbolt"),
+  ...hexSocketBoltModelPropsShape
+}).strict();
+
+// src/flex-screen-schema.ts
+var flexScreenOrientationSchema = z3.enum([
   "sitsFlat",
   "sitsFlatBelowBoard",
   "foldedToFaceAboveBoard",
@@ -30,26 +136,26 @@ var flexScreenOrientationSchema = z.enum([
   "foldedToRightAngleAboveBoard",
   "foldedToRightAngleBelowBoard"
 ]);
-var positiveFiniteNumberSchema = z.number().finite().positive();
-var aspectRatioStringSchema = z.string().refine((value) => {
+var positiveFiniteNumberSchema = z3.number().finite().positive();
+var aspectRatioStringSchema = z3.string().refine((value) => {
   const parts = value.split(":");
   if (parts.length !== 2) return false;
   const width = Number(parts[0]);
   const height = Number(parts[1]);
   return Number.isFinite(width) && Number.isFinite(height) && width > 0 && height > 0;
 }, 'Aspect ratio must look like "16:9"').transform((value) => value);
-var flexScreenAspectRatioSchema = z.union([
+var flexScreenAspectRatioSchema = z3.union([
   positiveFiniteNumberSchema,
   aspectRatioStringSchema,
-  z.tuple([positiveFiniteNumberSchema, positiveFiniteNumberSchema])
+  z3.tuple([positiveFiniteNumberSchema, positiveFiniteNumberSchema])
 ]);
-var modelPointSchema = z.object({
+var modelPointSchema = z3.object({
   x: modelLengthSchema.optional(),
   y: modelLengthSchema.optional(),
   z: modelLengthSchema.optional()
 }).strict();
-var rotationValueSchema = z.union([z.number().finite(), z.string().min(1)]);
-var modelRotationSchema = z.tuple([
+var rotationValueSchema = z3.union([z3.number().finite(), z3.string().min(1)]);
+var modelRotationSchema = z3.tuple([
   rotationValueSchema,
   rotationValueSchema,
   rotationValueSchema
@@ -72,47 +178,47 @@ var flexScreenModelPropsShape = {
   ratio: flexScreenAspectRatioSchema.optional(),
   defaultDiagonal: positiveModelLengthSchema.optional(),
   orientation: flexScreenOrientationSchema.optional(),
-  sitsFlat: z.boolean().optional(),
-  sitsFlatBelowBoard: z.boolean().optional(),
-  foldedToFaceAboveBoard: z.boolean().optional(),
-  foldedToFaceBelowBoard: z.boolean().optional(),
-  foldsAboveBoard: z.boolean().optional(),
-  foldsBelowBoard: z.boolean().optional(),
-  foldedToRightAngleAboveBoard: z.boolean().optional(),
-  foldedToRightAngleBelowBoard: z.boolean().optional(),
+  sitsFlat: z3.boolean().optional(),
+  sitsFlatBelowBoard: z3.boolean().optional(),
+  foldedToFaceAboveBoard: z3.boolean().optional(),
+  foldedToFaceBelowBoard: z3.boolean().optional(),
+  foldsAboveBoard: z3.boolean().optional(),
+  foldsBelowBoard: z3.boolean().optional(),
+  foldedToRightAngleAboveBoard: z3.boolean().optional(),
+  foldedToRightAngleBelowBoard: z3.boolean().optional(),
   screenThickness: positiveModelLengthSchema.optional(),
   bezelInset: nonnegativeModelLengthSchema.optional(),
   bezelDepth: positiveModelLengthSchema.optional(),
   activeAreaWidth: positiveModelLengthSchema.optional(),
   activeAreaHeight: positiveModelLengthSchema.optional(),
-  screenColor: z.string().min(1).optional(),
-  bezelColor: z.string().min(1).optional(),
-  showScreen: z.boolean().optional(),
+  screenColor: z3.string().min(1).optional(),
+  bezelColor: z3.string().min(1).optional(),
+  showScreen: z3.boolean().optional(),
   flexCableLength: positiveModelLengthSchema.optional(),
   flexCableWidth: positiveModelLengthSchema.optional(),
   flexCableThickness: positiveModelLengthSchema.optional(),
-  flexCableColor: z.string().min(1).optional(),
-  conductorCount: z.number().int().positive().optional(),
+  flexCableColor: z3.string().min(1).optional(),
+  conductorCount: z3.number().int().positive().optional(),
   conductorPitch: positiveModelLengthSchema.optional(),
   conductorWidth: positiveModelLengthSchema.optional(),
   conductorThickness: positiveModelLengthSchema.optional(),
-  conductorColor: z.string().min(1).optional(),
+  conductorColor: z3.string().min(1).optional(),
   cableEdgeMargin: nonnegativeModelLengthSchema.optional(),
   exposedContactLength: nonnegativeModelLengthSchema.optional(),
-  showConductors: z.boolean().optional(),
-  showFlexCable: z.boolean().optional(),
-  showStiffeners: z.boolean().optional(),
+  showConductors: z3.boolean().optional(),
+  showFlexCable: z3.boolean().optional(),
+  showStiffeners: z3.boolean().optional(),
   stiffenerLength: nonnegativeModelLengthSchema.optional(),
   stiffenerThickness: positiveModelLengthSchema.optional(),
-  stiffenerColor: z.string().min(1).optional(),
+  stiffenerColor: z3.string().min(1).optional(),
   bendRadius: positiveModelLengthSchema.optional(),
-  bendSegments: z.number().int().min(2).optional(),
+  bendSegments: z3.number().int().min(2).optional(),
   rightAngleVerticalLead: nonnegativeModelLengthSchema.optional(),
   distanceAboveBoard: nonnegativeModelLengthSchema.optional(),
   distanceBelowBoard: nonnegativeModelLengthSchema.optional(),
   foldDistanceFromConnector: nonnegativeModelLengthSchema.optional(),
   foldOutset: positiveModelLengthSchema.optional(),
-  foldSegments: z.number().int().min(4).optional(),
+  foldSegments: z3.number().int().min(4).optional(),
   screenGap: nonnegativeModelLengthSchema.optional(),
   boardTopZ: modelLengthSchema.optional(),
   boardThickness: positiveModelLengthSchema.optional(),
@@ -132,7 +238,7 @@ var addOrientationShortcutIssue = (props, addIssue) => {
   );
   if (selectedShortcuts.length > 1) addIssue(selectedShortcuts[1]);
 };
-var flexScreenModelPropsSchema = z.object(flexScreenModelPropsShape).strict().superRefine((props, context) => {
+var flexScreenModelPropsSchema = z3.object(flexScreenModelPropsShape).strict().superRefine((props, context) => {
   addOrientationShortcutIssue(props, (path) => {
     context.addIssue({
       code: "custom",
@@ -141,8 +247,8 @@ var flexScreenModelPropsSchema = z.object(flexScreenModelPropsShape).strict().su
     });
   });
 });
-var flexScreenModelDefinitionSchema = z.object({
-  fn: z.literal("flexscreen"),
+var flexScreenModelDefinitionSchema = z3.object({
+  fn: z3.literal("flexscreen"),
   ...flexScreenModelPropsShape
 }).strict().superRefine((model, context) => {
   addOrientationShortcutIssue(model, (path) => {
@@ -153,7 +259,10 @@ var flexScreenModelDefinitionSchema = z.object({
     });
   });
 });
-var modelDefinitionSchema = flexScreenModelDefinitionSchema;
+var modelDefinitionSchema = z3.discriminatedUnion("fn", [
+  flexScreenModelDefinitionSchema,
+  hexSocketBoltModelDefinitionSchema
+]);
 
 // src/parse-model-string.ts
 var parsePart = (part) => {
@@ -186,6 +295,54 @@ var parseModelStringParams = (definition) => {
   }
   params.string = normalizedDefinition;
   return params;
+};
+
+// src/parse-hex-socket-bolt-model-string.ts
+var parseHexSocketBoltModelParams = (raw) => {
+  if (raw.fn !== "hexsocketbolt") {
+    throw new Error(`Expected hexsocketbolt params, got "${raw.fn}"`);
+  }
+  const tokens = raw.string.split("_");
+  if (tokens[0]?.toLowerCase() !== "hexsocketbolt") {
+    throw new Error(
+      "The hexsocketbolt function does not accept an inline value"
+    );
+  }
+  const seen = /* @__PURE__ */ new Set();
+  for (const token of tokens.slice(1)) {
+    const name = token.match(/^[a-z]+/i)?.[0]?.toLowerCase();
+    if (name && seen.has(name))
+      throw new Error(`Duplicate bolt token "${name}"`);
+    if (name) seen.add(name);
+  }
+  const props = {};
+  for (const [token, value] of Object.entries(raw)) {
+    if (["fn", "string", "hexsocketbolt"].includes(token)) continue;
+    let property;
+    let parsed = value;
+    if (token === "m") {
+      property = "metricSize";
+      parsed = `M${String(value)}`;
+    } else if (token === "l" || token === "length") {
+      property = "length";
+    } else if (token === "threads" || token === "nothreads") {
+      if (value !== true)
+        throw new Error(`Bolt token "${token}" does not accept a value`);
+      property = "showThreads";
+      parsed = token === "threads";
+    } else {
+      throw new Error(
+        `Unknown hex socket bolt model token "${token}${String(value)}"`
+      );
+    }
+    if (property in props)
+      throw new Error(`Bolt property "${property}" is set more than once`);
+    props[property] = parsed;
+  }
+  return hexSocketBoltModelDefinitionSchema.parse({
+    fn: "hexsocketbolt",
+    ...props
+  });
 };
 
 // src/parse-flex-screen-model-string.ts
@@ -377,7 +534,8 @@ var parseFlexScreenModelParams = (rawParams) => {
 
 // src/modelprinter.ts
 var modelFunctions = {
-  flexscreen: parseFlexScreenModelParams
+  flexscreen: parseFlexScreenModelParams,
+  hexsocketbolt: parseHexSocketBoltModelParams
 };
 var modelParamsToJson = (params) => {
   const modelFunction = modelFunctions[params.fn];
@@ -399,11 +557,103 @@ var modelprinter = {
   getModelNames: () => Object.keys(modelFunctions)
 };
 var mp = modelprinter;
+
+// src/hex-socket-bolt-mesh.ts
+var createHexSocketBoltMesh = (input) => {
+  const props = hexSocketBoltModelPropsSchema.parse(input);
+  const {
+    diameter,
+    threadPitch: pitch,
+    headDiameter,
+    headHeight,
+    socketWidth,
+    socketDepth
+  } = hexSocketBoltDimensions[props.metricSize];
+  const { length, showThreads } = props;
+  const segments = 96;
+  const steps = Math.max(2, Math.ceil(length / pitch * 24));
+  if (steps > 24e3)
+    throw new Error(
+      "Bolt length exceeds mesh resolution limit (1000 thread turns)"
+    );
+  const positions = [];
+  const indices = [];
+  const radius = diameter / 2;
+  const depth = pitch * 0.61343;
+  const bevel = Math.min(0.2, headHeight * 0.08);
+  const tipBevel = Math.min(pitch * 0.6, length / 3);
+  const ring = (z4, radiusAt) => {
+    const start = positions.length / 3;
+    for (let i = 0; i < segments; i++) {
+      const angle = i * Math.PI * 2 / segments;
+      const r = radiusAt(angle);
+      positions.push(r * Math.cos(angle), r * Math.sin(angle), z4);
+    }
+    return start;
+  };
+  const connect = (a, b) => {
+    for (let i = 0; i < segments; i++) {
+      const next = (i + 1) % segments;
+      indices.push(a + i, a + next, b + next, a + i, b + next, b + i);
+    }
+  };
+  const cap = (start, z4, upward) => {
+    const center = positions.length / 3;
+    positions.push(0, 0, z4);
+    for (let i = 0; i < segments; i++) {
+      const a = start + i;
+      const b = start + (i + 1) % segments;
+      indices.push(center, upward ? a : b, upward ? b : a);
+    }
+  };
+  let previous = -1;
+  for (let step = 0; step <= steps; step++) {
+    const z4 = -length + length * step / steps;
+    const current = ring(z4, (angle) => {
+      const phase = ((z4 / pitch - angle / (2 * Math.PI)) % 1 + 1) % 1;
+      const distance = Math.min(phase, 1 - phase);
+      const groove = Math.min(
+        depth,
+        Math.max(0, (distance - 1 / 16) * pitch * Math.sqrt(3))
+      );
+      const endRamp = Math.min(
+        1,
+        (z4 + length) / tipBevel,
+        -z4 / Math.min(pitch / 2, length / 3)
+      );
+      const tipCut = tipBevel * Math.max(0, 1 - (z4 + length) / tipBevel);
+      return radius - (showThreads ? groove * endRamp : 0) - tipCut;
+    });
+    if (previous < 0) cap(current, z4, false);
+    else connect(previous, current);
+    previous = current;
+  }
+  const addRing = (z4, radiusAt) => {
+    const current = ring(z4, radiusAt);
+    connect(previous, current);
+    previous = current;
+  };
+  addRing(0, () => headDiameter / 2 - bevel);
+  addRing(bevel, () => headDiameter / 2);
+  addRing(headHeight - bevel, () => headDiameter / 2);
+  addRing(headHeight, () => headDiameter / 2 - bevel);
+  const hexRadius = (angle, acrossFlats) => acrossFlats / 2 / Math.cos((angle + Math.PI / 6) % (Math.PI / 3) - Math.PI / 6);
+  addRing(headHeight, (angle) => hexRadius(angle, socketWidth + bevel));
+  addRing(headHeight - bevel / 2, (angle) => hexRadius(angle, socketWidth));
+  addRing(headHeight - socketDepth, (angle) => hexRadius(angle, socketWidth));
+  cap(previous, headHeight - socketDepth, true);
+  return { positions, indices };
+};
 export {
+  createHexSocketBoltMesh,
   flexScreenAspectRatioSchema,
   flexScreenModelDefinitionSchema,
   flexScreenModelPropsSchema,
   flexScreenOrientationSchema,
+  hexSocketBoltDimensions,
+  hexSocketBoltModelDefinitionSchema,
+  hexSocketBoltModelPropsSchema,
+  metricBoltSizeSchema,
   modelDefinitionSchema,
   modelLengthSchema,
   modelprinter,

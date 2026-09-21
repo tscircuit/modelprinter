@@ -1,8 +1,9 @@
-import { describe, expect, test } from "bun:test"
-import { flexScreenModelPropsSchema, mp, parseModelString } from "../src"
+import { expect } from "bun:test"
+import { flexScreenModelPropsSchema, mp, parseModelString } from "../../src"
 
-describe("FlexScreen model schema", () => {
-  test("normalizes unit-bearing properties to millimeters", () => {
+export function assertModelprinter() {
+  // "normalizes unit-bearing properties to millimeters"
+  {
     expect(
       flexScreenModelPropsSchema.parse({
         width: "2in",
@@ -18,9 +19,10 @@ describe("FlexScreen model schema", () => {
       boardTopZ: -0.5,
       screenOffset: { x: 2, z: -3 },
     })
-  })
+  }
 
-  test("rejects unknown props and conflicting orientation shortcuts", () => {
+  // "rejects unknown props and conflicting orientation shortcuts"
+  {
     expect(() =>
       flexScreenModelPropsSchema.parse({ imaginaryLength: "4mm" }),
     ).toThrow()
@@ -30,14 +32,12 @@ describe("FlexScreen model schema", () => {
         foldsBelowBoard: true,
       }),
     ).toThrow("Only one FlexScreen orientation shortcut can be true")
-  })
-})
-
-describe("footprinter-style model strings", () => {
+  }
   const source =
     "flexscreen_w40mm_h22.5mm_flex60mm_foldsabove_distance20mm_foldstart9mm_outset6mm_conductors10"
 
-  test("exposes the raw function and modifiers through params()", () => {
+  // "exposes the raw function and modifiers through params()"
+  {
     expect(mp.string(source).params()).toEqual({
       flexscreen: true,
       fn: "flexscreen",
@@ -51,9 +51,10 @@ describe("footprinter-style model strings", () => {
       conductors: "10",
       string: source,
     })
-  })
+  }
 
-  test("returns flat, validated JSON with fn", () => {
+  // "returns flat, validated JSON with fn"
+  {
     expect(mp.string(source).json()).toEqual({
       fn: "flexscreen",
       width: 40,
@@ -65,18 +66,20 @@ describe("footprinter-style model strings", () => {
       foldOutset: 6,
       conductorCount: 10,
     })
-  })
+  }
 
-  test("can inspect fn before function-specific validation", () => {
+  // "can inspect fn before function-specific validation"
+  {
     expect(mp.string("soic8_w5mm").params()).toMatchObject({
       fn: "soic",
       num_pins: 8,
       w: "5mm",
     })
     expect(mp.string("0402").params().fn).toBe("0402")
-  })
+  }
 
-  test("rejects typos, ambiguous distance, and unsupported functions", () => {
+  // "rejects typos, ambiguous distance, and unsupported functions"
+  {
     expect(() =>
       mp.string("flexscreen_foldsabove_distnace20mm").json(),
     ).toThrow('Unknown FlexScreen model token "distnace20mm"')
@@ -86,5 +89,5 @@ describe("footprinter-style model strings", () => {
     expect(() => parseModelString("motor_w20mm")).toThrow(
       'Unsupported modelprinter function "motor"',
     )
-  })
-})
+  }
+}

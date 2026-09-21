@@ -20,7 +20,8 @@
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "format": "biome format --write .",
-    "format:check": "biome format ."
+    "format:check": "biome format .",
+    "snapshot:bolts": "BUN_UPDATE_SNAPSHOTS=1 bun test tests/hex-socket-bolt.test.ts"
   },
   "repository": {
     "type": "git",
@@ -43,7 +44,11 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.9",
+    "@tscircuit/alphabet": "^0.0.27",
+    "@tscircuit/image-utils": "^0.0.10",
     "bun-types": "^1.4.0",
+    "gl-matrix": "^3.4.4",
+    "poppygl": "^0.0.29",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"
   }
