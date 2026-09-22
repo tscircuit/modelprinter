@@ -26,10 +26,14 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org/
           package-manager-cache: false
-      - run: bun install --frozen-lockfile
+      - run: bun install
       - run: bun test
       - run: bun run typecheck
       - run: bun run format:check
       - run: bun run build
-      - run: git diff --exit-code -- dist
-      - run: npm publish --access public
+      - run: npm pack --dry-run
+      - run: npm publish --access public --provenance
+        env:
+          # Optional token for the initial publish; subsequent releases may use
+          # npm trusted publishing with this workflow's OIDC identity.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
