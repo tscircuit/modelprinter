@@ -1,5 +1,5 @@
 {
-  "name": "modelprinter",
+  "name": "@tscircuit/modelprinter",
   "version": "0.0.2",
   "description": "Parametric CAD model strings and schemas for tscircuit",
   "type": "module",
@@ -30,7 +30,7 @@
     "url": "git+https://github.com/tscircuit/modelprinter.git"
   },
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com"
   },
   "license": "MIT",
   "keywords": [

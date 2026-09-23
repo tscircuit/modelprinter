@@ -1,4 +1,4 @@
-name: Publish to npm
+name: Publish to GitHub Packages
 
 on:
   release:
@@ -7,10 +7,10 @@ on:
 
 permissions:
   contents: read
-  id-token: write
+  packages: write
 
 concurrency:
-  group: npm-publish
+  group: github-packages-publish
   cancel-in-progress: false
 
 jobs:
@@ -24,7 +24,8 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org/
+          registry-url: https://npm.pkg.github.com
+          scope: "@tscircuit"
           package-manager-cache: false
       - run: bun install
       - run: bun test
@@ -32,8 +33,6 @@ jobs:
       - run: bun run format:check
       - run: bun run build
       - run: npm pack --dry-run
-      - run: npm publish --access public --provenance
+      - run: npm publish
         env:
-          # Optional token for the initial publish; subsequent releases may use
-          # npm trusted publishing with this workflow's OIDC identity.
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ github.token }}
