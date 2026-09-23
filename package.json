@@ -23,8 +23,7 @@
     "typecheck": "tsc --noEmit",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "snapshot:bolts": "BUN_UPDATE_SNAPSHOTS=1 bun test tests/hex-socket-bolt.test.ts",
-    "prepare": "bun run build"
+    "snapshot:bolts": "BUN_UPDATE_SNAPSHOTS=1 bun test tests/hex-socket-bolt.test.ts"
   },
   "repository": {
     "type": "git",
