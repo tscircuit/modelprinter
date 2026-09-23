@@ -1,59 +1,56 @@
-import { mat4 } from "gl-matrix"
-import { SoftwareRenderer, encodePNG } from "poppygl"
-import { createSheetMetalMesh } from "../../src"
+import { createSheetMetalMesh, mp } from "../../src"
 import { sheetMetalExamples } from "./sheet-metal-examples"
+import { renderModelSnapshot } from "./render-model-snapshot"
 
-export function renderSheetMetalSnapshot() {
-  const width = 1200,
-    height = 800
-  const sheet = new SoftwareRenderer(width, height)
-  sheet.clear([232, 237, 244, 255])
-  for (const [index, props] of sheetMetalExamples.entries()) {
-    const mesh = createSheetMetalMesh(props)
-    for (const [row, eye] of [
-      [42, -55, 45],
-      [0, -65, 12],
-    ].entries()) {
-      const panel = new SoftwareRenderer(400, 400)
-      panel.clear([232, 237, 244, 255])
-      const draw = {
-        positions: new Float32Array(mesh.positions),
-        indices: new Uint32Array(mesh.indices),
-        normals: null,
-        uvs: null,
-        model: mat4.create(),
-        material: {
-          baseColorFactor: [0.57, 0.65, 0.74, 1] as [
-            number,
-            number,
-            number,
-            number,
-          ],
-          baseColorTexture: null,
-        },
-      }
-      panel.drawMesh(
-        draw,
-        {
-          view: mat4.lookAt(
-            mat4.create(),
-            eye as [number, number, number],
-            [0, 0, 5],
-            [0, 0, 1],
-          ),
-          proj: mat4.ortho(mat4.create(), -24, 24, -24, 24, 0.1, 200),
-        },
-        { dir: [-0.4, 0.5, -0.8], ambient: 0.3 },
-        draw.material,
-        true,
-        true,
-      )
-      for (let y = 0; y < 400; y++)
-        sheet.bitmap.data.set(
-          panel.bitmap.data.subarray(y * 400 * 4, (y + 1) * 400 * 4),
-          ((row * 400 + y) * width + index * 400) * 4,
-        )
-    }
-  }
-  return encodePNG(sheet.bitmap)
+const modelStrings = [
+  "sheetmetal_plate_w24mm_l28mm_t1mm_r1mm",
+  "sheetmetal_angle_w24mm_l20mm_h16mm_t1.2mm_r2mm",
+  "sheetmetal_channel_w28mm_l24mm_h14mm_t1mm_r2mm",
+] as const
+
+export function renderSheetMetalSnapshot(index: 0 | 1 | 2) {
+  const modelString = modelStrings[index]
+  const definition = mp.string(modelString).json()
+  if (definition.fn !== "sheetmetal") throw new Error("Expected sheet metal")
+  const { fn, ...props } = definition
+  return renderModelSnapshot({
+    mesh: createSheetMetalMesh({
+      ...props,
+      holes: sheetMetalExamples[index]!.holes,
+    }),
+    title: `SHEET METAL / ${definition.profile.toUpperCase()}`,
+    modelString,
+    views: [
+      {
+        name: "ISOMETRIC",
+        detail: "FORMED PANELS AND CUTOUTS",
+        eye: [42, -55, 45],
+        target: [0, 0, 5],
+        span: 44,
+      },
+      {
+        name: "TOP",
+        detail: "BASE PANEL CUTOUTS",
+        eye: [0, 0, 70],
+        target: [0, 0, 0],
+        span: 44,
+      },
+      {
+        name: "FRONT",
+        detail: "CONSTANT THICKNESS AND BEND RADII",
+        eye: [0, -65, 8],
+        target: [0, 0, 8],
+        span: 44,
+      },
+      {
+        name: "RIGHT",
+        detail: "FLANGE PROFILE AND CUTOUTS",
+        eye: [65, 0, 8],
+        target: [0, 0, 8],
+        span: 44,
+      },
+    ],
+    footer:
+      "POPPYGL / DIMENSIONS IN mm / PANEL CUTOUTS SUPPLIED AS TYPED HOLES PROPS",
+  })
 }
