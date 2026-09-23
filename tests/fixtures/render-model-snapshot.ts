@@ -161,7 +161,9 @@ export async function renderModelSnapshot({
     label(sheet, { text: view.detail, x: left + 22, y: top + 401, size: 17 })
   }
   label(sheet, { text: title, x: 32, y: 20, size: 38 })
-  label(sheet, { text: modelString, x: 32, y: 75, size: 21 })
+  for (const [index, line] of (modelString.match(/.{1,90}/g) ?? []).entries()) {
+    label(sheet, { text: line, x: 32, y: 73 + index * 21, size: 16 })
+  }
   label(sheet, { text: footer, x: 32, y: 1101, size: 17 })
 
   const bitmap = createUint8Bitmap(width, height)

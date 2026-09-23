@@ -1,3 +1,4 @@
+import { splitModelStringTokens } from "./split-model-string-tokens"
 export type RawModelprinterParams = {
   fn: string
   string: string
@@ -24,7 +25,7 @@ export const parseModelStringParams = (
   const normalizedDefinition = definition.trim()
   if (!normalizedDefinition) throw new Error("Model string cannot be empty")
 
-  const parts = normalizedDefinition.split("_")
+  const parts = splitModelStringTokens(normalizedDefinition)
   const firstPart = parts[0]!
   const first = parsePart(firstPart)
 
