@@ -1,4 +1,5 @@
-import { z } from "zod"
+import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"
+import { z } from "zod/v4"
 import { hexSocketBoltModelDefinitionSchema } from "./hex-socket-bolt-schema"
 import {
   modelLengthSchema,
@@ -197,6 +198,7 @@ export type FlexScreenModelDefinition = z.infer<
 >
 
 export const modelDefinitionSchema = z.discriminatedUnion("fn", [
+  sheetMetalModelDefinitionSchema,
   flexScreenModelDefinitionSchema,
   hexSocketBoltModelDefinitionSchema,
 ])

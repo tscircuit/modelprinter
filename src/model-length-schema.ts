@@ -1,5 +1,5 @@
 import { mm } from "@tscircuit/mm"
-import { z } from "zod"
+import { z } from "zod/v4"
 
 export const modelLengthSchema = z
   .union([z.number(), z.string()])

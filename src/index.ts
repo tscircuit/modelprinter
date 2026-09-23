@@ -3,3 +3,6 @@ export * from "./parse-model-string"
 export * from "./modelprinter"
 export * from "./hex-socket-bolt-schema"
 export * from "./hex-socket-bolt-mesh"
+
+export * from "./sheet-metal-schema"
+export * from "./sheet-metal-mesh"
