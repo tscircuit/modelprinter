@@ -2,6 +2,7 @@
 
 - Do not update README.md when adding new models.
 - Render all visual snapshots with poppygl.
+- Every visual snapshot must show exactly one model in exactly four views and include a title block displaying its modelprinter string. Use separate snapshot files for different models.
 - Test files must never use describe blocks and must contain exactly one visual test per file.
 - Keep reusable assertions and rendering helpers in tests/fixtures. Each visual test should compare its rendered PNG against a committed snapshot.
 
