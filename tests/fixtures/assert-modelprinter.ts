@@ -1,7 +1,24 @@
+import { z } from "zod"
 import { expect } from "bun:test"
-import { flexScreenModelPropsSchema, mp, parseModelString } from "../../src"
+import {
+  flexScreenModelPropsSchema,
+  modelDefinitionSchema,
+  mp,
+  parseModelString,
+} from "../../src"
 
 export function assertModelprinter() {
+  // Exported schemas must share the consumer's Zod instance.
+  expect(flexScreenModelPropsSchema).toBeInstanceOf(z.ZodType)
+  expect(modelDefinitionSchema).toBeInstanceOf(z.ZodType)
+  expect(
+    modelDefinitionSchema.safeParse({
+      fn: "flexscreen",
+      foldsAboveBoard: true,
+      foldsBelowBoard: true,
+    }).success,
+  ).toBe(false)
+
   // "normalizes unit-bearing properties to millimeters"
   {
     expect(
