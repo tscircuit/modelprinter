@@ -42,8 +42,7 @@
   ],
   "dependencies": {
     "@tscircuit/mm": "^0.0.9",
-    "earcut": "^3.2.3",
-    "zod": "^4.4.3"
+    "earcut": "^3.2.3"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.9",
@@ -54,6 +53,10 @@
     "gl-matrix": "^3.4.4",
     "poppygl": "^0.0.29",
     "tsup": "^8.5.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "zod": "^3.25.67"
+  },
+  "peerDependencies": {
+    "zod": "*"
   }
 }

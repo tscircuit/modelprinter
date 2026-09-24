@@ -1,4 +1,4 @@
-import { z } from "zod/v4"
+import { z } from "zod"
 import { positiveModelLengthSchema } from "./model-length-schema"
 
 /** Nominal ISO 4762 / DIN 912 dimensions in millimeters (coarse thread).
