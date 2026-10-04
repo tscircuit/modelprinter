@@ -11,8 +11,14 @@ import {
 } from "./parse-model-string"
 
 import { parseHelicalGearModelParams } from "./parse-helical-gear-model-string"
+import {
+  parseBallBearingModelParams,
+  parseThrustBallBearingModelParams,
+} from "./parse-ball-bearing-model-string"
 
 const modelFunctions = {
+  ballbearing: parseBallBearingModelParams,
+  thrustballbearing: parseThrustBallBearingModelParams,
   helicalgear: parseHelicalGearModelParams,
   nema: parseNemaMotorModelParams,
   sheetmetal: parseSheetMetalModelParams,
