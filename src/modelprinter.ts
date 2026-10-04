@@ -11,8 +11,11 @@ import {
 } from "./parse-model-string"
 
 import { parseHelicalGearModelParams } from "./parse-helical-gear-model-string"
+import { parseStandoffModelParams } from "./parse-standoff-model-string"
 
 const modelFunctions = {
+  femalestandoff: parseStandoffModelParams,
+  malefemalestandoff: parseStandoffModelParams,
   helicalgear: parseHelicalGearModelParams,
   nema: parseNemaMotorModelParams,
   sheetmetal: parseSheetMetalModelParams,

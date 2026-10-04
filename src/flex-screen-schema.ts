@@ -6,6 +6,10 @@ import { hexSocketBoltModelDefinitionSchema } from "./hex-socket-bolt-schema"
 import { spurGearModelDefinitionSchema } from "./spur-gear-schema"
 import { wormGearModelDefinitionSchema } from "./worm-gear-schema"
 import {
+  femaleStandoffModelDefinitionSchema,
+  maleFemaleStandoffModelDefinitionSchema,
+} from "./standoff-schema"
+import {
   modelLengthSchema,
   positiveModelLengthSchema,
   nonnegativeModelLengthSchema,
@@ -202,6 +206,8 @@ export type FlexScreenModelDefinition = z.infer<
 >
 
 export const modelDefinitionSchema = z.union([
+  femaleStandoffModelDefinitionSchema,
+  maleFemaleStandoffModelDefinitionSchema,
   nemaMotorModelDefinitionSchema,
   sheetMetalModelDefinitionSchema,
   flexScreenModelDefinitionSchema,
