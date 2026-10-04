@@ -5,6 +5,7 @@ import { z } from "zod"
 import { hexSocketBoltModelDefinitionSchema } from "./hex-socket-bolt-schema"
 import { spurGearModelDefinitionSchema } from "./spur-gear-schema"
 import { wormGearModelDefinitionSchema } from "./worm-gear-schema"
+import { spacerModelDefinitionSchema } from "./spacer-schema"
 import {
   modelLengthSchema,
   positiveModelLengthSchema,
@@ -202,6 +203,7 @@ export type FlexScreenModelDefinition = z.infer<
 >
 
 export const modelDefinitionSchema = z.union([
+  spacerModelDefinitionSchema,
   nemaMotorModelDefinitionSchema,
   sheetMetalModelDefinitionSchema,
   flexScreenModelDefinitionSchema,
