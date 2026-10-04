@@ -11,8 +11,10 @@ import {
 } from "./parse-model-string"
 
 import { parseHelicalGearModelParams } from "./parse-helical-gear-model-string"
+import { parseSpacerModelParams } from "./parse-spacer-model-string"
 
 const modelFunctions = {
+  spacer: parseSpacerModelParams,
   helicalgear: parseHelicalGearModelParams,
   nema: parseNemaMotorModelParams,
   sheetmetal: parseSheetMetalModelParams,
