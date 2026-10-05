@@ -37,7 +37,7 @@ const lengthProperties = {
   flexCableLength: ["flexcablelength", "flexlength", "flex"],
   flexCableWidth: ["flexcablewidth", "flexwidth"],
   flexCableThickness: ["flexcablethickness", "flexthickness"],
-  conductorPitch: ["conductorpitch"],
+  conductorPitch: ["conductorpitch", "pitch", "p"],
   conductorWidth: ["conductorwidth"],
   conductorThickness: ["conductorthickness"],
   cableEdgeMargin: ["cableedgemargin", "edgemargin"],
@@ -71,6 +71,8 @@ const lengthTokenToProperty = Object.fromEntries(
 )
 
 const integerTokenToProperty: Record<string, keyof FlexScreenModelProps> = {
+  num_pins: "conductorCount",
+  pincount: "conductorCount",
   conductorcount: "conductorCount",
   conductors: "conductorCount",
   bendsegments: "bendSegments",
