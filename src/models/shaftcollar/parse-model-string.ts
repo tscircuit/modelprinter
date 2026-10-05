@@ -1,6 +1,6 @@
-import { shaftCollarModelDefinitionSchema } from "./shaft-collar-schema"
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
+import { shaftCollarModelDefinitionSchema } from "./schema"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
 
 const tokenProperties: Record<string, string> = {
   bore: "boreDiameter",

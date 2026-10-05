@@ -1,4 +1,4 @@
-import { shaftCollarModelDefinitionSchema } from "./shaft-collar-schema"
+import { shaftCollarModelDefinitionSchema } from "./models/shaftcollar"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"
