@@ -2,7 +2,7 @@ import { z } from "zod"
 import {
   nonnegativeGearLengthSchema as nonnegative,
   positiveGearLengthSchema as positive,
-} from "./gear-parameter-schemas"
+} from "../../gear-parameter-schemas"
 
 const shape = {
   width: positive.default(20),

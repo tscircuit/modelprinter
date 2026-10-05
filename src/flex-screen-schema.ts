@@ -1,4 +1,4 @@
-import { tSlotInsideCornerModelDefinitionSchema } from "./tslot-inside-corner-schema"
+import { tSlotInsideCornerModelDefinitionSchema } from "./models/tslotinsidecorner"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"

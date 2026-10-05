@@ -2,10 +2,10 @@ import {
   parseGearAngle,
   parseGearInteger,
   parseGearToken,
-} from "./gear-parameter-schemas"
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
-import { tSlotInsideCornerModelDefinitionSchema } from "./tslot-inside-corner-schema"
+} from "../../gear-parameter-schemas"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
+import { tSlotInsideCornerModelDefinitionSchema } from "./schema"
 
 const lengths = {
   w: "width",
