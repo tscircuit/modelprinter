@@ -1,4 +1,4 @@
-import { parseButtonScrewModelParams } from "./parse-button-screw-model-string"
+import { parseButtonScrewModelParams } from "./models/buttonscrew/parse-model-string"
 import { parseNemaMotorModelParams } from "./parse-nema-motor-model-string"
 import { parseSheetMetalModelParams } from "./parse-sheet-metal-model-string"
 import type { ModelDefinition } from "./flex-screen-schema"

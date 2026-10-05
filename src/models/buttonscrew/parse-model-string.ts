@@ -1,6 +1,6 @@
-import { buttonScrewModelDefinitionSchema } from "./button-screw-schema"
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
+import { buttonScrewModelDefinitionSchema } from "./schema"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
 
 export function parseButtonScrewModelParams(raw: RawModelprinterParams) {
   const tokens = splitModelStringTokens(raw.string)

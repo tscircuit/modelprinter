@@ -1,4 +1,4 @@
-import { buttonScrewModelDefinitionSchema } from "./button-screw-schema"
+import { buttonScrewModelDefinitionSchema } from "./models/buttonscrew"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"

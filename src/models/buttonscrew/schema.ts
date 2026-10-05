@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { modelLengthSchema } from "./model-length-schema"
+import { modelLengthSchema } from "../../model-length-schema"
 
 /** ISO 7380-1:2022 Table 1, nominal/max envelopes and minimum socket depth.
  * https://cdn.standards.iteh.ai/samples/78699/a175805085534f98983d6c8aa583a5b0/ISO-7380-1-2022.pdf
