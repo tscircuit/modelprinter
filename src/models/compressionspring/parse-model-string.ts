@@ -1,6 +1,6 @@
-import { compressionSpringModelDefinitionSchema } from "./compression-spring-schema"
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
+import { compressionSpringModelDefinitionSchema } from "./schema"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
 
 export function parseCompressionSpringModelParams(raw: RawModelprinterParams) {
   const tokens = splitModelStringTokens(raw.string)

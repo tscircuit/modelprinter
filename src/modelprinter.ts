@@ -1,4 +1,4 @@
-import { parseCompressionSpringModelParams } from "./parse-compression-spring-model-string"
+import { parseCompressionSpringModelParams } from "./models/compressionspring/parse-model-string"
 import { parseNemaMotorModelParams } from "./parse-nema-motor-model-string"
 import { parseSheetMetalModelParams } from "./parse-sheet-metal-model-string"
 import type { ModelDefinition } from "./flex-screen-schema"

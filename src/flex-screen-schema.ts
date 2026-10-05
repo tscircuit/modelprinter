@@ -1,4 +1,4 @@
-import { compressionSpringModelDefinitionSchema } from "./compression-spring-schema"
+import { compressionSpringModelDefinitionSchema } from "./models/compressionspring/schema"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"
