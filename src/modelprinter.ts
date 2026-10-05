@@ -12,7 +12,10 @@ import {
 
 import { parseHelicalGearModelParams } from "./parse-helical-gear-model-string"
 
+import { parseFlatHeadScrewModelParams } from "./parse-flat-head-screw-model-string"
+
 const modelFunctions = {
+  flatheadscrew: parseFlatHeadScrewModelParams,
   helicalgear: parseHelicalGearModelParams,
   nema: parseNemaMotorModelParams,
   sheetmetal: parseSheetMetalModelParams,
