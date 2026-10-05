@@ -11,8 +11,10 @@ import {
 } from "./parse-model-string"
 
 import { parseHelicalGearModelParams } from "./parse-helical-gear-model-string"
+import { parsePcbCardGuideModelParams } from "./parse-pcb-card-guide-model-string"
 
 const modelFunctions = {
+  pcbcardguide: parsePcbCardGuideModelParams,
   helicalgear: parseHelicalGearModelParams,
   nema: parseNemaMotorModelParams,
   sheetmetal: parseSheetMetalModelParams,

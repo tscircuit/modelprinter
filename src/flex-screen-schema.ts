@@ -1,4 +1,5 @@
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
+import { pcbCardGuideModelDefinitionSchema } from "./pcb-card-guide-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"
 import { z } from "zod"
@@ -202,6 +203,7 @@ export type FlexScreenModelDefinition = z.infer<
 >
 
 export const modelDefinitionSchema = z.union([
+  pcbCardGuideModelDefinitionSchema,
   nemaMotorModelDefinitionSchema,
   sheetMetalModelDefinitionSchema,
   flexScreenModelDefinitionSchema,
