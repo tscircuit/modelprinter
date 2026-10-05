@@ -1,3 +1,4 @@
+import { hexBoltModelDefinitionSchema } from "./models/hexbolt/schema"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"
@@ -107,6 +108,15 @@ const flexScreenModelPropsShape = {
   flexCableWidth: positiveModelLengthSchema.optional(),
   flexCableThickness: positiveModelLengthSchema.optional(),
   flexCableColor: z.string().min(1).optional(),
+  /** FPC contact parameters, matching the corresponding connector renderer. */
+  pinCount: z.number().int().positive().optional(),
+  pitch: positiveModelLengthSchema.optional(),
+  padWidth: positiveModelLengthSchema.optional(),
+  padLength: nonnegativeModelLengthSchema.optional(),
+  /** Length of the widened straight connector tail, before the taper. */
+  tailLength: positiveModelLengthSchema.optional(),
+  /** Length of the transition from connector tail to cable body. */
+  taperLength: positiveModelLengthSchema.optional(),
   conductorCount: z.number().int().positive().optional(),
   conductorPitch: positiveModelLengthSchema.optional(),
   conductorWidth: positiveModelLengthSchema.optional(),
@@ -156,6 +166,37 @@ const addOrientationShortcutIssue = (
   if (selectedShortcuts.length > 1) addIssue(selectedShortcuts[1]!)
 }
 
+const validateTailLengths = (
+  props: {
+    flexCableLength?: number
+    tailLength?: number
+    taperLength?: number
+  },
+  context: z.RefinementCtx,
+) => {
+  if (props.flexCableLength === undefined) return
+  if (
+    props.tailLength !== undefined &&
+    props.tailLength >= props.flexCableLength
+  ) {
+    context.addIssue({
+      code: "custom",
+      message: "tailLength must be shorter than flexCableLength",
+      path: ["tailLength"],
+    })
+  }
+  if (
+    (props.tailLength ?? 0) + (props.taperLength ?? 0) >
+    props.flexCableLength
+  ) {
+    context.addIssue({
+      code: "custom",
+      message: "tailLength and taperLength must fit within flexCableLength",
+      path: ["taperLength"],
+    })
+  }
+}
+
 /**
  * Canonical, renderer-independent properties for a parameterized FlexScreen.
  * Every length accepts either millimeters as a number or a unit-bearing string
@@ -165,6 +206,7 @@ export const flexScreenModelPropsSchema = z
   .object(flexScreenModelPropsShape)
   .strict()
   .superRefine((props, context) => {
+    validateTailLengths(props, context)
     addOrientationShortcutIssue(props, (path) => {
       context.addIssue({
         code: "custom",
@@ -188,6 +230,7 @@ export const flexScreenModelDefinitionSchema = z
   })
   .strict()
   .superRefine((model, context) => {
+    validateTailLengths(model, context)
     addOrientationShortcutIssue(model, (path) => {
       context.addIssue({
         code: "custom",
@@ -202,6 +245,7 @@ export type FlexScreenModelDefinition = z.infer<
 >
 
 export const modelDefinitionSchema = z.union([
+  hexBoltModelDefinitionSchema,
   nemaMotorModelDefinitionSchema,
   sheetMetalModelDefinitionSchema,
   flexScreenModelDefinitionSchema,
