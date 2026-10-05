@@ -12,3 +12,6 @@ export * from "./nema-motor-reference-points"
 export * from "./spur-gear-schema"
 export * from "./worm-gear-schema"
 export * from "./helical-gear-schema"
+
+export * from "./cable-tie-schema"
+export * from "./parse-cable-tie-model-string"
