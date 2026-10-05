@@ -1,4 +1,4 @@
-import { hexBoltModelDefinitionSchema } from "./hex-bolt-schema"
+import { hexBoltModelDefinitionSchema } from "./models/hexbolt/schema"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"

@@ -1,6 +1,6 @@
-import { hexBoltModelDefinitionSchema } from "./hex-bolt-schema"
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
+import { hexBoltModelDefinitionSchema } from "./schema"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
 
 const aliases: Record<string, string> = {
   m: "metricSize",

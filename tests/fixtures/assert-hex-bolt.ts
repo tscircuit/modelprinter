@@ -7,7 +7,7 @@ import {
   mp,
   modelprinter,
 } from "../../src"
-import { parseHexBoltModelParams } from "../../src/parse-hex-bolt-model-string"
+import { parseHexBoltModelParams } from "../../src/models/hexbolt/parse-model-string"
 
 export const assertHexBolt = () => {
   const builder = mp.string(
