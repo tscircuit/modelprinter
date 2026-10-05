@@ -1,6 +1,6 @@
-import { rigidCouplerModelDefinitionSchema } from "./rigid-coupler-schema"
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
+import { rigidCouplerModelDefinitionSchema } from "./schema"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
 
 const tokenProperties: Record<string, string> = {
   bore: "boreDiameter",

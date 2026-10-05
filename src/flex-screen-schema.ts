@@ -1,4 +1,4 @@
-import { rigidCouplerModelDefinitionSchema } from "./rigid-coupler-schema"
+import { rigidCouplerModelDefinitionSchema } from "./models/rigidcoupler"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"

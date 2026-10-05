@@ -1,4 +1,4 @@
-import { parseRigidCouplerModelParams } from "./parse-rigid-coupler-model-string"
+import { parseRigidCouplerModelParams } from "./models/rigidcoupler/parse-model-string"
 import { parseNemaMotorModelParams } from "./parse-nema-motor-model-string"
 import { parseSheetMetalModelParams } from "./parse-sheet-metal-model-string"
 import type { ModelDefinition } from "./flex-screen-schema"
