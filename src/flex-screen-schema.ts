@@ -1,4 +1,4 @@
-import { flatHeadScrewModelDefinitionSchema } from "./flat-head-screw-schema"
+import { flatHeadScrewModelDefinitionSchema } from "./models/flatheadscrew/schema"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"

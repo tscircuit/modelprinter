@@ -7,7 +7,7 @@ import {
   mp,
   modelprinter,
 } from "../../src"
-import { parseFlatHeadScrewModelParams } from "../../src/parse-flat-head-screw-model-string"
+import { parseFlatHeadScrewModelParams } from "../../src/models/flatheadscrew/parse-model-string"
 
 export const assertFlatHeadScrew = () => {
   const builder = mp.string(
