@@ -1,4 +1,4 @@
-import { parseFlangedBushingModelParams } from "./parse-flanged-bushing-model-string"
+import { parseFlangedBushingModelParams } from "./models/flangedbushing/parse-model-string"
 import { parseNemaMotorModelParams } from "./parse-nema-motor-model-string"
 import { parseSheetMetalModelParams } from "./parse-sheet-metal-model-string"
 import type { ModelDefinition } from "./flex-screen-schema"

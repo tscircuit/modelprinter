@@ -1,4 +1,4 @@
-import { flangedBushingModelDefinitionSchema } from "./flanged-bushing-schema"
+import { flangedBushingModelDefinitionSchema } from "./models/flangedbushing/schema"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"

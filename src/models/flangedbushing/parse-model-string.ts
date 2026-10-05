@@ -1,6 +1,6 @@
-import { flangedBushingModelDefinitionSchema } from "./flanged-bushing-schema"
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
+import { flangedBushingModelDefinitionSchema } from "./schema"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
 
 const lengths = {
   id: "innerDiameter",
