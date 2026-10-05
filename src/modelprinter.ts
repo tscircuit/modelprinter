@@ -1,4 +1,4 @@
-import { parsePlainBushingModelParams } from "./parse-plain-bushing-model-string"
+import { parsePlainBushingModelParams } from "./models/plainbushing/parse-model-string"
 import { parseNemaMotorModelParams } from "./parse-nema-motor-model-string"
 import { parseSheetMetalModelParams } from "./parse-sheet-metal-model-string"
 import type { ModelDefinition } from "./flex-screen-schema"

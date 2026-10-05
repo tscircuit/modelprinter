@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { modelLengthSchema } from "./model-length-schema"
+import { modelLengthSchema } from "../../model-length-schema"
 
 const length = z
   .union([

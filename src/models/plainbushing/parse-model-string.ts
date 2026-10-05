@@ -1,6 +1,6 @@
-import type { RawModelprinterParams } from "./parse-model-string"
-import { plainBushingModelDefinitionSchema } from "./plain-bushing-schema"
-import { splitModelStringTokens } from "./split-model-string-tokens"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { plainBushingModelDefinitionSchema } from "./schema"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
 
 const lengths = {
   id: "innerDiameter",
