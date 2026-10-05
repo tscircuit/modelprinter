@@ -1,4 +1,4 @@
-import { tSlotGussetModelDefinitionSchema } from "./tslot-gusset-schema"
+import { tSlotGussetModelDefinitionSchema } from "./models/tslotgusset"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"

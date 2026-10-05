@@ -1,7 +1,7 @@
-import { parseGearInteger, parseGearToken } from "./gear-parameter-schemas"
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
-import { tSlotGussetModelDefinitionSchema } from "./tslot-gusset-schema"
+import { parseGearInteger, parseGearToken } from "../../gear-parameter-schemas"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
+import { tSlotGussetModelDefinitionSchema } from "./schema"
 
 const lengths = {
   w: "width",

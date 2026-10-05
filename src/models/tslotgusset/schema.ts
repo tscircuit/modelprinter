@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { positiveGearLengthSchema as positive } from "./gear-parameter-schemas"
+import { positiveGearLengthSchema as positive } from "../../gear-parameter-schemas"
 
 const shape = {
   width: positive.default(40),
