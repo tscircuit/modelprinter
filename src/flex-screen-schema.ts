@@ -1,4 +1,4 @@
-import { panScrewModelDefinitionSchema } from "./pan-screw-schema"
+import { panScrewModelDefinitionSchema } from "./models/panscrew/schema"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"

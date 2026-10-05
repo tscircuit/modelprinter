@@ -13,4 +13,4 @@ export * from "./spur-gear-schema"
 export * from "./worm-gear-schema"
 export * from "./helical-gear-schema"
 
-export * from "./pan-screw-schema"
+export * from "./models/panscrew"

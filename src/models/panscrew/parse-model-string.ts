@@ -1,6 +1,6 @@
-import { panScrewModelDefinitionSchema } from "./pan-screw-schema"
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
+import { panScrewModelDefinitionSchema } from "./schema"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
 
 const aliases: Record<string, string> = {
   m: "metricSize",

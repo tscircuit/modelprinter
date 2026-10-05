@@ -7,7 +7,7 @@ import {
   mp,
   modelprinter,
 } from "../../src"
-import { parsePanScrewModelParams } from "../../src/parse-pan-screw-model-string"
+import { parsePanScrewModelParams } from "../../src/models/panscrew/parse-model-string"
 
 export const assertPanScrew = () => {
   const builder = mp.string(
