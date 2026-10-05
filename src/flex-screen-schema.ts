@@ -1,4 +1,4 @@
-import { cableGrommetModelDefinitionSchema } from "./cable-grommet-schema"
+import { cableGrommetModelDefinitionSchema } from "./models/cablegrommet/schema"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"

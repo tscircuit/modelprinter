@@ -13,5 +13,5 @@ export * from "./spur-gear-schema"
 export * from "./worm-gear-schema"
 export * from "./helical-gear-schema"
 
-export * from "./cable-grommet-schema"
-export * from "./parse-cable-grommet-model-string"
+export * from "./models/cablegrommet"
+export * from "./models/cablegrommet/parse-model-string"

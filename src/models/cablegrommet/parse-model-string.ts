@@ -1,6 +1,6 @@
-import { cableGrommetModelDefinitionSchema } from "./cable-grommet-schema"
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
+import { cableGrommetModelDefinitionSchema } from "./schema"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
 
 const lengths = {
   panelhole: "panelHoleDiameter",
