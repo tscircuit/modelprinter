@@ -1,6 +1,6 @@
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
-import { threadedRodModelDefinitionSchema } from "./threaded-rod-schema"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
+import { threadedRodModelDefinitionSchema } from "./schema"
 
 const lengths = {
   l: "length",

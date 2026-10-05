@@ -1,4 +1,4 @@
-import { threadedRodModelDefinitionSchema } from "./threaded-rod-schema"
+import { threadedRodModelDefinitionSchema } from "./models/threadedrod"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"
