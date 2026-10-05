@@ -1,3 +1,4 @@
+import { parseTSlotGussetModelParams } from "./parse-tslot-gusset-model-string"
 import { parseNemaMotorModelParams } from "./parse-nema-motor-model-string"
 import { parseSheetMetalModelParams } from "./parse-sheet-metal-model-string"
 import type { ModelDefinition } from "./flex-screen-schema"
@@ -13,6 +14,7 @@ import {
 import { parseHelicalGearModelParams } from "./parse-helical-gear-model-string"
 
 const modelFunctions = {
+  tslotgusset: parseTSlotGussetModelParams,
   helicalgear: parseHelicalGearModelParams,
   nema: parseNemaMotorModelParams,
   sheetmetal: parseSheetMetalModelParams,
