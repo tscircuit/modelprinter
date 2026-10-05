@@ -1,4 +1,4 @@
-import { parseClampingShaftCollarModelParams } from "./parse-clamping-shaft-collar-model-string"
+import { parseClampingShaftCollarModelParams } from "./models/clampingshaftcollar/parse-model-string"
 import { parseNemaMotorModelParams } from "./parse-nema-motor-model-string"
 import { parseSheetMetalModelParams } from "./parse-sheet-metal-model-string"
 import type { ModelDefinition } from "./flex-screen-schema"

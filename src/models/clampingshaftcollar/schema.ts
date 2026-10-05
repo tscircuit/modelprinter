@@ -2,8 +2,8 @@ import { z } from "zod"
 import {
   hexSocketBoltDimensions,
   metricBoltSizeSchema,
-} from "./hex-socket-bolt-schema"
-import { modelLengthSchema } from "./model-length-schema"
+} from "../../hex-socket-bolt-schema"
+import { modelLengthSchema } from "../../model-length-schema"
 
 const length = z
   .union([

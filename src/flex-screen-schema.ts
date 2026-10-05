@@ -1,4 +1,4 @@
-import { clampingShaftCollarModelDefinitionSchema } from "./clamping-shaft-collar-schema"
+import { clampingShaftCollarModelDefinitionSchema } from "./models/clampingshaftcollar"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"
