@@ -12,7 +12,10 @@ import {
 
 import { parseHelicalGearModelParams } from "./parse-helical-gear-model-string"
 
+import { parseHexBoltModelParams } from "./parse-hex-bolt-model-string"
+
 const modelFunctions = {
+  hexbolt: parseHexBoltModelParams,
   helicalgear: parseHelicalGearModelParams,
   nema: parseNemaMotorModelParams,
   sheetmetal: parseSheetMetalModelParams,
