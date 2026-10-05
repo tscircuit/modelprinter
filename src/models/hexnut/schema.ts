@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { modelLengthSchema } from "./model-length-schema"
+import { modelLengthSchema } from "../../model-length-schema"
 
 /** Pinned ISO 4032:2023 Table 1 (grade A, no washer-face): nominal/max s,m
  * and maximum bore-mouth diameter da. This is an untoleranced visual contract.

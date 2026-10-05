@@ -1,6 +1,6 @@
-import { hexNutModelDefinitionSchema } from "./hex-nut-schema"
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
+import { hexNutModelDefinitionSchema } from "./schema"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
 
 export function parseHexNutModelParams(raw: RawModelprinterParams) {
   const tokens = splitModelStringTokens(raw.string)

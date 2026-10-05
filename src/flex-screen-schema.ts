@@ -1,4 +1,4 @@
-import { hexNutModelDefinitionSchema } from "./hex-nut-schema"
+import { hexNutModelDefinitionSchema } from "./models/hexnut"
 import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"

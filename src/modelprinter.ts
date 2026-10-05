@@ -1,4 +1,4 @@
-import { parseHexNutModelParams } from "./parse-hex-nut-model-string"
+import { parseHexNutModelParams } from "./models/hexnut/parse-model-string"
 import { parseNemaMotorModelParams } from "./parse-nema-motor-model-string"
 import { parseSheetMetalModelParams } from "./parse-sheet-metal-model-string"
 import type { ModelDefinition } from "./flex-screen-schema"
