@@ -1,7 +1,7 @@
-import { parseGearToken } from "./gear-parameter-schemas"
-import type { RawModelprinterParams } from "./parse-model-string"
-import { splitModelStringTokens } from "./split-model-string-tokens"
-import { tSlotExtrusionModelDefinitionSchema } from "./tslot-extrusion-schema"
+import { parseGearToken } from "../../gear-parameter-schemas"
+import type { RawModelprinterParams } from "../../parse-model-string"
+import { splitModelStringTokens } from "../../split-model-string-tokens"
+import { tSlotExtrusionModelDefinitionSchema } from "./schema"
 
 const lengths = {
   w: "width",

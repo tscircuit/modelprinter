@@ -1,4 +1,4 @@
-import { parseTSlotExtrusionModelParams } from "./parse-tslot-extrusion-model-string"
+import { parseTSlotExtrusionModelParams } from "./models/tslotextrusion/parse-model-string"
 import { parseNemaMotorModelParams } from "./parse-nema-motor-model-string"
 import { parseSheetMetalModelParams } from "./parse-sheet-metal-model-string"
 import type { ModelDefinition } from "./flex-screen-schema"
