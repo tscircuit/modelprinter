@@ -1,6 +1,6 @@
 {
   "name": "@tscircuit/modelprinter",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Parametric CAD model strings and schemas for tscircuit",
   "type": "module",
   "main": "./index.js",
@@ -18,12 +18,14 @@
     "types"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --sourcemap --clean && tsc -p tsconfig.build.json && bun scripts/prepare-package.ts",
+    "generate": "bun scripts/generate-model-registry.ts",
+    "generate:watch": "bun scripts/watch-model-registry.ts",
+    "build": "bun run generate && tsup src/index.ts --format esm --sourcemap --clean && tsc -p tsconfig.build.json && bun scripts/prepare-package.ts",
     "prepack": "bun run build",
     "test": "bun test",
-    "typecheck": "tsc --noEmit",
-    "format": "biome format --write .",
-    "format:check": "biome format .",
+    "typecheck": "bun run generate && tsc --noEmit",
+    "format": "bun run generate && biome format --write .",
+    "format:check": "bun run generate && biome format .",
     "prepare": "bun install --ignore-scripts && bun run build"
   },
   "repository": {
