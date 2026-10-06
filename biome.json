@@ -7,7 +7,8 @@
       "!!index.js",
       "!!index.d.ts",
       "!!index.js.map",
-      "!!types"
+      "!!types",
+      "!!src/generated"
     ]
   },
   "formatter": {
