@@ -49,12 +49,60 @@ test("wire model strings parse, normalize and reject conflicting/invalid paramet
     wireConnection: "none",
   })
   for (const model of [
-    "nema17_jstph4",
+    "nema17_jstph1",
     "nema17_nowires_wirestubs",
     "nema17_wireanglebad",
     "nema17_wirecount1",
     "nema17_wirediameter6mm",
     "nema17_wirelength0mm",
+  ])
+    expect(() => parseModelString(model)).toThrow()
+})
+
+test("JST PH and SH variants accept canonical and legacy spellings", () => {
+  for (const family of ["ph", "sh"]) {
+    const maxPins = family === "ph" ? 16 : 15
+    for (let pinCount = 2; pinCount <= maxPins; pinCount++) {
+      const definition = parseModelString(
+        `nema17_jst${family}${pinCount}_wireangle90deg`,
+      )
+      expect(definition.wireConnection).toBe(`jst-${family}-${pinCount}`)
+      for (const alias of [
+        `jst${pinCount}_${family}`,
+        `jst_${family}_${pinCount}`,
+        `jst-${family}-${pinCount}`,
+      ]) {
+        expect(parseModelString(`nema17_${alias}_wireangle90deg`)).toEqual(
+          definition,
+        )
+        expect(
+          parseModelString(`NEMA17_${alias.toUpperCase()}_wireangle90deg`),
+        ).toEqual(definition)
+      }
+    }
+  }
+  for (const size of [8, 17, 23]) {
+    for (const [alias, token] of [
+      ["none", "nowires"],
+      ["stubs", "wirestubs"],
+    ])
+      expect(parseModelString(`nema${size}_${alias}`)).toEqual(
+        parseModelString(`nema${size}_${token}`),
+      )
+  }
+  for (const model of [
+    "nema17_jst4_ph_nowires",
+    "nema17_jst-ph-4_jstph4",
+    "nema17_jst4_ph_jst4_sh",
+    "nema17_none_stubs",
+    "nema17_jst1_ph",
+    "nema17_jst17_ph",
+    "nema17_jst16_sh",
+    "nema17_jst4_xh",
+    "nema17_jst4_sh_extra",
+    "nema17_jst4_ph2",
+    "nema17_jst0_sh",
+    "nema8_jst16_ph",
   ])
     expect(() => parseModelString(model)).toThrow()
 })

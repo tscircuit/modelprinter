@@ -1,3 +1,7 @@
+import {
+  getJstMotorConnector,
+  jstMotorWireConnectionSchema,
+} from "./jst-motor-connector"
 import { z } from "zod"
 import {
   hexSocketBoltDimensions,
@@ -101,7 +105,9 @@ const shape = {
   backFaceHoleDepth: positive.optional(),
   backFaceScrewSize: metricBoltSizeSchema.optional(),
   /** Visual termination; the wireside reference exists even when hidden. */
-  wireConnection: z.enum(["none", "stubs", "jst-ph-6"]).optional(),
+  wireConnection: z
+    .union([z.enum(["none", "stubs"]), jstMotorWireConnectionSchema])
+    .optional(),
   /** Counterclockwise angle about local +Z; 0 is the +X side. */
   wireSideAngle: z.number().finite().optional(),
   wireLength: positive.optional(),
@@ -198,11 +204,9 @@ const validate = (p: NemaMotorModelProps, ctx: z.RefinementCtx) => {
     if (p.wireDiameter >= p.rearCapLength)
       issue("Wire diameter must fit within the rear cap")
   }
-  if (
-    p.wireConnection === "jst-ph-6" &&
-    p.bodyWidth - 2 * p.faceCornerChamfer < 13.9
-  )
-    issue("Six-position JST-PH header must fit on the motor side")
+  const connector = getJstMotorConnector(p.wireConnection)
+  if (connector && p.bodyWidth - 2 * p.faceCornerChamfer < connector.bodyWidth)
+    issue("JST header must fit on the motor side")
   const r = p.mountingHoleDiameter / 2
   if (p.frontCapLength + p.rearCapLength >= p.bodyLength)
     issue("End caps must leave a positive body length")
