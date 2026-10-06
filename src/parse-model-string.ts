@@ -1,3 +1,4 @@
+import { normalizeNemaMotorModelString } from "./normalize-nema-motor-model-string"
 import { splitModelStringTokens } from "./split-model-string-tokens"
 export type RawModelprinterParams = {
   fn: string
@@ -22,7 +23,7 @@ const parsePart = (part: string) => {
 export const parseModelStringParams = (
   definition: string,
 ): RawModelprinterParams => {
-  const normalizedDefinition = definition.trim()
+  const normalizedDefinition = normalizeNemaMotorModelString(definition.trim())
   if (!normalizedDefinition) throw new Error("Model string cannot be empty")
 
   const parts = splitModelStringTokens(normalizedDefinition)

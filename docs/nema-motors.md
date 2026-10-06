@@ -77,3 +77,13 @@ screws larger than the bore, and holes or heads that cross the rear-face edge.
 mp.string("nema17_backfaceholes").json()
 mp.string("nema23_backfacescrews_backholespacing40mm_backscrewm3").json()
 ```
+
+## Wire connection aliases
+
+Model strings accept `_jst6_ph`, `_jst_ph_6` and `_jst-ph-6` as aliases for
+`_jstph6`, plus `_none` for `_nowires` and `_stubs` for `_wirestubs`.
+Aliases normalize before token parsing, including inside longer parameter
+strings. Resolved definitions keep the existing `wireConnection` values
+`"jst-ph-6"`, `"none"` and `"stubs"`. Duplicate and unsupported connections
+still fail validation.
+

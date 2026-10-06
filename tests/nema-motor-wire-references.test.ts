@@ -58,3 +58,30 @@ test("wire model strings parse, normalize and reject conflicting/invalid paramet
   ])
     expect(() => parseModelString(model)).toThrow()
 })
+
+test("assembly wire aliases preserve the existing NEMA definitions", () => {
+  for (const size of [8, 17, 23]) {
+    for (const [alias, token] of [
+      ["jst6_ph", "jstph6"],
+      ["jst_ph_6", "jstph6"],
+      ["jst-ph-6", "jstph6"],
+      ["none", "nowires"],
+      ["stubs", "wirestubs"],
+    ]) {
+      expect(parseModelString(`nema${size}_${alias}_wireangle90deg`)).toEqual(
+        parseModelString(`nema${size}_${token}_wireangle90deg`),
+      )
+    }
+  }
+  expect(parseModelString("NEMA17_JST6_PH")).toEqual(
+    parseModelString("nema17_jstph6"),
+  )
+  for (const model of [
+    "nema17_jst6_ph_nowires",
+    "nema17_jst-ph-6_jstph6",
+    "nema17_none_stubs",
+    "nema17_jst4_ph",
+    "nema17_jst6_ph_extra",
+  ])
+    expect(() => parseModelString(model)).toThrow()
+})

@@ -1,3 +1,4 @@
+import { normalizeNemaMotorModelString } from "./normalize-nema-motor-model-string"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import type { RawModelprinterParams } from "./parse-model-string"
 
@@ -27,7 +28,7 @@ const lengths = {
 } as const
 
 export function parseNemaMotorModelParams(raw: RawModelprinterParams) {
-  const tokens = raw.string.split("_")
+  const tokens = normalizeNemaMotorModelString(raw.string).split("_")
   const match = tokens[0]?.match(/^nema(8|17|23)$/i)
   if (!match) throw new Error("Expected nema8, nema17 or nema23")
   const props: Record<string, unknown> = {
