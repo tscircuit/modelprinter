@@ -1,0 +1,154 @@
+[
+  {
+    "source": "hexbolt_standard(iso4017)_m6_l25mm_drive(hex)",
+    "json": {
+      "fn": "hexbolt",
+      "standard": "iso4017:2014",
+      "metricSize": "M6",
+      "length": 25,
+      "thread": "full",
+      "drive": "hex",
+      "threadHand": "right",
+      "threadClass": "6g",
+      "threadGender": "male",
+      "showThreads": true,
+      "diameter": 6,
+      "threadPitch": 1,
+      "headAcrossFlats": 10,
+      "headHeight": 4,
+      "underHeadRadius": 0.25,
+      "headChamferAngle": 30,
+      "tipChamferAngle": 45,
+      "threadFlankAngle": 60,
+      "tipChamfer": 0.5,
+      "threadRootDiameter": 4.773130677972045,
+      "threadPitchDiameter": 5.350480947161671,
+      "headCornerDiameter": 11.547005383792516,
+      "headChamferDiameter": 10
+    }
+  },
+  {
+    "source": "helicalgear",
+    "json": {
+      "fn": "helicalgear",
+      "toothCount": 24,
+      "module": 1,
+      "faceWidth": 5,
+      "pressureAngle": 20,
+      "backlash": 0,
+      "clearance": 0.25,
+      "boreDiameter": 0,
+      "hubDiameter": 0,
+      "hubLength": 0,
+      "phase": 0,
+      "segmentsPerTooth": 12,
+      "helixAngle": 20,
+      "handedness": "right",
+      "segmentsPerTurn": 32
+    }
+  },
+  {
+    "source": "nema17_l40mm_round",
+    "json": {
+      "fn": "nema",
+      "nemaSize": 17,
+      "wireConnection": "stubs",
+      "wireSideAngle": 0,
+      "wireLength": 6,
+      "wireDiameter": 1.2,
+      "wireCount": 4,
+      "backFace": "screws",
+      "backFaceHoleSpacing": 31,
+      "backFaceHoleDiameter": 3,
+      "backFaceHoleDepth": 4.5,
+      "backFaceScrewSize": "M3",
+      "bodyWidth": 42.3,
+      "bodyLength": 40,
+      "mountingHoleSpacing": 31,
+      "mountingHoleDiameter": 3,
+      "mountingHoleDepth": 4.5,
+      "mountingHoleThrough": false,
+      "pilotDiameter": 22,
+      "pilotLength": 2,
+      "shaftDiameter": 5,
+      "shaftLength": 24,
+      "shaftShape": "round",
+      "shaftFlatDepth": 0.5,
+      "shaftFlatLength": 15,
+      "shaftFlatAngle": 0,
+      "frontCapLength": 5,
+      "rearCapLength": 5,
+      "faceCornerChamfer": 3,
+      "bodyCornerChamfer": 6
+    }
+  },
+  {
+    "source": "sheetmetal_channel_w28mm_l24mm_h14mm_t1mm_r2mm",
+    "json": {
+      "fn": "sheetmetal",
+      "profile": "channel",
+      "width": 28,
+      "baseLength": 24,
+      "flangeHeight": 14,
+      "thickness": 1,
+      "insideBendRadius": 2,
+      "holes": []
+    }
+  },
+  {
+    "source": "flexscreen30_w16_h10_flex5_p0.5mm_sitsflat",
+    "json": {
+      "fn": "flexscreen",
+      "width": 16,
+      "height": 10,
+      "orientation": "sitsFlat",
+      "flexCableLength": 5,
+      "pinCount": 30,
+      "pitch": 0.5
+    }
+  },
+  {
+    "source": "hexsocketbolt_m3_l6mm",
+    "json": {
+      "fn": "hexsocketbolt",
+      "metricSize": "M3",
+      "length": 6,
+      "showThreads": true
+    }
+  },
+  {
+    "source": "spurgear",
+    "json": {
+      "fn": "spurgear",
+      "toothCount": 24,
+      "module": 1,
+      "faceWidth": 5,
+      "pressureAngle": 20,
+      "backlash": 0,
+      "clearance": 0.25,
+      "boreDiameter": 0,
+      "hubDiameter": 0,
+      "hubLength": 0,
+      "phase": 0,
+      "segmentsPerTooth": 12
+    }
+  },
+  {
+    "source": "wormgear",
+    "json": {
+      "fn": "wormgear",
+      "module": 1,
+      "pitchDiameter": 10,
+      "length": 20,
+      "starts": 1,
+      "pressureAngle": 20,
+      "backlash": 0,
+      "clearance": 0.25,
+      "boreDiameter": 0,
+      "handedness": "right",
+      "phase": 0,
+      "radialSegments": 96,
+      "segmentsPerTurn": 32
+    }
+  }
+]
