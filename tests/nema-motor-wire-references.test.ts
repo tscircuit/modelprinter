@@ -66,6 +66,7 @@ test("JST PH and SH variants accept canonical and legacy spellings", () => {
       const definition = parseModelString(
         `nema17_jst${family}${pinCount}_wireangle90deg`,
       )
+      if (definition.fn !== "nema") throw new Error("Expected NEMA")
       expect(definition.wireConnection).toBe(`jst-${family}-${pinCount}`)
       for (const alias of [
         `jst${pinCount}_${family}`,
