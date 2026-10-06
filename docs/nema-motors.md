@@ -80,10 +80,14 @@ mp.string("nema23_backfacescrews_backholespacing40mm_backscrewm3").json()
 
 ## Wire connection aliases
 
-Model strings accept `_jst6_ph`, `_jst_ph_6` and `_jst-ph-6` as aliases for
-`_jstph6`, plus `_none` for `_nowires` and `_stubs` for `_wirestubs`.
-Aliases normalize before token parsing, including inside longer parameter
-strings. Resolved definitions keep the existing `wireConnection` values
-`"jst-ph-6"`, `"none"` and `"stubs"`. Duplicate and unsupported connections
-still fail validation.
+JST PH supports 2–16 pins and JST SH supports 2–15 pins, matching cableprinter.
+For either family, model strings accept `jstN_ph` / `jstN_sh`,
+`jst_ph_N` / `jst_sh_N`, and `jst-ph-N` / `jst-sh-N`; these normalize to
+`jstphN` / `jstshN` before token parsing. For example, `nema17_jst4_sh`
+and `nema17_jstsh4` produce the same definition.
 
+Resolved definitions retain the existing `jst-family-N` spelling; existing
+PH definitions and dimensions are preserved. Header dimensions vary with
+family and pin count, and headers that cannot fit on the motor are rejected.
+`none` / `stubs` remain aliases for `nowires` / `wirestubs`. Duplicate,
+unsupported, and out-of-range connections still fail validation.

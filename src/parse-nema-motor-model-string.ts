@@ -55,12 +55,16 @@ export function parseNemaMotorModelParams(raw: RawModelprinterParams) {
           : name === "backfacescrews"
             ? "screws"
             : "plain"
-    } else if (["wirestubs", "nowires"].includes(name) || name === "jstph") {
-      if ((name === "jstph" && value !== "6") || (name !== "jstph" && value))
+    } else if (["wirestubs", "nowires", "jstph", "jstsh"].includes(name)) {
+      const isJst = name === "jstph" || name === "jstsh"
+      if ((isJst && !/^[1-9][0-9]*$/.test(value)) || (!isJst && value))
         throw new Error(`Invalid wire connection token "${token}"`)
       property = "wireConnection"
-      parsed =
-        name === "jstph" ? "jst-ph-6" : name === "nowires" ? "none" : "stubs"
+      parsed = isJst
+        ? `jst-${name.slice(3)}-${value}`
+        : name === "nowires"
+          ? "none"
+          : "stubs"
     } else if (name === "wirecount") {
       property = "wireCount"
       if (!/^\d+$/.test(value)) throw new Error("wirecount requires an integer")
