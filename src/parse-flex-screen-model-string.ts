@@ -3,7 +3,7 @@ import {
   type FlexScreenModelDefinition,
   type FlexScreenModelProps,
   type FlexScreenOrientation,
-} from "./flex-screen-schema"
+} from "./models/flexscreen/schema"
 import type { RawModelprinterParams } from "./parse-model-string"
 
 const orientationTokens: Record<string, FlexScreenOrientation> = {

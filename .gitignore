@@ -12,3 +12,6 @@ bun.lock
 bun.lockb
 
 /types/
+
+# Static model discovery is generated before tests, checks and builds.
+/src/generated/
