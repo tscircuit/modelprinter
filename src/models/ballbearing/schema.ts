@@ -42,7 +42,15 @@ const shape = {
   outerDiameter: positiveLength.optional(),
   width: positiveLength.optional(),
   code: ballBearingCodeSchema.optional(),
-  closure: z.enum(["open", "shielded", "sealed"]).default("open"),
+  bothSidesOpen: z.boolean().optional(),
+  bothSidesShielded: z.boolean().optional(),
+  bothSidesSealed: z.boolean().optional(),
+  topSideOpen: z.boolean().optional(),
+  topSideShielded: z.boolean().optional(),
+  topSideSealed: z.boolean().optional(),
+  bottomSideOpen: z.boolean().optional(),
+  bottomSideShielded: z.boolean().optional(),
+  bottomSideSealed: z.boolean().optional(),
 }
 type Input = z.output<z.ZodObject<typeof shape>>
 function resolve(input: Input, context: z.RefinementCtx) {
@@ -50,11 +58,36 @@ function resolve(input: Input, context: z.RefinementCtx) {
     input.code === undefined
       ? ballBearingDefaults
       : ballBearingStandardSizes[input.code]
+  const kinds = ["Open", "Shielded", "Sealed"] as const
+  const globals = kinds.filter((kind) => input[`bothSides${kind}`] === true)
+  if (globals.length > 1)
+    context.addIssue({ code: "custom", message: "Both-side flags conflict" })
+  const selectFace = (side: "top" | "bottom") => {
+    const selected = kinds.filter(
+      (kind) => input[`${side}Side${kind}`] === true,
+    )
+    const specified = kinds.some(
+      (kind) => input[`${side}Side${kind}`] !== undefined,
+    )
+    if (selected.length > 1 || (specified && selected.length === 0))
+      context.addIssue({
+        code: "custom",
+        message: `${side} face must select exactly one flag`,
+      })
+    return selected[0] ?? globals[0] ?? "Open"
+  }
+  const top = selectFace("top")
+  const bottom = selectFace("bottom")
   const props = {
-    ...input,
     innerDiameter: input.innerDiameter ?? envelope.innerDiameter,
     outerDiameter: input.outerDiameter ?? envelope.outerDiameter,
     width: input.width ?? envelope.width,
+    topSideOpen: top === "Open",
+    topSideShielded: top === "Shielded",
+    topSideSealed: top === "Sealed",
+    bottomSideOpen: bottom === "Open",
+    bottomSideShielded: bottom === "Shielded",
+    bottomSideSealed: bottom === "Sealed",
   }
   if (input.code !== undefined)
     for (const key of ["innerDiameter", "outerDiameter", "width"] as const)
