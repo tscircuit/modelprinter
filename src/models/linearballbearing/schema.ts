@@ -46,7 +46,7 @@ function nominal(props: {
     boreRadius * 0.2,
   )
   const loadedRadius = boreRadius + ballRadius
-  const returnRadius = boreRadius + 2.75 * ballRadius
+  const returnRadius = boreRadius + 1.6 * ballRadius
   const turnRadius =
     Math.hypot(
       loadedRadius - returnRadius * Math.cos(Math.PI / 6),
@@ -141,6 +141,8 @@ export function getLinearBallBearingDimensions(
     grooveRadius: 1.08 * d.ballRadius,
     straightSleeveInnerRadius: d.boreRadius + 1.7 * d.ballRadius,
     endChamberRadius: d.returnRadius + 1.1 * d.ballRadius,
+    returnCageOuterRadius: d.returnRadius - 1.1 * d.ballRadius,
+    returnCageHalfAngle: Math.PI / 18,
     cageInnerRadius: d.boreRadius + 0.1 * d.ballRadius,
     cageOuterRadius: d.boreRadius + 1.6 * d.ballRadius,
     cageStart: d.rowStart + 1.1 * d.ballRadius,
