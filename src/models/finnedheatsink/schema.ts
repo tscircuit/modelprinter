@@ -1,0 +1,80 @@
+import { z } from "zod"
+import { modelLengthSchema } from "../../model-length-schema"
+const length = z
+  .union([
+    z.number(),
+    z
+      .string()
+      .regex(/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:mm|cm|m|in|inch|mil|ft|feet)?$/i)
+      .transform((value) => value.toLowerCase()),
+  ])
+  .pipe(modelLengthSchema)
+const positive = length.refine((value) => value > 0, "Length must be positive")
+
+const shape = {
+  width: positive.default(20),
+  length: positive.default(20),
+  /** Total height, including the base. Mounting plane is Z=0. */
+  height: positive.default(10),
+  baseThickness: positive.default(2),
+  finThickness: positive.default(1),
+  finCount: z.number().int().min(2).max(128).default(6),
+}
+type Resolved = z.output<z.ZodObject<typeof shape>>
+function validate(p: Resolved, context: z.RefinementCtx) {
+  if (p.height <= p.baseThickness)
+    context.addIssue({
+      code: "custom",
+      path: ["height"],
+      message: "Height must exceed base thickness",
+    })
+  if (p.finCount * p.finThickness >= p.width)
+    context.addIssue({
+      code: "custom",
+      path: ["finThickness"],
+      message: "Fins must leave positive gaps across the width",
+    })
+  if (!Number.isFinite(p.width * p.length * p.height))
+    context.addIssue({
+      code: "custom",
+      message: "Envelope volume must be finite",
+    })
+}
+/** Rectangular extrusion with equally spaced plate fins running along Y. */
+export const finnedHeatsinkModelPropsSchema = z
+  .object(shape)
+  .strict()
+  .superRefine(validate)
+export const finnedHeatsinkModelDefinitionSchema = z
+  .object({ fn: z.literal("finnedheatsink"), ...shape })
+  .strict()
+  .superRefine(validate)
+export type FinnedHeatsinkModelPropsInput = z.input<
+  typeof finnedHeatsinkModelPropsSchema
+>
+export type FinnedHeatsinkModelProps = z.output<
+  typeof finnedHeatsinkModelPropsSchema
+>
+export type FinnedHeatsinkModelDefinition = z.output<
+  typeof finnedHeatsinkModelDefinitionSchema
+>
+export function getFinnedHeatsinkDimensions(
+  input: FinnedHeatsinkModelPropsInput,
+) {
+  const p = finnedHeatsinkModelPropsSchema.parse(input)
+  const finPitch = (p.width - p.finThickness) / (p.finCount - 1)
+  const finHeight = p.height - p.baseThickness
+  return {
+    width: p.width,
+    length: p.length,
+    height: p.height,
+    finPitch,
+    finGap: finPitch - p.finThickness,
+    finHeight,
+    baseBottomZ: 0,
+    baseTopZ: p.baseThickness,
+    volume:
+      p.width * p.length * p.baseThickness +
+      p.finCount * p.finThickness * p.length * finHeight,
+  }
+}
