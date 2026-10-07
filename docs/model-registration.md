@@ -39,6 +39,14 @@ Validation, unit conversion, defaults, and transforms belong in that parser,
 normally through `spacerModelDefinitionSchema.parse(...)`; the registry does
 not parse its result a second time.
 
+A descriptor may optionally provide a pure `normalizeString(value)` function
+for model-local shorthand expansion. `mp.string(...)` runs that hook before
+returning raw `.params()` or parsing `.json()`. It must return a string with the
+same model name, validate information that expansion would remove, and be
+idempotent. Registrations without a hook preserve their existing raw parameters.
+The registry snapshots the hook alongside the parser; adding a model-specific
+normalizer does not require another central-parser edit.
+
 Keep the public barrel focused on the model's API:
 
 ```ts

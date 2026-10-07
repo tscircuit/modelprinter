@@ -23,3 +23,32 @@ before submitting changes. Build output is generated: never commit dist/ or the
 root index.js, index.d.ts and index.js.map files, or types/. The prepare/prepack scripts
 stage the root entrypoints for the modelprinter package; dist/ is never published.
 Lockfile generation is disabled in bunfig.toml; do not commit bun.lock or bun.lockb.
+
+## Model-string API design
+
+- Use standard or de-facto designations, never manufacturer-specific model names.
+  Keep shorthand recognition and expansion inside the model's own directory;
+  register an optional pure `normalizeString` hook rather than adding model
+  imports or special cases to the central parser. Existing models without the
+  hook must retain their raw parameters and parsing behavior.
+- Prefer value-free flags over enum parameters: use `_open` or
+  `_bothsidesopen`, not `_closure(open)`. Normalize selectors into explicit
+  boolean properties and reject conflicting or repeated selectors.
+- Radial bearings accept compact envelopes such as `ballbearing608` and
+  conventional suffixes Z, ZZ/2Z, RS and 2RS, case insensitive. Match a supported
+  envelope code before its suffix: `6002rs` and `60022rs` differ. These aliases
+  do not promise any manufacturer's seal contact, preload or lubrication.
+- Expand radial shorthand into a complete string with explicit millimeter
+  dimensions and face flags. For example, `ballbearing625zz` becomes
+  `ballbearing_id5mm_od16mm_w5mm_bothsidesshielded`. The top face is Z=width;
+  the bottom is Z=0. Z/RS selects a bottom shield/seal; ZZ/2Z/2RS selects both.
+  Bare bearings open both faces. Explicit global flags override suffix defaults,
+  and explicit per-face flags override globals independent of token order.
+- Normalized radial props contain one true flag per face and false for the
+  other two: `topSideOpen`/`topSideShielded`/`topSideSealed` and their bottom-side
+  counterparts. Input also accepts `bothSidesOpen`, `bothSidesShielded` and
+  `bothSidesSealed`; canonical strings collapse equal faces to a both-side flag.
+  Validate duplicate tokens and code/dimension conflicts before expansion erases
+  them. Check compact/full-form equivalence, normalization idempotency, schema
+  roundtrips, asymmetric faces and unchanged behavior of existing models.
+  Canonical lengths must use plain decimals, including tiny or large dimensions.

@@ -14,7 +14,7 @@ const modelParamsToJson = (params: RawModelprinterParams): ModelDefinition =>
   registry.parse(params) as ModelDefinition
 
 export const string = (value: string) => {
-  const params = parseModelStringParams(value)
+  const params = registry.normalize(parseModelStringParams(value))
   return {
     params: () => params,
     json: () => modelParamsToJson(params),

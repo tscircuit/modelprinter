@@ -1,5 +1,8 @@
 import type { z } from "zod"
-import type { RawModelprinterParams } from "./parse-model-string"
+import {
+  parseModelStringParams,
+  type RawModelprinterParams,
+} from "./parse-model-string"
 
 /** The discriminator shared by every normalized model definition. */
 export type RegisteredModelDefinition = {
@@ -73,6 +76,8 @@ export type ModelRegistration<
   readonly schema: Schema
   /** Validate and normalize raw parameters with the model's schema. */
   readonly parse: (params: RawModelprinterParams) => z.output<NoInfer<Schema>>
+  /** Optional model-local expansion of shorthand into a canonical string. */
+  readonly normalizeString?: (value: string) => string
 }
 
 /** Preserve the literal name and schema output without widening either. */
@@ -107,17 +112,38 @@ export class ModelRegistry {
         `Modelprinter function "${model.name}" is already registered`,
       )
     }
+    if (
+      model.normalizeString !== undefined &&
+      typeof model.normalizeString !== "function"
+    )
+      throw new Error("Model string normalizer must be a function")
     // Snapshot the descriptor so later changes to its object cannot replace
     // an instance's registered parser or name.
     this.models.set(model.name, {
       name: model.name,
       schema: model.schema,
       parse: model.parse,
+      normalizeString: model.normalizeString,
     })
   }
 
   getModelNames(): string[] {
     return [...this.models.keys()]
+  }
+
+  normalize(params: RawModelprinterParams): RawModelprinterParams {
+    const model = this.models.get(params.fn)
+    if (!model?.normalizeString) return params
+    const value = model.normalizeString(params.string)
+    if (typeof value !== "string")
+      throw new Error(`Normalizer for "${model.name}" must return a string`)
+    if (value === params.string) return params
+    const normalized = parseModelStringParams(value)
+    if (normalized.fn !== model.name)
+      throw new Error(
+        `Normalizer for "${model.name}" must preserve the model name`,
+      )
+    return normalized
   }
 
   parse(params: RawModelprinterParams): RegisteredModelDefinition {
