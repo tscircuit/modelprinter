@@ -58,24 +58,30 @@ function validate(props: ResolvedProps, context: z.RefinementCtx) {
 }
 
 /** Generic hollow, ribbed tube in a single planar pose, not a spring simulation. */
-export const gooseneckModelPropsSchema = z
+export const hollowPositioningArmTubeModelPropsSchema = z
   .object(shape)
   .strict()
   .superRefine(validate)
-export const gooseneckModelDefinitionSchema = z
-  .object({ fn: z.literal("gooseneck"), ...shape })
+export const hollowPositioningArmTubeModelDefinitionSchema = z
+  .object({ fn: z.literal("hollowpositioningarmtube"), ...shape })
   .strict()
   .superRefine(validate)
 
-export type GooseneckModelPropsInput = z.input<typeof gooseneckModelPropsSchema>
-export type GooseneckModelProps = z.output<typeof gooseneckModelPropsSchema>
-export type GooseneckModelDefinition = z.output<
-  typeof gooseneckModelDefinitionSchema
+export type HollowPositioningArmTubeModelPropsInput = z.input<
+  typeof hollowPositioningArmTubeModelPropsSchema
 >
-export type GooseneckPoint = [number, number, number]
+export type HollowPositioningArmTubeModelProps = z.output<
+  typeof hollowPositioningArmTubeModelPropsSchema
+>
+export type HollowPositioningArmTubeModelDefinition = z.output<
+  typeof hollowPositioningArmTubeModelDefinitionSchema
+>
+export type HollowPositioningArmTubePoint = [number, number, number]
 
-export function getGooseneckDimensions(input: GooseneckModelPropsInput) {
-  const props = gooseneckModelPropsSchema.parse(input)
+export function getHollowPositioningArmTubeDimensions(
+  input: HollowPositioningArmTubeModelPropsInput,
+) {
+  const props = hollowPositioningArmTubeModelPropsSchema.parse(input)
   const bendLength = props.bendRadius * ((props.bendAngle * Math.PI) / 180)
   const rootDiameter = props.outerDiameter - 2 * props.ribDepth
   return {
@@ -89,9 +95,13 @@ export function getGooseneckDimensions(input: GooseneckModelPropsInput) {
 /** Position and orthonormal section axes at centerline distance s (mm).
  * The remaining section axis is always +Y. End faces are normal to the tangent.
  */
-export function getGooseneckFrame(input: GooseneckModelPropsInput, s: number) {
-  const props = gooseneckModelPropsSchema.parse(input)
-  const { bendLength, totalLength } = getGooseneckDimensions(props)
+export function getHollowPositioningArmTubeFrame(
+  input: HollowPositioningArmTubeModelPropsInput,
+  s: number,
+) {
+  const props = hollowPositioningArmTubeModelPropsSchema.parse(input)
+  const { bendLength, totalLength } =
+    getHollowPositioningArmTubeDimensions(props)
   if (!Number.isFinite(s) || s < 0 || s > totalLength)
     throw new Error("Centerline distance must be within [0,totalLength]")
   const alongBend = Math.min(bendLength, Math.max(0, s - props.startLength))
@@ -99,14 +109,14 @@ export function getGooseneckFrame(input: GooseneckModelPropsInput, s: number) {
   const sine = Math.sin(angle)
   const cosine = Math.cos(angle)
   const alongEnd = Math.max(0, s - props.startLength - bendLength)
-  const position: GooseneckPoint = [
+  const position: HollowPositioningArmTubePoint = [
     props.bendRadius * (1 - cosine) + alongEnd * sine,
     0,
     Math.min(s, props.startLength) +
       props.bendRadius * sine +
       alongEnd * cosine,
   ]
-  const tangent: GooseneckPoint = [sine, 0, cosine]
-  const normal: GooseneckPoint = [cosine, 0, -sine]
+  const tangent: HollowPositioningArmTubePoint = [sine, 0, cosine]
+  const normal: HollowPositioningArmTubePoint = [cosine, 0, -sine]
   return { position, tangent, normal }
 }

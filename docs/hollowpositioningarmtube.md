@@ -1,21 +1,21 @@
-# Gooseneck
+# Hollow positioning arm tube
 
-A generic hollow gooseneck reference for lamps, camera arms and wire conduits.
+A generic hollow positioning arm tube reference for lamps, camera arms and wire conduits.
 The pose consists of a straight section, one circular bend, and a second
 straight section. It describes the installed envelope, not spring mechanics,
 load capacity, a supplier part, or a minimum safe bending radius.
 
 ```ts
-import { mp, getGooseneckDimensions, getGooseneckFrame } from "@tscircuit/modelprinter"
+import { mp, getHollowPositioningArmTubeDimensions, getHollowPositioningArmTubeFrame } from "@tscircuit/modelprinter"
 
 const definition = mp.string(
-  "gooseneck_od6mm_id4mm_start38mm_end112mm_radius60mm_angle90_pitch2.25mm_depth0.25mm",
+  "hollowpositioningarmtube_od6mm_id4mm_start38mm_end112mm_radius60mm_angle90_pitch2.25mm_depth0.25mm",
 ).json()
-if (definition.fn !== "gooseneck") throw new Error("Expected gooseneck")
+if (definition.fn !== "hollowpositioningarmtube") throw new Error("Expected hollowpositioningarmtube")
 const { fn, ...props } = definition
 
-getGooseneckDimensions(props) // totalLength ≈ 244.248 mm
-getGooseneckFrame(props, 0) // position [0, 0, 0], tangent [0, 0, 1]
+getHollowPositioningArmTubeDimensions(props) // totalLength ≈ 244.248 mm
+getHollowPositioningArmTubeFrame(props, 0) // position [0, 0, 0], tangent [0, 0, 1]
 ```
 
 | Token | Property | Default | Meaning |
@@ -38,7 +38,7 @@ The first open end is centered on the origin in the XY plane. Its centerline
 starts along +Z, bends toward +X in the XZ plane, then continues along the
 final tangent. At 90 degrees the terminal center is
 `[bendRadius + endLength, 0, startLength + bendRadius]`.
-`getGooseneckFrame` returns the position, tangent and in-plane normal at any
+`getHollowPositioningArmTubeFrame` returns the position, tangent and in-plane normal at any
 centerline distance; +Y is the other section axis. Use assembly transforms
 to position or mirror the entire model. The ribs are annular visualization
 details, not a helical strip or thread.
@@ -50,6 +50,6 @@ Geometry is tessellated by jscad-electronics, so round surfaces have chordal
 approximation error. No end fittings, wires, or mounting hardware are included.
 
 ```text
-gooseneck_od6mm_id4mm_start150mm_end0mm_radius60mm_angle0_pitch2.25mm_depth0.25mm
-gooseneck_od8mm_id5mm_start20mm_end20mm_radius30mm_angle180_pitch3mm_depth0mm
+hollowpositioningarmtube_od6mm_id4mm_start150mm_end0mm_radius60mm_angle0_pitch2.25mm_depth0.25mm
+hollowpositioningarmtube_od8mm_id5mm_start20mm_end20mm_radius30mm_angle180_pitch3mm_depth0mm
 ```
