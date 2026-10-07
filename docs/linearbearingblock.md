@@ -27,7 +27,7 @@ mm/cm/m/in/inch/mil/ft/feet strings accepted. Duplicate aliases, incomplete
 lengths, unknown tokens/options and extra direct-schema fields are rejected.
 
 `getLinearBearingBlockDimensions` owns all housing datums and nominal
-cartridge balls, loaded/return grooves, polymer separators and end retainers.
+cartridge balls, loaded/return grooves, polymer separators, return-row retaining floors and end retainers.
 Six loaded rows and six offset return rows illustrate recirculation without
 claiming standard internal geometry, load ratings, preload or supplier fits.
 This contract is independent of the separate linearballbearing family.

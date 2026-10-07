@@ -21,7 +21,7 @@ Axis Z is the shaft travel direction; the end planes are Z=0 and Z=length,
 with X/Y center at the origin. The bore is the minimum radial shaft-contact
 diameter, not the sleeve's larger metal inner wall. Six loaded rows start
 on +X and repeat every 60 degrees; six return rows are offset 30 degrees.
-Metal raceway grooves, polymer pocket separators, two end retainers and
+Metal raceway grooves, polymer pocket separators and return-row retaining floors, two end retainers and
 balls in the end chambers form a nominal recirculating assembly. The helper
 owns all ball spacing, return-chamber and cage dimensions. Internal ball
 count, groove profile, end-turn representation and seals are visualization
