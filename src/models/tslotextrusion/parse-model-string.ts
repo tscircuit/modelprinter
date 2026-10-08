@@ -1,3 +1,5 @@
+import { expandModelStringFlags } from "../../utils/model-string-flags"
+import { stringFlags } from "./string-flags"
 import { parseGearToken } from "../../gear-parameter-schemas"
 import type { RawModelprinterParams } from "../../parse-model-string"
 import { splitModelStringTokens } from "../../split-model-string-tokens"
@@ -25,7 +27,9 @@ const lengths = {
 } as const
 
 export function parseTSlotExtrusionModelParams(raw: RawModelprinterParams) {
-  const tokens = splitModelStringTokens(raw.string)
+  const tokens = splitModelStringTokens(
+    expandModelStringFlags(raw.string, stringFlags),
+  )
   if (raw.fn !== "tslotextrusion" || tokens[0]?.toLowerCase() !== raw.fn)
     throw new Error("Expected tslotextrusion without an inline value")
   const props: Record<string, unknown> = { fn: "tslotextrusion" }

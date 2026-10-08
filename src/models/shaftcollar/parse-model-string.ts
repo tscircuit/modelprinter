@@ -1,3 +1,5 @@
+import { expandModelStringFlags } from "../../utils/model-string-flags"
+import { stringFlags } from "./string-flags"
 import { shaftCollarModelDefinitionSchema } from "./schema"
 import type { RawModelprinterParams } from "../../parse-model-string"
 import { splitModelStringTokens } from "../../split-model-string-tokens"
@@ -18,7 +20,9 @@ const tokenProperties: Record<string, string> = {
 }
 
 export function parseShaftCollarModelParams(raw: RawModelprinterParams) {
-  const tokens = splitModelStringTokens(raw.string)
+  const tokens = splitModelStringTokens(
+    expandModelStringFlags(raw.string, stringFlags),
+  )
   if (raw.fn !== "shaftcollar" || tokens[0]?.toLowerCase() !== "shaftcollar")
     throw new Error("Expected an unadorned shaftcollar function")
   const props: Record<string, unknown> = {}

@@ -1,3 +1,5 @@
+import { expandModelStringFlags } from "../../utils/model-string-flags"
+import { stringFlags } from "./string-flags"
 import { clampingShaftCollarModelDefinitionSchema } from "./schema"
 import type { RawModelprinterParams } from "../../parse-model-string"
 import { splitModelStringTokens } from "../../split-model-string-tokens"
@@ -22,7 +24,9 @@ const tokenProperties: Record<string, string> = {
 export function parseClampingShaftCollarModelParams(
   raw: RawModelprinterParams,
 ) {
-  const tokens = splitModelStringTokens(raw.string)
+  const tokens = splitModelStringTokens(
+    expandModelStringFlags(raw.string, stringFlags),
+  )
   if (
     raw.fn !== "clampingshaftcollar" ||
     tokens[0]?.toLowerCase() !== "clampingshaftcollar"

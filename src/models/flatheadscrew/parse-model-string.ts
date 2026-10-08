@@ -1,3 +1,5 @@
+import { expandModelStringFlags } from "../../utils/model-string-flags"
+import { stringFlags } from "./string-flags"
 import { flatHeadScrewModelDefinitionSchema } from "./schema"
 import type { RawModelprinterParams } from "../../parse-model-string"
 import { splitModelStringTokens } from "../../split-model-string-tokens"
@@ -45,7 +47,9 @@ const selectors = new Set([
 export const parseFlatHeadScrewModelParams = (raw: RawModelprinterParams) => {
   if (raw.fn !== "flatheadscrew")
     throw new Error(`Expected flatheadscrew params, got "${raw.fn}"`)
-  const [root, ...tokens] = splitModelStringTokens(raw.string)
+  const [root, ...tokens] = splitModelStringTokens(
+    expandModelStringFlags(raw.string, stringFlags),
+  )
   if (root?.toLowerCase() !== "flatheadscrew")
     throw new Error(
       "The flatheadscrew function does not accept an inline value",

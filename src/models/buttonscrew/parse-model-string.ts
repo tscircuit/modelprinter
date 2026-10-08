@@ -1,9 +1,13 @@
+import { expandModelStringFlags } from "../../utils/model-string-flags"
+import { stringFlags } from "./string-flags"
 import { buttonScrewModelDefinitionSchema } from "./schema"
 import type { RawModelprinterParams } from "../../parse-model-string"
 import { splitModelStringTokens } from "../../split-model-string-tokens"
 
 export function parseButtonScrewModelParams(raw: RawModelprinterParams) {
-  const tokens = splitModelStringTokens(raw.string)
+  const tokens = splitModelStringTokens(
+    expandModelStringFlags(raw.string, stringFlags),
+  )
   if (raw.fn !== "buttonscrew" || tokens[0]?.toLowerCase() !== "buttonscrew")
     throw new Error("Expected buttonscrew without an inline argument")
   const props: Record<string, unknown> = { fn: "buttonscrew" }
