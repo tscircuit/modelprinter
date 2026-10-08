@@ -1,6 +1,6 @@
-# Adhesive-mount electrical heatsink
+# Adhesive-mount electrical component heatsink
 
-`adhesivemountelectricalheatsink_w20mm_l25mm_h12mm_base2mm_fin1mm_fins6`
+`adhesivemountelectricalcomponentheatsink_w20mm_l25mm_h12mm_base2mm_fin1mm_fins6`
 
 A rectangular plate-fin heatsink body for adhesive mounting to electronic
 components, with a flat bonding face at Z=0.
@@ -27,7 +27,7 @@ Height must exceed the base thickness; total fin thickness must be less than
 width so that every gap is positive. Unknown/repeated tokens, nonfinite lengths
 and unknown schema properties are errors. Case-insensitive strings are accepted.
 
-`adhesiveMountElectricalHeatsinkModelPropsSchema`, `adhesiveMountElectricalHeatsinkModelDefinitionSchema` and their
-input/output types form the public contract. `getAdhesiveMountElectricalHeatsinkDimensions`
+`adhesiveMountElectricalComponentHeatsinkModelPropsSchema`, `adhesiveMountElectricalComponentHeatsinkModelDefinitionSchema` and their
+input/output types form the public contract. `getAdhesiveMountElectricalComponentHeatsinkDimensions`
 returns fin pitch `(width - finThickness) / (finCount - 1)`, clear gap, fin height,
 base datums and nominal solid volume. Dimensions do not predict cooling capacity.

@@ -41,27 +41,31 @@ function validate(p: Resolved, context: z.RefinementCtx) {
     })
 }
 /** Flat-base heatsink body for adhesive mounting to electronics; adhesive is separate. */
-export const adhesiveMountElectricalHeatsinkModelPropsSchema = z
+export const adhesiveMountElectricalComponentHeatsinkModelPropsSchema = z
   .object(shape)
   .strict()
   .superRefine(validate)
-export const adhesiveMountElectricalHeatsinkModelDefinitionSchema = z
-  .object({ fn: z.literal("adhesivemountelectricalheatsink"), ...shape })
+export const adhesiveMountElectricalComponentHeatsinkModelDefinitionSchema = z
+  .object({
+    fn: z.literal("adhesivemountelectricalcomponentheatsink"),
+    ...shape,
+  })
   .strict()
   .superRefine(validate)
-export type AdhesiveMountElectricalHeatsinkModelPropsInput = z.input<
-  typeof adhesiveMountElectricalHeatsinkModelPropsSchema
+export type AdhesiveMountElectricalComponentHeatsinkModelPropsInput = z.input<
+  typeof adhesiveMountElectricalComponentHeatsinkModelPropsSchema
 >
-export type AdhesiveMountElectricalHeatsinkModelProps = z.output<
-  typeof adhesiveMountElectricalHeatsinkModelPropsSchema
+export type AdhesiveMountElectricalComponentHeatsinkModelProps = z.output<
+  typeof adhesiveMountElectricalComponentHeatsinkModelPropsSchema
 >
-export type AdhesiveMountElectricalHeatsinkModelDefinition = z.output<
-  typeof adhesiveMountElectricalHeatsinkModelDefinitionSchema
+export type AdhesiveMountElectricalComponentHeatsinkModelDefinition = z.output<
+  typeof adhesiveMountElectricalComponentHeatsinkModelDefinitionSchema
 >
-export function getAdhesiveMountElectricalHeatsinkDimensions(
-  input: AdhesiveMountElectricalHeatsinkModelPropsInput,
+export function getAdhesiveMountElectricalComponentHeatsinkDimensions(
+  input: AdhesiveMountElectricalComponentHeatsinkModelPropsInput,
 ) {
-  const p = adhesiveMountElectricalHeatsinkModelPropsSchema.parse(input)
+  const p =
+    adhesiveMountElectricalComponentHeatsinkModelPropsSchema.parse(input)
   const finPitch = (p.width - p.finThickness) / (p.finCount - 1)
   const finHeight = p.height - p.baseThickness
   return {
