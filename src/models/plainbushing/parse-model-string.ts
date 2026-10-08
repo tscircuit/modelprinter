@@ -1,3 +1,5 @@
+import { expandModelStringFlags } from "../../utils/model-string-flags"
+import { stringFlags } from "./string-flags"
 import type { RawModelprinterParams } from "../../parse-model-string"
 import { plainBushingModelDefinitionSchema } from "./schema"
 import { splitModelStringTokens } from "../../split-model-string-tokens"
@@ -13,7 +15,9 @@ const lengths = {
 } as const
 
 export function parsePlainBushingModelParams(raw: RawModelprinterParams) {
-  const tokens = splitModelStringTokens(raw.string)
+  const tokens = splitModelStringTokens(
+    expandModelStringFlags(raw.string, stringFlags),
+  )
   if (raw.fn !== "plainbushing" || tokens[0]?.toLowerCase() !== "plainbushing")
     throw new Error("Expected plainbushing without an inline value")
   const props: Record<string, unknown> = { fn: "plainbushing" }

@@ -1,3 +1,5 @@
+import { expandModelStringFlags } from "../../utils/model-string-flags"
+import { stringFlags } from "./string-flags"
 import { panScrewModelDefinitionSchema } from "./schema"
 import type { RawModelprinterParams } from "../../parse-model-string"
 import { splitModelStringTokens } from "../../split-model-string-tokens"
@@ -55,7 +57,9 @@ const selectors = new Set([
 export const parsePanScrewModelParams = (raw: RawModelprinterParams) => {
   if (raw.fn !== "panscrew")
     throw new Error(`Expected panscrew params, got "${raw.fn}"`)
-  const [root, ...tokens] = splitModelStringTokens(raw.string)
+  const [root, ...tokens] = splitModelStringTokens(
+    expandModelStringFlags(raw.string, stringFlags),
+  )
   if (root?.toLowerCase() !== "panscrew")
     throw new Error("The panscrew function does not accept an inline value")
   const props: Record<string, unknown> = {}

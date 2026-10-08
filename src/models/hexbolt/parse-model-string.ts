@@ -1,3 +1,5 @@
+import { expandModelStringFlags } from "../../utils/model-string-flags"
+import { stringFlags } from "./string-flags"
 import { hexBoltModelDefinitionSchema } from "./schema"
 import type { RawModelprinterParams } from "../../parse-model-string"
 import { splitModelStringTokens } from "../../split-model-string-tokens"
@@ -42,7 +44,9 @@ const selectors = new Set([
 export const parseHexBoltModelParams = (raw: RawModelprinterParams) => {
   if (raw.fn !== "hexbolt")
     throw new Error(`Expected hexbolt params, got "${raw.fn}"`)
-  const [root, ...tokens] = splitModelStringTokens(raw.string)
+  const [root, ...tokens] = splitModelStringTokens(
+    expandModelStringFlags(raw.string, stringFlags),
+  )
   if (root?.toLowerCase() !== "hexbolt")
     throw new Error("The hexbolt function does not accept an inline value")
   const props: Record<string, unknown> = {}
