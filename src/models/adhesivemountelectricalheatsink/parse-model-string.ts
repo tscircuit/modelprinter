@@ -1,6 +1,6 @@
 import type { RawModelprinterParams } from "../../parse-model-string"
 import { splitModelStringTokens } from "../../split-model-string-tokens"
-import { finnedHeatsinkModelDefinitionSchema } from "./schema"
+import { adhesiveMountElectricalHeatsinkModelDefinitionSchema } from "./schema"
 const lengths = {
   w: "width",
   l: "length",
@@ -8,14 +8,20 @@ const lengths = {
   base: "baseThickness",
   fin: "finThickness",
 } as const
-export function parseFinnedHeatsinkModelParams(raw: RawModelprinterParams) {
+export function parseAdhesiveMountElectricalHeatsinkModelParams(
+  raw: RawModelprinterParams,
+) {
   const tokens = splitModelStringTokens(raw.string)
   if (
-    raw.fn !== "finnedheatsink" ||
-    tokens[0]?.toLowerCase() !== "finnedheatsink"
+    raw.fn !== "adhesivemountelectricalheatsink" ||
+    tokens[0]?.toLowerCase() !== "adhesivemountelectricalheatsink"
   )
-    throw new Error("Expected finnedheatsink without an inline value")
-  const props: Record<string, unknown> = { fn: "finnedheatsink" }
+    throw new Error(
+      "Expected adhesivemountelectricalheatsink without an inline value",
+    )
+  const props: Record<string, unknown> = {
+    fn: "adhesivemountelectricalheatsink",
+  }
   for (const token of tokens.slice(1)) {
     const match = token.match(/^([a-z]+)(.*)$/i)
     const name = match?.[1]?.toLowerCase(),
@@ -34,5 +40,5 @@ export function parseFinnedHeatsinkModelParams(raw: RawModelprinterParams) {
       throw new Error(`Duplicate heatsink property "${property}"`)
     props[property] = parsed
   }
-  return finnedHeatsinkModelDefinitionSchema.parse(props)
+  return adhesiveMountElectricalHeatsinkModelDefinitionSchema.parse(props)
 }
