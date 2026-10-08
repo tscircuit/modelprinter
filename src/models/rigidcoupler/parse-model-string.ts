@@ -1,3 +1,5 @@
+import { expandModelStringFlags } from "../../utils/model-string-flags"
+import { stringFlags } from "./string-flags"
 import { rigidCouplerModelDefinitionSchema } from "./schema"
 import type { RawModelprinterParams } from "../../parse-model-string"
 import { splitModelStringTokens } from "../../split-model-string-tokens"
@@ -20,7 +22,9 @@ const tokenProperties: Record<string, string> = {
 }
 
 export function parseRigidCouplerModelParams(raw: RawModelprinterParams) {
-  const tokens = splitModelStringTokens(raw.string)
+  const tokens = splitModelStringTokens(
+    expandModelStringFlags(raw.string, stringFlags),
+  )
   if (raw.fn !== "rigidcoupler" || tokens[0]?.toLowerCase() !== "rigidcoupler")
     throw new Error("Expected an unadorned rigidcoupler function")
   const props: Record<string, unknown> = {}

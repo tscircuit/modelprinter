@@ -1,3 +1,5 @@
+import { expandModelStringFlags } from "../../utils/model-string-flags"
+import { stringFlags } from "./string-flags"
 import { cableGrommetModelDefinitionSchema } from "./schema"
 import type { RawModelprinterParams } from "../../parse-model-string"
 import { splitModelStringTokens } from "../../split-model-string-tokens"
@@ -18,7 +20,9 @@ const lengths = {
 } as const
 
 export function parseCableGrommetModelParams(raw: RawModelprinterParams) {
-  const tokens = splitModelStringTokens(raw.string)
+  const tokens = splitModelStringTokens(
+    expandModelStringFlags(raw.string, stringFlags),
+  )
   if (raw.fn !== "cablegrommet" || !/^cablegrommet$/i.test(tokens[0]!))
     throw new Error("Expected cablegrommet without an inline value")
   const props: Record<string, unknown> = { fn: "cablegrommet" }

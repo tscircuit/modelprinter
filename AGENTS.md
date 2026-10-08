@@ -52,3 +52,11 @@ Lockfile generation is disabled in bunfig.toml; do not commit bun.lock or bun.lo
   them. Check compact/full-form equivalence, normalization idempotency, schema
   roundtrips, asymmetric faces and unchanged behavior of existing models.
   Canonical lengths must use plain decimals, including tiny or large dimensions.
+- When correcting syntax for a released model, add model-local value-free flag
+  aliases and retain its existing JSON fields and input/output types. Renderers
+  may depend on enum fields such as `threadHand` or `mount`; switching those
+  fields to booleans requires a separately planned compatibility migration.
+  Keep legacy strings and their raw `.params()` unchanged. Normalize only the
+  new syntax, validate duplicates/conflicts before removing redundant defaults,
+  and test new/old JSON equality plus downstream rendering. Keep standards,
+  metric designations, and tolerance classes as identifiers rather than flags.
