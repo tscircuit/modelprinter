@@ -68,7 +68,7 @@ const length = z
     "Length must be finite and positive",
   )
 const shape = {
-  standard: z.enum(["iso7040", "iso7040:2012"]).default("iso7040:2012"),
+  iso7040: z.literal(true).default(true),
   metricSize: nylonLockNutMetricSizeSchema,
   threadPitch: length.optional(),
   rightHanded: z.literal(true).default(true),
@@ -91,7 +91,6 @@ function validate(props: RawProps, context: z.RefinementCtx) {
 function normalize<T extends RawProps>(props: T) {
   return {
     ...props,
-    standard: "iso7040:2012" as const,
     threadPitch: nylonLockNutDimensions[props.metricSize].threadPitch,
   }
 }

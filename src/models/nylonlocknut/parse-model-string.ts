@@ -17,11 +17,12 @@ export function parseNylonLockNutModelParams(raw: RawModelprinterParams) {
     } else if (/^threadpitch/i.test(token)) {
       property = "threadPitch"
       parsed = token.slice("threadpitch".length)
-    } else if (/^(standard|threadclass)\([^()]+\)$/i.test(token)) {
-      const name = token.slice(0, token.indexOf("(")).toLowerCase()
-      property = name === "standard" ? "standard" : "threadClass"
-      const value = token.slice(token.indexOf("(") + 1, -1)
-      parsed = name === "standard" ? value.toLowerCase() : value.toUpperCase()
+    } else if (lower === "iso7040") {
+      property = "iso7040"
+      parsed = true
+    } else if (/^threadclass\([^()]+\)$/i.test(token)) {
+      property = "threadClass"
+      parsed = token.slice(token.indexOf("(") + 1, -1).toUpperCase()
     } else if (lower === "righthanded") {
       property = "rightHanded"
       parsed = true

@@ -5,14 +5,15 @@ import {
   mp,
   nylonLockNutDimensions,
   nylonLockNutModelPropsSchema,
+  nylonLockNutModelDefinitionSchema,
   modelprinter,
 } from "../src"
 
 test("nylonlocknut example selects pinned ISO envelope and locking feature", () => {
-  const model = mp.string("nylonlocknut_standard(iso7040)_m6").json()
+  const model = mp.string("nylonlocknut_m6").json()
   expect(model).toEqual({
     fn: "nylonlocknut",
-    standard: "iso7040:2012",
+    iso7040: true,
     metricSize: "M6",
     threadPitch: 1,
     rightHanded: true,
@@ -32,6 +33,30 @@ test("nylonlocknut example selects pinned ISO envelope and locking feature", () 
     bearingZ: 0,
     topZ: 8,
   })
+})
+
+test("nylonlocknut ISO flag defaults, explicit selection and schema roundtrips agree", () => {
+  for (const metricSize of ["M5", "M6", "M8", "M10", "M12"] as const) {
+    const source = `nylonlocknut_${metricSize.toLowerCase()}`
+    const implicit = mp.string(source).json()
+    if (implicit.fn !== "nylonlocknut") throw new Error("Unexpected model")
+    expect(mp.string(`${source}_iso7040`).json()).toEqual(implicit)
+    expect(mp.string(`${source}_ISO7040`).json()).toEqual(implicit)
+    expect(implicit).toHaveProperty("iso7040", true)
+    expect(implicit).not.toHaveProperty("standard")
+    const props = nylonLockNutModelPropsSchema.parse({ metricSize })
+    expect(nylonLockNutModelPropsSchema.parse(props)).toEqual(props)
+    expect(
+      nylonLockNutModelPropsSchema.parse({ metricSize, iso7040: true }),
+    ).toEqual(props)
+    expect(
+      nylonLockNutModelDefinitionSchema.parse({
+        fn: "nylonlocknut",
+        metricSize,
+      }),
+    ).toEqual(implicit)
+    expect(nylonLockNutModelDefinitionSchema.parse(implicit)).toEqual(implicit)
+  }
 })
 
 test("nylonlocknut supports five table sizes and complete pitch units", () => {
@@ -66,7 +91,7 @@ test("nylonlocknut supports five table sizes and complete pitch units", () => {
   expect(
     mp
       .string(
-        "NYLONLOCKNUT_STANDARD(ISO7040:2012)_M6_THREADPITCH0.1CM_THREADCLASS(6h)_RIGHTHANDED_NOTHREADS",
+        "NYLONLOCKNUT_ISO7040_M6_THREADPITCH0.1CM_THREADCLASS(6h)_RIGHTHANDED_NOTHREADS",
       )
       .json(),
   ).toMatchObject({ showThreads: false, rightHanded: true, threadClass: "6H" })
@@ -79,6 +104,15 @@ test("nylonlocknut rejects malformed, duplicate, unknown and conflicting inputs"
     "nylonlocknut_m3",
     "nylonlocknut_m6_m8",
     "nylonlocknut_m6_m6",
+    "nylonlocknut_m6_iso7040_iso7040",
+    "nylonlocknut_m6_iso7040_ISO7040",
+    "nylonlocknut_m6_iso7040(false)",
+    "nylonlocknut_m6_iso7040(true)",
+    "nylonlocknut_m6_iso7040false",
+    "nylonlocknut_m6_iso7040:2012",
+    "nylonlocknut_m6_iso4032",
+    "nylonlocknut_m6_standard(iso7040)",
+    "nylonlocknut_m6_standard(iso7040:2012)",
     "nylonlocknut_m6_standard(iso7040:2025)",
     "nylonlocknut_m6_standard(iso7040)_standard(iso7040)",
     "nylonlocknut_m6_threadpitch0.75mm",
@@ -101,6 +135,11 @@ test("nylonlocknut rejects malformed, duplicate, unknown and conflicting inputs"
       nylonLockNutModelPropsSchema.parse({ metricSize: "M6", threadPitch }),
     ).toThrow()
   for (const extra of [
+    { iso7040: false },
+    { iso7040: "true" },
+    { standard: "iso7040" },
+    { standard: "iso7040:2012" },
+    { iso4032: true },
     { height: 8 },
     { acrossFlats: 10 },
     { pocketDiameter: 8 },
@@ -108,7 +147,17 @@ test("nylonlocknut rejects malformed, duplicate, unknown and conflicting inputs"
     { showThreads: "false" },
     { threadClass: "6G" },
   ])
-    expect(() =>
-      nylonLockNutModelPropsSchema.parse({ metricSize: "M6", ...extra }),
-    ).toThrow()
+    for (const schema of [
+      nylonLockNutModelPropsSchema,
+      nylonLockNutModelDefinitionSchema,
+    ])
+      expect(() =>
+        schema.parse({
+          ...(schema === nylonLockNutModelDefinitionSchema
+            ? { fn: "nylonlocknut" }
+            : {}),
+          metricSize: "M6",
+          ...extra,
+        }),
+      ).toThrow()
 })

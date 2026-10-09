@@ -1,11 +1,14 @@
 # Nylon lock nut contract
 
-`nylonlocknut_standard(iso7040)_m6` selects ISO 7040:2012, third edition,
-Figure 1 and Table 1. `standard(iso7040:2012)` is equivalent and the default.
+`nylonlocknut_m6` defaults to ISO 7040:2012, third edition,
+Figure 1 and Table 1. The optional value-free `iso7040` flag restates that
+default: `nylonlocknut_m6_iso7040` produces the same normalized definition.
+Normalized props contain `iso7040: true` and no `standard` property. The legacy
+`standard(...)` selector is rejected.
 The [primary dimension table](https://cdn.standards.iteh.ai/samples/61363/a60b58fa5c3b449e81910d0a4b47c7e4/ISO-7040-2012.pdf)
 pins the supported preferred M5/M6/M8/M10/M12 sizes. ISO 7040:2025 supersedes
 this edition; this contract deliberately remains pinned to 2012 and rejects
-other editions. It is an untoleranced nominal visualization, without material
+other ISO designations or edition-valued flags. It is an untoleranced nominal visualization, without material
 certification or a prediction of locking torque.
 
 The table uses coarse pitch P, maximum across-flats s, maximum total height h,
