@@ -1,0 +1,15 @@
+# setscrew parameter contract
+
+```ts
+mp.string("setscrew_standard(iso4029)_m3_l6mm_hexsocket_cuppoint").json()
+```
+
+This family pins **ISO 4029:2003**, supporting M3, M4, M5 and M6 with coarse metric threads, a hexagonal socket and a cup point. `standard(iso4029:2003)` selects the same edition. The pinned edition was superseded by ISO 4029:2026; the unqualified selector remains pinned and does not silently follow future editions.
+
+The primary source is [ISO 4029:2003 Figure 1 and Table 1](https://cdn.standards.iteh.ai/samples/36433/631453640d214e7682ed5a23ddee05b5/ISO-4029-2003.pdf). `setscrewDimensions` uses nominal major diameter, coarse pitch, nominal socket across-flats, the minimum socket depth for non-short screws, and maximum cup-point diameter dz. M3 has P=0.5, socket across-flats=1.5, depth=2 and dz=1.4 mm. Only lengths above the geometric minimum are accepted; this version does not model the standard's reduced socket depth for short screws.
+
+The cup is a 120-degree included conical recess, ending at an apex above the contact ring. Its depth is dz/(2*sqrt(3)). The external point tapers at 45 degrees below the root diameter; the same straight taper is extended into the incomplete thread above that diameter. The taper length is (d-dz)/2. This fixes the allowed incomplete end contour for visual assembly use. The socket has a flat floor without optional drilling overcut or drill relief. At the socket end, the external rim has a nominal 45-degree chamfer of P/2; optional socket-mouth rounding is omitted. These nominal end choices are not manufacturing tolerances. Fine pitches, other points/drives, markings, coatings, tolerances and thread-root rounding are unsupported.
+
+The screw axis is Z. The socket mouth plane is Z=0, and the cup's contact ring is Z=-length; length includes the point and excludes no head because the screw is headless. Socket flats lie at Y=+/-socketAcrossFlats/2. Length must exceed socketDepth+cupDepth+pointTaperLength to leave positive material between both blind recesses and their end features. With H=sqrt(3)*P/2 the nominal thread pitch diameter is d-3H/4 and root diameter is d-17H/12. A single-start flattened 60-degree thread has crest width P/8 and root flat P/6. Before end clipping the crest crosses +X at Z=-length; it advances counterclockwise with increasing Z for right-handed threads. `lefthanded` reverses the helix. `nothreads` renders the same end features on a smooth major-diameter body.
+
+`hexsocket` and `cuppoint` normalize to true `hexSocket` and `cupPoint` booleans, defaulting true. `m`/`metricsize(mN)`, `l`/`length`, `d`/`diameter` and `af`/`socketacrossflats` are aliases. `threads`/`nothreads` and `lefthanded`/`righthanded` are mutually exclusive value-free flags. Dimensions accept mm, cm, m, in or inch and output millimeters. Explicit dimensional fields must match the table. Unknown or duplicate tokens/properties, flags with values, false shape flags, malformed values, exponent notation and conflicting overrides fail. Public props and definition schemas are strict and support normalized roundtrips.
