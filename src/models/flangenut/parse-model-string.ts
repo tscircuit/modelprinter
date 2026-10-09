@@ -37,13 +37,13 @@ export function parseFlangeNutModelParams(raw: RawModelprinterParams) {
         name === "plainface"
           ? "plainFace"
           : name === "righthanded"
-            ? "threadHand"
+            ? "rightHanded"
             : "showThreads"
       parsed =
         name === "plainface"
           ? true
           : name === "righthanded"
-            ? "right"
+            ? true
             : name === "threads"
     } else throw new Error(`Unknown flange nut token "${token}"`)
     if (property in props)

@@ -11,7 +11,7 @@ arguments, other standards, serrated faces and dimensional overrides fail.
 The public props and definition schemas are strict. Lengths normalize to mm;
 an explicit `threadPitch` must equal the tabulated coarse pitch. String pitches
 accept complete decimal lengths with mm, cm, m, in, inch, mil, ft or feet units.
-The schemas preserve normalized `plainFace: true`, `threadHand: "right"`,
+The schemas preserve normalized `plainFace: true`, `rightHanded: true`,
 `threadClass: "6H"` and `showThreads`; contradictory JSON values fail. Thread
 class identifies the selected series without applying its manufacturing
 allowances or tolerances.

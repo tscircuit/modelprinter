@@ -121,7 +121,7 @@ const shape = {
   metricSize: flangeNutMetricSizeSchema,
   plainFace: z.literal(true).default(true),
   threadPitch: positiveLength.optional(),
-  threadHand: z.literal("right").default("right"),
+  rightHanded: z.literal(true).default(true),
   threadClass: z.literal("6H").default("6H"),
   showThreads: z.boolean().default(true),
 }

@@ -16,7 +16,7 @@ test("flange nut example pins ISO 4161:2012 and the plainface contract", () => {
     metricSize: "M6",
     plainFace: true,
     threadPitch: 1,
-    threadHand: "right",
+    rightHanded: true,
     threadClass: "6H",
     showThreads: true,
   })
@@ -112,7 +112,9 @@ test("flange nut rejects contradictory, duplicate and malformed tokens", () => {
     expect(() => mp.string(source).json(), source).toThrow()
   for (const props of [
     { metricSize: "M6", plainFace: false },
-    { metricSize: "M6", threadHand: "left" },
+    { metricSize: "M6", rightHanded: false },
+    { metricSize: "M6", rightHanded: "right" },
+    { metricSize: "M6", threadHand: "right" },
     { metricSize: "M6", threadClass: "6G" },
     { metricSize: "M6", acrossFlats: 10 },
     { metricSize: "M6", height: 6 },
