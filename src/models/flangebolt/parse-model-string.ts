@@ -38,15 +38,18 @@ export function parseFlangeBoltModelParams(raw: RawModelprinterParams) {
     throw new Error("The flangebolt function does not accept an inline value")
   const props: Record<string, unknown> = {}
   for (const token of tokens) {
+    if (token.toLowerCase() === "iso4162") {
+      if ("iso4162" in props)
+        throw new Error("Property iso4162 is set more than once")
+      props.iso4162 = true
+      continue
+    }
     const match = token.match(/^([a-z]+)(.*)$/i)
     const key = match?.[1]?.toLowerCase() ?? ""
     const value = match?.[2] ?? ""
     let property: string
     let parsed: unknown
-    if (token.toLowerCase() === "iso4162") {
-      property = "iso4162"
-      parsed = true
-    } else if (flags[key]) {
+    if (flags[key]) {
       if (value) throw new Error(`Flag ${key} does not accept a value`)
       property = flags[key]!
       parsed = !["righthanded", "nothreads"].includes(key)
