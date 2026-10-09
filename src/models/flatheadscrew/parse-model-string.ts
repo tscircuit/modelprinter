@@ -9,7 +9,6 @@ const aliases: Record<string, string> = {
   metricsize: "metricSize",
   l: "length",
   length: "length",
-  standard: "standard",
   thread: "thread",
   drive: "drive",
   threadhand: "threadHand",
@@ -36,7 +35,6 @@ const aliases: Record<string, string> = {
   socketh: "socketDepth",
 }
 const selectors = new Set([
-  "standard",
   "thread",
   "drive",
   "threadHand",
@@ -56,6 +54,12 @@ export const parseFlatHeadScrewModelParams = (raw: RawModelprinterParams) => {
     )
   const props: Record<string, unknown> = {}
   for (const token of tokens) {
+    if (token.toLowerCase() === "iso10642") {
+      if ("iso10642" in props)
+        throw new Error('Property "iso10642" is set more than once')
+      props.iso10642 = true
+      continue
+    }
     const match = token.match(/^([a-z]+)(.*)$/i)
     const key = match?.[1]?.toLowerCase()
     const value = match?.[2]

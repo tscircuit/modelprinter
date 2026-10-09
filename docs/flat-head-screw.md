@@ -3,13 +3,14 @@
 Implements roadmap #0002 from [issue #13](https://github.com/tscircuit/modelprinter/issues/13).
 
 ```ts
-mp.string("flatheadscrew_standard(iso10642)_m3_l10mm_drive(hexsocket)").json()
+mp.string("flatheadscrew_m3_l10mm_drive(hexsocket)").json()
 ```
 
-The model pins `iso10642` to **ISO10642:2019**, with M3, M4,
-M5 and M6 supported. Other sizes/editions, drives, partial threading, thread
-classes other than 6g, and fine pitches are rejected. `iso10642:2019` selects the
-same pinned contract explicitly. All normalized lengths are millimeters,
+The model defaults to **ISO10642:2019**, with M3, M4, M5 and M6 supported.
+The optional value-free `_iso10642` flag explicitly selects the same default;
+both forms normalize to `iso10642: true`. Legacy `standard(...)` selectors,
+other sizes/editions, drives, partial threading, thread classes other than 6g,
+and fine pitches are rejected. All normalized lengths are millimeters,
 angles are degrees, and the primary metric thread is male, coarse and right-hand.
 `threadhand(left)` selects the same profile with opposite handedness.
 
@@ -35,8 +36,7 @@ d3 = d - 17H/12 root diameter. `showThreads: false` renders a smooth shank at
 the major diameter, retaining the same head, under-head blend, tip chamfer,
 length and thread identity.
 
-`mN` / `metricsize(mN)` and `l` / `length` are aliases. `standard(...)`,
-`drive(...)`, `thread(full)`, `threadhand(...)`, `threadclass(6g)` and
+`mN` / `metricsize(mN)` and `l` / `length` are aliases. `drive(...)`, `thread(full)`, `threadhand(...)`, `threadclass(6g)` and
 `threadgender(male)` are selectors. `threads` / `nothreads` set visibility.
 Dimensional fields in the table can be repeated explicitly using their
 lowercase field names (for example `threadpitch0.5mm`), or supplied through the

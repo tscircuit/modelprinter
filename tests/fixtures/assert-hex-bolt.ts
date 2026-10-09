@@ -10,9 +10,7 @@ import {
 import { parseHexBoltModelParams } from "../../src/models/hexbolt/parse-model-string"
 
 export const assertHexBolt = () => {
-  const builder = mp.string(
-    "hexbolt_standard(iso4017)_m6_l25mm_thread(full)_drive(hex)",
-  )
+  const builder = mp.string("hexbolt_m6_l25mm_thread(full)_drive(hex)")
   const model = builder.json()
   if (model.fn !== "hexbolt") throw new Error("Unexpected model family")
   expect(model).toMatchObject({
@@ -25,7 +23,7 @@ export const assertHexBolt = () => {
   expect(builder.params()).toMatchObject({ fn: "hexbolt", m: "6", l: "25mm" })
   expect(model).toEqual({
     fn: "hexbolt",
-    standard: "iso4017:2014",
+    iso4017: true,
     metricSize: "M6",
     length: 25,
     thread: "full",
@@ -37,14 +35,15 @@ export const assertHexBolt = () => {
 
     ...hexBoltDimensions.M6,
   })
+  expect(mp.string(builder.params().string + "_iso4017").json()).toEqual(model)
+  expect(mp.string(builder.params().string + "_ISO4017").json()).toEqual(model)
+  expect(model).not.toHaveProperty("standard")
+  const { fn, ...props } = model
+  expect(hexBoltModelPropsSchema.parse(props)).toEqual(props)
   expect(modelDefinitionSchema.parse(model)).toEqual(model)
   expect(hexBoltModelDefinitionSchema.parse(model)).toEqual(model)
   expect(modelprinter.getModelNames()).toContain("hexbolt")
-  expect(
-    mp
-      .string("HEXBOLT_M6_length2.5cm_STANDARD(ISO4017:2014)_DRIVE(HEX)")
-      .json(),
-  ).toEqual(model)
+  expect(mp.string("HEXBOLT_M6_length2.5cm_DRIVE(HEX)").json()).toEqual(model)
   expect(
     mp
       .string(
@@ -82,7 +81,10 @@ export const assertHexBolt = () => {
   }
   for (const invalid of [
     { mystery: true },
-    { standard: "din7991" },
+    { standard: "iso4017:2014" },
+    { iso4017: false },
+    { iso4017: "true" },
+    { iso4029: true },
     { metricSize: "M7" },
     { drive: "torx" },
     { thread: "partial" },
@@ -104,7 +106,15 @@ export const assertHexBolt = () => {
     "_m3",
     "_l12mm",
     "_length12mm",
-    "_standard(iso4017)_standard(iso4017)",
+    "_iso4017_iso4017",
+    "_ISO4017_iso4017",
+    "_iso4017(true)",
+    "_iso4017(false)",
+    "_iso40171",
+    "_iso4017:2014",
+    "_iso4029",
+    "_standard(iso4017)",
+    "_standard(iso4017:2014)",
     "_drive(torx)",
     "_thread(partial)",
     "_threadhand(center)",

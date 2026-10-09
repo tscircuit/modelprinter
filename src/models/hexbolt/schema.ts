@@ -80,13 +80,8 @@ export const hexBoltDimensions = {
 } as const
 
 export const hexBoltMetricSizeSchema = z.enum(["M3", "M4", "M5", "M6"])
-export const hexBoltStandardSchema = z
-  .enum(["iso4017", "iso4017:2014"])
-  .default("iso4017")
-  .transform(() => "iso4017:2014" as const)
-
 const hexBoltModelPropsShape = {
-  standard: hexBoltStandardSchema,
+  iso4017: z.literal(true).default(true),
   metricSize: hexBoltMetricSizeSchema,
   length: positiveModelLengthSchema,
   thread: z.literal("full").default("full"),
@@ -121,7 +116,7 @@ const validateHexBolt = (props: CheckedProps, context: z.RefinementCtx) => {
       context.addIssue({
         code: "custom",
         path: [key],
-        message: `Dimension ${key} contradicts ${props.standard} ${props.metricSize}`,
+        message: `Dimension ${key} contradicts ISO 4017:2014 ${props.metricSize}`,
       })
     }
   }

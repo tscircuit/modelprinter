@@ -9,7 +9,6 @@ const aliases: Record<string, string> = {
   metricsize: "metricSize",
   l: "length",
   length: "length",
-  standard: "standard",
   thread: "thread",
   drive: "drive",
   threadhand: "threadHand",
@@ -33,7 +32,6 @@ const aliases: Record<string, string> = {
   af: "headAcrossFlats",
 }
 const selectors = new Set([
-  "standard",
   "thread",
   "drive",
   "threadHand",
@@ -51,6 +49,12 @@ export const parseHexBoltModelParams = (raw: RawModelprinterParams) => {
     throw new Error("The hexbolt function does not accept an inline value")
   const props: Record<string, unknown> = {}
   for (const token of tokens) {
+    if (token.toLowerCase() === "iso4017") {
+      if ("iso4017" in props)
+        throw new Error("Property iso4017 is set more than once")
+      props.iso4017 = true
+      continue
+    }
     const match = token.match(/^([a-z]+)(.*)$/i)
     const key = match?.[1]?.toLowerCase()
     const value = match?.[2]

@@ -3,13 +3,15 @@
 Implements roadmap #0003 from [issue #13](https://github.com/tscircuit/modelprinter/issues/13).
 
 ```ts
-mp.string("panscrew_standard(iso7045)_m3_l10mm_drive(phillips)").json()
+mp.string("panscrew_m3_l10mm_drive(phillips)").json()
 ```
 
 The model pins `iso7045` to **ISO7045:2011**, with M3, M4,
 M5 and M6 supported. Other sizes/editions, drives, partial threading, thread
-classes other than 6g, and fine pitches are rejected. `iso7045:2011` selects the
-same pinned contract explicitly. All normalized lengths are millimeters,
+classes other than 6g, and fine pitches are rejected. The ISO table applies by
+default; optional `_iso7045` restates it and normalizes to `iso7045: true`.
+The flag accepts no value, and schemas default it to true. Legacy `standard(...)`
+selectors and the `standard` property are unsupported. All normalized lengths are millimeters,
 angles are degrees, and the primary metric thread is male, coarse and right-hand.
 `threadhand(left)` selects the same profile with opposite handedness.
 
@@ -35,8 +37,7 @@ d3 = d - 17H/12 root diameter. `showThreads: false` renders a smooth shank at
 the major diameter, retaining the same head, under-head blend, tip chamfer,
 length and thread identity.
 
-`mN` / `metricsize(mN)` and `l` / `length` are aliases. `standard(...)`,
-`drive(...)`, `thread(full)`, `threadhand(...)`, `threadclass(6g)` and
+`mN` / `metricsize(mN)` and `l` / `length` are aliases. `drive(...)`, `thread(full)`, `threadhand(...)`, `threadclass(6g)` and
 `threadgender(male)` are selectors. `threads` / `nothreads` set visibility.
 Dimensional fields in the table can be repeated explicitly using their
 lowercase field names (for example `threadpitch0.5mm`), or supplied through the
@@ -68,7 +69,10 @@ The thread axis is Z and the underside of the head is the mounting datum at
 Z=0; the shank extends to Z=-length. Type-H cross-recess wings follow X and Y.
 The drive is Phillips (type H), rather than Pozidriv (type Z).
 
-The recess is pinned to **ISO 4757:1983**, section 2.1 and Table 1,
+The recess defaults to **ISO 4757:1983**, section 2.1 and Table 1. Optional
+`_iso4757` restates that fixed recess table and normalizes to `iso4757: true`;
+the schema defaults this boolean to true and rejects false. The former
+`recessStandard` property is unsupported. See the
 [primary reference](https://cdn.standards.iteh.ai/samples/10742/d878fa0371e041b39de75de4d4426928/ISO-4757-1983.pdf).
 The exported symbol fields recessB/E/G/F/Radius/T1/Alpha/Beta correspond to
 b/e/g/f/r/t1/alpha/beta in that section's drawing. b and g use the stated

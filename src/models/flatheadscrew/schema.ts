@@ -84,13 +84,8 @@ export const flatHeadScrewDimensions = {
 } as const
 
 export const flatHeadScrewMetricSizeSchema = z.enum(["M3", "M4", "M5", "M6"])
-export const flatHeadScrewStandardSchema = z
-  .enum(["iso10642", "iso10642:2019"])
-  .default("iso10642")
-  .transform(() => "iso10642:2019" as const)
-
 const flatHeadScrewModelPropsShape = {
-  standard: flatHeadScrewStandardSchema,
+  iso10642: z.literal(true).default(true),
   metricSize: flatHeadScrewMetricSizeSchema,
   length: positiveModelLengthSchema,
   thread: z.literal("full").default("full"),
@@ -129,7 +124,7 @@ const validateFlatHeadScrew = (
       context.addIssue({
         code: "custom",
         path: [key],
-        message: `Dimension ${key} contradicts ${props.standard} ${props.metricSize}`,
+        message: `Dimension ${key} contradicts ISO 10642:2019 ${props.metricSize}`,
       })
     }
   }

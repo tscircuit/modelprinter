@@ -3,13 +3,15 @@
 Implements roadmap #0001 from [issue #13](https://github.com/tscircuit/modelprinter/issues/13).
 
 ```ts
-mp.string("hexbolt_standard(iso4017)_m6_l25mm_thread(full)_drive(hex)").json()
+mp.string("hexbolt_m6_l25mm_thread(full)_drive(hex)").json()
 ```
 
 The model pins `iso4017` to **ISO4017:2014**, with M3, M4,
 M5 and M6 supported. Other sizes/editions, drives, partial threading, thread
-classes other than 6g, and fine pitches are rejected. `iso4017:2014` selects the
-same pinned contract explicitly. All normalized lengths are millimeters,
+classes other than 6g, and fine pitches are rejected. The ISO table applies by
+default; optional `_iso4017` restates it and normalizes to `iso4017: true`.
+The flag accepts no value, and schemas default it to true. Legacy `standard(...)`
+selectors and the `standard` property are unsupported. All normalized lengths are millimeters,
 angles are degrees, and the primary metric thread is male, coarse and right-hand.
 `threadhand(left)` selects the same profile with opposite handedness.
 
@@ -35,8 +37,7 @@ d3 = d - 17H/12 root diameter. `showThreads: false` renders a smooth shank at
 the major diameter, retaining the same head, under-head blend, tip chamfer,
 length and thread identity.
 
-`mN` / `metricsize(mN)` and `l` / `length` are aliases. `standard(...)`,
-`drive(...)`, `thread(full)`, `threadhand(...)`, `threadclass(6g)` and
+`mN` / `metricsize(mN)` and `l` / `length` are aliases. `drive(...)`, `thread(full)`, `threadhand(...)`, `threadclass(6g)` and
 `threadgender(male)` are selectors. `threads` / `nothreads` set visibility.
 Dimensional fields in the table can be repeated explicitly using their
 lowercase field names (for example `threadpitch0.5mm`), or supplied through the
