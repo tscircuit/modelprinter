@@ -98,29 +98,27 @@ test("threaded rod coarse pitch defaults and explicit fine left-hand threads", (
   }
 })
 
-test("threaded rod legacy selectors normalize to concise strings and boolean JSON", () => {
+test("threaded rod handedness flags normalize idempotently to boolean JSON", () => {
   const cases = [
     [
-      "threadedrod_spec(custom)_m6_l100mm_thread(full)_ends(flat)_chamfer0.5mm",
-      "threadedrod_m6_l100mm_chamfer0.5mm",
-    ],
-    [
-      "threadedrod_m6_l100mm_threadpitch0.5mm_threadhand(left)",
       "threadedrod_m6_l100mm_threadpitch0.5mm_lefthanded",
+      "threadedrod_m6_l100mm_threadpitch0.5mm_lefthanded",
+      true,
     ],
+    ["threadedrod_m6_l100mm_righthanded", "threadedrod_m6_l100mm", false],
     [
-      "threadedrod_m6_l100mm_custom_fullthread_flatends_righthanded",
-      "threadedrod_m6_l100mm",
+      "THREADEDROD_M6_length1CM_LEFTHANDED",
+      "threadedrod_M6_length1CM_lefthanded",
+      true,
     ],
-    ["threadedrod_m6_l100mm_threadhand(right)", "threadedrod_m6_l100mm"],
-    ["threadedrod_m6_l100mm_righthanded", "threadedrod_m6_l100mm"],
   ] as const
-  for (const [legacy, canonical] of cases) {
-    const builder = mp.string(legacy)
+  for (const [source, canonical, leftHand] of cases) {
+    const builder = mp.string(source)
     const expected = mp.string(canonical).json()
+    expect(expected).toMatchObject({ leftHand })
     expect(builder.json()).toEqual(expected)
-    expect(parseModelString(legacy)).toEqual(expected)
-    expect(mp.string(legacy.toUpperCase()).json()).toEqual(expected)
+    expect(parseModelString(source)).toEqual(expected)
+    expect(mp.string(source.toUpperCase()).json()).toEqual(expected)
     expect(builder.params().string).toBe(canonical)
     expect(mp.string(builder.params().string).params()).toEqual(
       builder.params(),
@@ -131,12 +129,23 @@ test("threaded rod legacy selectors normalize to concise strings and boolean JSO
     for (const property of ["spec", "thread", "ends", "threadHand"])
       expect(expected).not.toHaveProperty(property)
   }
-  expect(mp.string("threadedrod_m6_l100mm_lefthanded").json()).toMatchObject({
-    leftHand: true,
-  })
-  expect(mp.string("threadedrod_m6_l100mm_righthanded").json()).toMatchObject({
-    leftHand: false,
-  })
+})
+
+test("threaded rod rejects enum selectors and fixed construction flags", () => {
+  for (const token of [
+    "spec(custom)",
+    "thread(full)",
+    "ends(flat)",
+    "threadhand(left)",
+    "threadhand(right)",
+    "custom",
+    "fullthread",
+    "flatends",
+  ])
+    for (const spelling of [token, token.toUpperCase()])
+      expect(() =>
+        mp.string(`threadedrod_m6_l100mm_${spelling}`).json(),
+      ).toThrow()
 })
 
 test("threaded rod rejects duplicate aliases, malformed tokens and unsupported contracts", () => {
@@ -150,17 +159,10 @@ test("threaded rod rejects duplicate aliases, malformed tokens and unsupported c
     "threadpitch0",
     "threadpitch5mm",
     "threadpitch1mm_threadpitch0.5mm",
-    "threadhand(left)_threadhand(right)",
     "lefthanded_lefthanded",
     "righthanded_righthanded",
     "lefthanded_righthanded",
     "righthanded_lefthanded",
-    "lefthanded_threadhand(left)",
-    "threadhand(left)_lefthanded",
-    "lefthanded_threadhand(right)",
-    "threadhand(right)_lefthanded",
-    "righthanded_threadhand(right)",
-    "threadhand(right)_righthanded",
     "lefthanded(true)",
     "righthanded1",
     "m7",
@@ -168,31 +170,11 @@ test("threaded rod rejects duplicate aliases, malformed tokens and unsupported c
     "m6junk",
     "chamfer3mm",
     "chamfer-1mm",
-    "spec(iso976)",
-    "spec",
-    "spec(custom)junk",
-    "spec(custom)(custom)",
-    "spec(custom)_spec(custom)",
-    "custom_custom",
-    "custom_spec(custom)",
-    "spec(custom)_custom",
-    "thread(partial)",
-    "thread(full)_thread(full)",
-    "fullthread_fullthread",
-    "fullthread_thread(full)",
-    "thread(full)_fullthread",
-    "ends(round)",
-    "threadhand(other)",
-    "ends(flat)_ends(flat)",
-    "flatends_flatends",
-    "flatends_ends(flat)",
-    "ends(flat)_flatends",
     "chamfer0.5mm_chamfer0.5mm",
     "threadpitch1mmjunk",
     "l1e2",
     "l10mmjunk",
     "l(10mm)",
-    "specCUSTOM",
     "constructor1",
     "unknown1",
     "",

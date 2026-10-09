@@ -38,26 +38,21 @@ Lengths accept finite numbers in millimeters or complete numeric strings with
 optional `mm`, `cm`, `m`, `in`, `inch`, `mil`, `ft`, or `feet` units. All output
 lengths are millimeters. Model-string tokens and flags are case-insensitive;
 direct properties use the names shown above and `leftHand` accepts a boolean.
-Flags are value-free, so use `_lefthanded` rather than `_threadhand(left)`. Unknown
-properties, malformed values, duplicate tokens, and duplicate aliases are rejected.
+Flags are value-free. Unknown properties, malformed values, duplicate tokens,
+and duplicate aliases are rejected.
 
-Legacy strings using `spec(custom)`, `thread(full)`, `ends(flat)`, or
-`threadhand(right)` / `threadhand(left)` remain accepted and are validated before
-normalization. The fixed selectors and `_custom`, `_fullthread`, `_flatends`, and
-`_righthanded` compatibility flags are removed from `.params().string`;
-`threadhand(left)` becomes `_lefthanded`. Model-string validation runs during
-`.string()`, and normalization is idempotent. Repeating a flag or combining it
-with a selector for the same property is an error, even when the values agree. See
-[Mechanical model string flags](model-string-flags.md) for the shared convention.
+The only option flags are `_lefthanded` and `_righthanded`. Repeated or conflicting
+handedness flags are errors. `_righthanded` is omitted from `.params().string`,
+and normalization is idempotent. Complete model strings are validated during
+`.string()`. Parenthesized enum selectors and flags for fixed properties such as
+`_fullthread` are unsupported.
 
 A bare `threadedrod` name supports renderer dispatch through `.params().fn`;
 `.json()` still requires metric size and length.
 
-JSON and direct props contain `leftHand` instead of `threadHand`, with no `spec`,
-`thread`, or `ends` fields. The strict schemas reject those obsolete properties,
-including their former default values. When migrating direct props or stored
-JSON, remove the fixed fields and replace `threadHand: "left"` with
-`leftHand: true`, or `threadHand: "right"` with `leftHand: false`.
+JSON and direct props use `leftHand: true` for left-handed threads and
+`leftHand: false` for right-handed threads. The strict schemas reject unknown
+properties, including `spec`, `thread`, `ends`, and `threadHand`.
 
 The rod is centered on the Z axis, with the first end plane at Z=0 and the other
 at Z=`length`. Chamfers stay inside these planes; they do not add length.

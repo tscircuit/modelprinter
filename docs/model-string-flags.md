@@ -5,18 +5,17 @@ Prefer value-free flags for mechanical options. For models other than
 `.params()`. Their new flag strings are validated during `.string()`; legacy
 strings retain deferred model validation during `.json()`.
 
-`threadedrod` uses `leftHand: boolean` and omits the fixed `spec`, `thread`, and
-`ends` JSON fields. It validates and normalizes both legacy selectors and flags
-during `.string()`. See [Threaded rod](threaded-rods.md) for its props migration.
+`threadedrod` accepts `_lefthanded` and `_righthanded` and uses `leftHand: boolean`.
+Its fixed properties need no JSON fields or flags, and enum selectors are
+rejected. See [Threaded rod](threaded-rods.md) for its contract.
 
 | Legacy selector | Preferred syntax | Models |
 | --- | --- | --- |
 | `mount(setscrew)` | `_setscrew` | shaftcollar, rigidcoupler |
 | `mount(singleclamp)` | `_singleclamp` | clampingshaftcollar |
-| `threadhand(left)` | `_lefthanded` | threadedrod, shaftcollar, clampingshaftcollar, rigidcoupler, hexbolt, flatheadscrew, panscrew |
+| `threadhand(left)` | `_lefthanded` | shaftcollar, clampingshaftcollar, rigidcoupler, hexbolt, flatheadscrew, panscrew |
 | `hand(left)` | `_lefthanded` | compressionspring |
 | `ends(closedground)` | `_closedground` | compressionspring |
-| `thread(full)` | Omit | threadedrod |
 | `thread(full)` | `_fullthread` | hexbolt, flatheadscrew, panscrew, buttonscrew |
 | `drive(hex)` | `_hex` | hexbolt |
 | `drive(hexsocket)` | `_hexsocket` | flatheadscrew, buttonscrew |
@@ -30,8 +29,6 @@ Omit redundant default selectors: `spec(custom)`, `state(free)`,
 The corresponding `_custom`, `_free`, `_plainclosed`, `_flatends`,
 `_righthanded` and `_male` aliases are accepted only in applicable models and
 removed when normalizing flag syntax. All existing default values remain intact.
-For `threadedrod`, `_fullthread` also normalizes away because full threading is
-the model's fixed construction.
 Dimensions and identifiers such as `standard(iso4017:2014)`, `m6`, and
 `threadclass(6H)` retain their established syntax. Existing thread visibility
 flags `_threads` and `_nothreads` continue to work.

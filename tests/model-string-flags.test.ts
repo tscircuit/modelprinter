@@ -56,7 +56,6 @@ test("new flags remove redundant defaults while retaining dimensional and identi
 
 test("mixed legacy selectors and flags reject hand conflicts and duplicate defaults", () => {
   for (const base of [
-    "threadedrod_m6_l100mm",
     "shaftcollar_bore8mm_od16mm_w8mm_m4",
     "hexbolt_m4_l20mm",
   ]) {
