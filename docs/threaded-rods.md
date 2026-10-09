@@ -50,6 +50,9 @@ normalization. The fixed selectors and `_custom`, `_fullthread`, `_flatends`, an
 with a selector for the same property is an error, even when the values agree. See
 [Mechanical model string flags](model-string-flags.md) for the shared convention.
 
+A bare `threadedrod` name supports renderer dispatch through `.params().fn`;
+`.json()` still requires metric size and length.
+
 JSON and direct props contain `leftHand` instead of `threadHand`, with no `spec`,
 `thread`, or `ends` fields. The strict schemas reject those obsolete properties,
 including their former default values. When migrating direct props or stored

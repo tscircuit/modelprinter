@@ -43,6 +43,17 @@ test("threaded rod concise string and public model integration", () => {
   })
 })
 
+test("threaded rod bare names support renderer dispatch without a complete model", () => {
+  for (const source of ["threadedrod", "THREADEDROD"]) {
+    const builder = mp.string(source)
+    expect(builder.params()).toMatchObject({
+      fn: "threadedrod",
+      string: "threadedrod",
+    })
+    expect(() => builder.json()).toThrow()
+  }
+})
+
 test("threaded rod coarse pitch defaults and explicit fine left-hand threads", () => {
   for (const [metricSize, threadPitch] of Object.entries(
     threadedRodCoarsePitches,

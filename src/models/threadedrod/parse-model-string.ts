@@ -72,6 +72,8 @@ export function parseThreadedRodModelParams(raw: RawModelprinterParams) {
 
 /** Validate aliases before omitting fixed options and default handedness. */
 export function normalizeThreadedRodModelString(value: string) {
+  // Renderers inspect bare names through .params() before parsing dimensions.
+  if (value.toLowerCase() === "threadedrod") return "threadedrod"
   parseThreadedRodModelParams(parseModelStringParams(value))
   const preferred = new Map<string, string>(
     Object.entries(stringFlags).map(([flag, selector]) => [selector, flag]),
