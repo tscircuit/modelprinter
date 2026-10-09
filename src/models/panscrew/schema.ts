@@ -132,13 +132,8 @@ export const panScrewDimensions = {
 } as const
 
 export const panScrewMetricSizeSchema = z.enum(["M3", "M4", "M5", "M6"])
-export const panScrewStandardSchema = z
-  .enum(["iso7045", "iso7045:2011"])
-  .default("iso7045")
-  .transform(() => "iso7045:2011" as const)
-
 const panScrewModelPropsShape = {
-  standard: panScrewStandardSchema,
+  iso7045: z.literal(true).default(true),
   metricSize: panScrewMetricSizeSchema,
   length: positiveModelLengthSchema,
   thread: z.literal("full").default("full"),
@@ -147,7 +142,7 @@ const panScrewModelPropsShape = {
   threadClass: z.literal("6g").default("6g"),
   threadGender: z.literal("male").default("male"),
   showThreads: z.boolean().default(true),
-  recessStandard: z.literal("iso4757:1983").default("iso4757:1983"),
+  iso4757: z.literal(true).default(true),
   recessType: z.literal("H").default("H"),
   diameter: positiveModelLengthSchema.optional(),
   threadPitch: positiveModelLengthSchema.optional(),
@@ -188,7 +183,7 @@ const validatePanScrew = (props: CheckedProps, context: z.RefinementCtx) => {
       context.addIssue({
         code: "custom",
         path: [key],
-        message: `Dimension ${key} contradicts ${props.standard} ${props.metricSize}`,
+        message: `Dimension ${key} contradicts ISO 7045:2011 ${props.metricSize}`,
       })
     }
   }

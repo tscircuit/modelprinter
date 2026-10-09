@@ -10,9 +10,7 @@ import {
 import { parseFlatHeadScrewModelParams } from "../../src/models/flatheadscrew/parse-model-string"
 
 export const assertFlatHeadScrew = () => {
-  const builder = mp.string(
-    "flatheadscrew_standard(iso10642)_m3_l10mm_drive(hexsocket)",
-  )
+  const builder = mp.string("flatheadscrew_m3_l10mm_drive(hexsocket)")
   const model = builder.json()
   if (model.fn !== "flatheadscrew") throw new Error("Unexpected model family")
   expect(model).toMatchObject({
@@ -30,7 +28,7 @@ export const assertFlatHeadScrew = () => {
   })
   expect(model).toEqual({
     fn: "flatheadscrew",
-    standard: "iso10642:2019",
+    iso10642: true,
     metricSize: "M3",
     length: 10,
     thread: "full",
@@ -42,15 +40,18 @@ export const assertFlatHeadScrew = () => {
 
     ...flatHeadScrewDimensions.M3,
   })
+  const { fn, ...props } = model
+  expect(flatHeadScrewModelPropsSchema.parse(props)).toEqual(props)
+  expect(model).not.toHaveProperty("standard")
+  expect(model).not.toHaveProperty("headStandard")
+  expect(
+    mp.string("flatheadscrew_iso10642_m3_l10mm_drive(hexsocket)").json(),
+  ).toEqual(model)
   expect(modelDefinitionSchema.parse(model)).toEqual(model)
   expect(flatHeadScrewModelDefinitionSchema.parse(model)).toEqual(model)
   expect(modelprinter.getModelNames()).toContain("flatheadscrew")
   expect(
-    mp
-      .string(
-        "FLATHEADSCREW_M3_length1.0cm_STANDARD(ISO10642:2019)_DRIVE(HEXSOCKET)",
-      )
-      .json(),
+    mp.string("FLATHEADSCREW_M3_length1.0cm_ISO10642_DRIVE(HEXSOCKET)").json(),
   ).toEqual(model)
   expect(
     mp
@@ -89,7 +90,12 @@ export const assertFlatHeadScrew = () => {
   }
   for (const invalid of [
     { mystery: true },
+    { standard: "iso10642" },
     { standard: "din7991" },
+    { headStandard: "iso10642" },
+    { iso10642: false },
+    { iso10642: "true" },
+    { iso4029: true },
     { metricSize: "M7" },
     { drive: "torx" },
     { thread: "partial" },
@@ -111,7 +117,13 @@ export const assertFlatHeadScrew = () => {
     "_m3",
     "_l12mm",
     "_length12mm",
-    "_standard(iso10642)_standard(iso10642)",
+    "_standard(iso10642)",
+    "_headstandard(iso10642)",
+    "_iso10642_iso10642",
+    "_iso10642(true)",
+    "_iso10642false",
+    "_iso10642:2019",
+    "_iso4029",
     "_drive(torx)",
     "_thread(partial)",
     "_threadhand(center)",

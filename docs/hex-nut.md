@@ -1,8 +1,9 @@
 # Hex nut parameter contract
 
-`hexnut_standard(iso4032)_m6` selects the fifth edition, ISO 4032:2023,
+`hexnut_m6` defaults to the fifth edition, ISO 4032:2023,
 Table 1 and Figure 1 (regular style 1, without the optional washer-face).
-`standard(iso4032:2023)` is equivalent and this edition is also the default.
+The optional value-free `iso4032` flag restates the selection:
+`hexnut_m6_iso4032` produces the same normalized definition.
 [The primary preview](https://cdn.standards.iteh.ai/samples/75016/5b1f83bd2dc44fc199973e9957a75086/ISO-4032-2023.pdf)
 contains the dimension table pinned in exported `hexNutDimensions`.
 
@@ -22,7 +23,7 @@ its M10/M12 wrench dimensions differ. Table-selected dimensions cannot be
 changed with body/envelope tokens or object properties. This family describes
 one untoleranced nominal visualization, not a manufactured tolerance model.
 
-Exactly one of `m` or `imperial(...)` is required. `standard` defaults as above. `threadpitch` can restate the
+Exactly one of `m` or `imperial(...)` is required. ISO, DIN and ASME family flags default by size as above. `threadpitch` can restate the
 coarse pitch, using a millimeter number or complete numeric unit string (`mm`,
 `cm`, `m`, `in`, `inch`, `mil`, `ft`, `feet`); all lengths normalize to mm. A
 contradictory/fine pitch is rejected. `threadhand(right)` and `threadclass(6H)`
@@ -31,6 +32,14 @@ separate contract. `showThreads` defaults true; `threads`/`nothreads` are
 value-free visibility flags. Strings are case insensitive; the normalized
 internal thread class remains `6H`. Duplicate tokens, malformed selectors,
 inline family arguments, unknown tokens and unknown schema properties fail.
+The optional family flags are `iso4032`, `din934` and `asmeb18.2.2`
+(`asmeb1822` is an equivalent compact alias). Normalized definitions contain
+all three boolean properties `iso4032`, `din934` and `asmeb1822`, with exactly
+one true. Object inputs may provide those boolean selectors; false values on
+unselected families are accepted for schema roundtrips. Disabling the
+size-default family without selecting another family fails. Multiple family
+flags, repeated flags and legacy `standard(...)` selectors are rejected;
+there is no `standard` property in the object contract.
 
 The mounting datum is the lower face at z=0. The nut is centered on Z and
 extends to z=height. The body is a regular hexagon with two flats parallel to
@@ -64,13 +73,13 @@ meshes. Geometry generation belongs in jscad-electronics.
 
 ## Additional metric and imperial sizes
 
-Use `hexnut_standard(din934)_m3` for a DIN 934 regular metric hex nut.
+Use `hexnut_din934_m3` for a DIN 934 regular metric hex nut.
 Supported sizes are M1.6, M2, M2.5, M3, M3.5, M4, M5, M6, M7, M8, M10,
 M12, M14, M16, M18, M20, M22 and M24. The exported
 `hexNutDinDimensions` table owns their coarse pitches and nominal envelopes.
 The five previously supported sizes retain their ISO default and released
 dimensions. Other metric sizes default to DIN 934; `hexnut_m3` is equivalent
-to `hexnut_standard(din934)_m3`. An explicit ISO selector remains strict.
+to `hexnut_din934_m3`. An explicit ISO selector remains strict.
 DIN and ISO envelopes differ (for example, M10 uses 17 versus 16 mm flats).
 
 Use `hexnut_imperial(1/4-20)` or `hexnut_unc(1/4-20)` for an imperial
@@ -78,7 +87,7 @@ regular hex nut. `imperial(1/4)` also selects its coarse pitch. Supported UNC
 sizes are #2-56, #4-40, #6-32, #8-32, #10-24, #12-24, 1/4-20,
 5/16-18, 3/8-16, 7/16-14, 1/2-13, 5/8-11, 3/4-10, 7/8-9 and 1-8.
 Imperial inputs use `imperialSize` in the object API, default
-`standard: "asmeb18.2.2"`, right-hand threads and internal class `2B`.
+`asmeb1822: true` (string flag `asmeb18.2.2`), right-hand threads and internal class `2B`.
 `hexNutImperialDimensions` contains inch envelopes converted using exactly
 25.4 mm per inch; `threadPitch` is 25.4 divided by threads per inch.
 An explicit TPI or pitch must agree with the tabulated coarse series.

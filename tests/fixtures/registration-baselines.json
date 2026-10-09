@@ -1,9 +1,9 @@
 [
   {
-    "source": "hexbolt_standard(iso4017)_m6_l25mm_drive(hex)",
+    "source": "hexbolt_m6_l25mm_drive(hex)",
     "json": {
       "fn": "hexbolt",
-      "standard": "iso4017:2014",
+      "iso4017": true,
       "metricSize": "M6",
       "length": 25,
       "thread": "full",

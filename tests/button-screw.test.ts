@@ -8,19 +8,16 @@ import {
   mp,
 } from "../src"
 
-test("button screw example selects pinned dimensions, defaults and public registry", () => {
-  const builder = mp.string(
-    "buttonscrew_standard(iso7380-1)_m3_l10mm_drive(hexsocket)",
-  )
+test("button screw defaults to ISO 7380-1 dimensions and public registry", () => {
+  const builder = mp.string("buttonscrew_m3_l10mm")
   expect(builder.params()).toMatchObject({
     m: "3",
-    standard: "(iso7380-1)",
     l: "10mm",
   })
   const model = builder.json()
   expect(model).toEqual({
     fn: "buttonscrew",
-    standard: "iso7380-1:2022",
+    iso73801: true,
     metricSize: "M3",
     length: 10,
     drive: "hexsocket",
@@ -31,6 +28,17 @@ test("button screw example selects pinned dimensions, defaults and public regist
     showThreads: true,
   })
   expect(modelDefinitionSchema.parse(model)).toEqual(model)
+  expect(mp.string("buttonscrew_iso7380-1_m3_l10mm").json()).toEqual(model)
+  expect(mp.string("BUTTONSCREW_M3_L10MM_ISO7380-1").json()).toEqual(model)
+  expect(
+    buttonScrewModelPropsSchema.parse({ metricSize: "M3", length: 10 }),
+  ).toEqual(
+    buttonScrewModelPropsSchema.parse({
+      metricSize: "M3",
+      length: 10,
+      iso73801: true,
+    }),
+  )
   expect(modelprinter.getModelNames()).toContain("buttonscrew")
   const dimensions = getButtonScrewDimensions({ metricSize: "M3", length: 10 })
   expect(dimensions).toMatchObject({
@@ -64,6 +72,9 @@ test("button screw unit normalization, each table size and thread visibility", (
       .length,
   ).toBeCloseTo(6.35)
   for (const metricSize of ["M3", "M4", "M5", "M6"] as const) {
+    const props = buttonScrewModelPropsSchema.parse({ metricSize, length: 10 })
+    expect(props.iso73801).toBe(true)
+    expect(buttonScrewModelPropsSchema.parse(props)).toEqual(props)
     expect(
       buttonScrewModelPropsSchema.parse({ metricSize, length: 10 }).threadPitch,
     ).toBe(buttonScrewDimensions[metricSize].threadPitch)
@@ -89,6 +100,16 @@ test("button screw rejects contradictory standards, tokens, pitches and lengths"
     "buttonscrew_m3_l10mm_l12mm",
     "buttonscrew_m3_l10mm_length12mm",
     "buttonscrew_m3_m4_l10mm",
+    "buttonscrew_m3_l10mm_iso7380-1_iso7380-1",
+    "buttonscrew_m3_l10mm_iso7380-1_ISO7380-1",
+    "buttonscrew_m3_l10mm_iso7380-1(true)",
+    "buttonscrew_m3_l10mm_iso7380-1(false)",
+    "buttonscrew_m3_l10mm_iso7380-1=1",
+    "buttonscrew_m3_l10mm_iso7380-1:2022",
+    "buttonscrew_m3_l10mm_iso7380-2",
+    "buttonscrew_m3_l10mm_iso4029",
+    "buttonscrew_m3_l10mm_standard(iso7380-1)",
+    "buttonscrew_m3_l10mm_standard(iso7380-1:2022)",
     "buttonscrew_m3_l10mm_standard(iso7380-2)",
     "buttonscrew_m3_l10mm_standard(iso7380-1:2011)",
     "buttonscrew_m3_l10mm_standard",
@@ -107,6 +128,19 @@ test("button screw rejects contradictory standards, tokens, pitches and lengths"
     expect(() =>
       buttonScrewModelPropsSchema.parse({ metricSize: "M3", length }),
     ).toThrow()
+  for (const props of [
+    { iso73801: false },
+    { iso73801: "true" },
+    { iso73802: true },
+    { standard: "iso7380-1" },
+    { standard: "iso7380-1:2022" },
+  ]) {
+    const input = { metricSize: "M3", length: 10, ...props }
+    expect(() => buttonScrewModelPropsSchema.parse(input)).toThrow()
+    expect(() =>
+      modelDefinitionSchema.parse({ fn: "buttonscrew", ...input }),
+    ).toThrow()
+  }
   expect(() =>
     buttonScrewModelPropsSchema.parse({
       metricSize: "M3",

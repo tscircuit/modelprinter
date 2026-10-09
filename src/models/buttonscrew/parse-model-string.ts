@@ -17,13 +17,18 @@ export function parseButtonScrewModelParams(raw: RawModelprinterParams) {
     threadpitch: "threadPitch",
   } as const
   const selectors = {
-    standard: "standard",
     drive: "drive",
     thread: "thread",
     threadhand: "threadHand",
     threadclass: "threadClass",
   } as const
   for (const token of tokens.slice(1)) {
+    if (token.toLowerCase() === "iso7380-1") {
+      if ("iso73801" in props)
+        throw new Error('Duplicate button screw property "iso73801"')
+      props.iso73801 = true
+      continue
+    }
     const match = token.match(/^([a-z]+)(.*)$/i)
     if (!match) throw new Error(`Invalid button screw token "${token}"`)
     const name = match[1]!.toLowerCase()

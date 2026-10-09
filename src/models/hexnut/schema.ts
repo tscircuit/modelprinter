@@ -262,9 +262,9 @@ const length = z
   .pipe(modelLengthSchema)
   .refine((value) => value > 0, "Length must be positive")
 const shape = {
-  standard: z
-    .enum(["iso4032", "iso4032:2023", "din934", "asmeb18.2.2"])
-    .optional(),
+  iso4032: z.boolean().optional(),
+  din934: z.boolean().optional(),
+  asmeb1822: z.boolean().optional(),
   metricSize: hexNutMetricSizeSchema.optional(),
   imperialSize: hexNutImperialSizeSchema.optional(),
   threadPitch: length.optional(),
@@ -273,25 +273,26 @@ const shape = {
   showThreads: z.boolean().default(true),
 }
 type RawProps = z.output<z.ZodObject<typeof shape>>
-function selectedStandard(props: RawProps) {
-  if (props.standard === "iso4032") return "iso4032:2023" as const
-  return (
-    props.standard ??
-    (props.imperialSize
-      ? "asmeb18.2.2"
-      : props.metricSize && !(props.metricSize in hexNutDimensions)
-        ? "din934"
-        : "iso4032:2023")
-  )
+function selectedFamily(props: RawProps) {
+  if (props.iso4032 || props.din934 || props.asmeb1822)
+    return {
+      iso4032: props.iso4032 === true,
+      din934: props.din934 === true,
+      asmeb1822: props.asmeb1822 === true,
+    }
+  const asmeb1822 = !!props.imperialSize
+  const din934 =
+    !asmeb1822 && !!props.metricSize && !(props.metricSize in hexNutDimensions)
+  return { iso4032: !asmeb1822 && !din934, din934, asmeb1822 }
 }
 function selectedDimensions(props: RawProps) {
-  const standard = selectedStandard(props)
-  if (standard === "asmeb18.2.2")
+  const family = selectedFamily(props)
+  if (family.asmeb1822)
     return props.imperialSize
       ? hexNutImperialDimensions[props.imperialSize]
       : undefined
   if (!props.metricSize) return undefined
-  return standard === "din934"
+  return family.din934
     ? hexNutDinDimensions[props.metricSize]
     : hexNutDimensions[props.metricSize as keyof typeof hexNutDimensions]
 }
@@ -300,29 +301,40 @@ function validate(props: RawProps, context: z.RefinementCtx) {
     context.addIssue({ code: "custom", path: [path], message })
   if (!!props.metricSize === !!props.imperialSize)
     issue("metricSize", "Select exactly one metric or imperial size")
+  const flags = ["iso4032", "din934", "asmeb1822"] as const
+  const family = selectedFamily(props)
+  if (flags.filter((flag) => props[flag] === true).length > 1)
+    issue("iso4032", "Select only one ISO, DIN or ASME family")
+  for (const flag of flags)
+    if (family[flag] && props[flag] === false)
+      issue(
+        flag,
+        "The size-default family cannot be disabled without selecting another family",
+      )
   const dims = selectedDimensions(props)
   if (!dims)
-    issue("standard", "The selected standard does not support this size")
+    issue(
+      "metricSize",
+      "The selected ISO, DIN or ASME family does not support this size",
+    )
   if (
     dims &&
     props.threadPitch !== undefined &&
     Math.abs(props.threadPitch - dims.threadPitch) > 1e-9
   )
     issue("threadPitch", "Hex nuts require the tabulated coarse pitch")
-  const threadClass = selectedStandard(props) === "asmeb18.2.2" ? "2B" : "6H"
+  const threadClass = selectedFamily(props).asmeb1822 ? "2B" : "6H"
   if (props.threadClass && props.threadClass !== threadClass)
     issue("threadClass", `The selected standard requires ${threadClass}`)
 }
 function normalize<T extends RawProps>(props: T) {
   return {
     ...props,
-    standard: selectedStandard(props),
+    ...selectedFamily(props),
     threadPitch: selectedDimensions(props)!.threadPitch,
     threadClass:
       props.threadClass ??
-      (selectedStandard(props) === "asmeb18.2.2"
-        ? ("2B" as const)
-        : ("6H" as const)),
+      (selectedFamily(props).asmeb1822 ? ("2B" as const) : ("6H" as const)),
   }
 }
 export const hexNutModelPropsSchema = z

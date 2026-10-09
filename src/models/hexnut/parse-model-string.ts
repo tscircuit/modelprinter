@@ -12,11 +12,19 @@ export function parseHexNutModelParams(raw: RawModelprinterParams) {
     throw new Error("Expected hexnut without an inline argument")
   const props: Record<string, unknown> = { fn: "hexnut" }
   const selectors = {
-    standard: "standard",
     threadhand: "threadHand",
     threadclass: "threadClass",
   } as const
+  let explicitFamily = false
   for (const token of tokens.slice(1)) {
+    const lower = token.toLowerCase()
+    if (["iso4032", "din934", "asmeb18.2.2", "asmeb1822"].includes(lower)) {
+      if (explicitFamily)
+        throw new Error("Select only one hex nut ISO, DIN or ASME flag")
+      explicitFamily = true
+      props[lower === "asmeb18.2.2" ? "asmeb1822" : lower] = true
+      continue
+    }
     const match = token.match(/^([a-z]+)(.*)$/i)
     if (!match) throw new Error(`Invalid hex nut token "${token}"`)
     const name = match[1]!.toLowerCase()

@@ -70,10 +70,7 @@ const length = z
   .refine((value) => value > 0, "Length must be positive")
 export const buttonScrewMetricSizeSchema = z.enum(["M3", "M4", "M5", "M6"])
 const shape = {
-  standard: z
-    .enum(["iso7380-1", "iso7380-1:2022"])
-    .default("iso7380-1")
-    .transform(() => "iso7380-1:2022" as const),
+  iso73801: z.literal(true).default(true),
   metricSize: buttonScrewMetricSizeSchema,
   /** Under-head length; this family supports short fully threaded screws only. */
   length,

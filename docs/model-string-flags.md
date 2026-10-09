@@ -1,9 +1,10 @@
 # Mechanical model string flags
 
-Prefer value-free flags for mechanical options. For models other than
-`threadedrod`, these aliases preserve the released JSON schema and legacy raw
-`.params()`. Their new flag strings are validated during `.string()`; legacy
-strings retain deferred model validation during `.json()`.
+Prefer value-free flags for mechanical options. Fastener standard flags and
+`threadedrod` use boolean JSON properties. Other aliases below preserve their
+existing JSON schema and legacy raw `.params()` behavior. Those aliases validate
+new flag strings during `.string()`; legacy strings retain deferred model
+validation during `.json()`.
 
 `threadedrod` accepts `_lefthanded` and `_righthanded` and uses `leftHand: boolean`.
 Its fixed properties need no JSON fields or flags, and enum selectors are
@@ -29,8 +30,24 @@ Omit redundant default selectors: `spec(custom)`, `state(free)`,
 The corresponding `_custom`, `_free`, `_plainclosed`, `_flatends`,
 `_righthanded` and `_male` aliases are accepted only in applicable models and
 removed when normalizing flag syntax. All existing default values remain intact.
-Dimensions and identifiers such as `standard(iso4017:2014)`, `m6`, and
-`threadclass(6H)` retain their established syntax. Existing thread visibility
+Fastener standards use optional value-free flags, with the same geometry when
+the flag is omitted:
+
+| Model | Optional standard flag |
+| --- | --- |
+| hexbolt | `_iso4017` |
+| flatheadscrew | `_iso10642` |
+| panscrew | `_iso7045` and the independent recess flag `_iso4757` |
+| buttonscrew | `_iso7380-1` |
+| hexnut | `_iso4032`, `_din934`, or `_asmeb18.2.2` |
+
+Hex nuts choose their existing size-based family by default: ISO for supported
+ISO metric sizes, DIN for other supported metric sizes, and ASME for imperial
+sizes. Explicit family flags remain strict about supported sizes. These models
+reject `standard(...)`; normalized contracts contain boolean standard flags.
+
+Dimensions and identifiers such as `m6` and `threadclass(6H)` retain their
+established syntax. Existing thread visibility
 flags `_threads` and `_nothreads` continue to work.
 
 For example:
@@ -46,5 +63,5 @@ Flags are case insensitive, model-local and value-free. Repeating a flag or
 combining it with a selector for the same property is an error, even if they
 agree. Unsupported options remain unsupported; these aliases do not add new
 geometry variants. New models should use boolean JSON properties for options
-from the outset; aliases on other released models preserve their existing JSON
-API.
+from the outset. Apart from the standard flags above, aliases on released models
+preserve their existing JSON API.

@@ -10,9 +10,7 @@ import {
 import { parsePanScrewModelParams } from "../../src/models/panscrew/parse-model-string"
 
 export const assertPanScrew = () => {
-  const builder = mp.string(
-    "panscrew_standard(iso7045)_m3_l10mm_drive(phillips)",
-  )
+  const builder = mp.string("panscrew_m3_l10mm_drive(phillips)")
   const model = builder.json()
   if (model.fn !== "panscrew") throw new Error("Unexpected model family")
   expect(model).toMatchObject({
@@ -28,7 +26,7 @@ export const assertPanScrew = () => {
   expect(builder.params()).toMatchObject({ fn: "panscrew", m: "3", l: "10mm" })
   expect(model).toEqual({
     fn: "panscrew",
-    standard: "iso7045:2011",
+    iso7045: true,
     metricSize: "M3",
     length: 10,
     thread: "full",
@@ -37,18 +35,26 @@ export const assertPanScrew = () => {
     threadClass: "6g",
     threadGender: "male",
     showThreads: true,
-    recessStandard: "iso4757:1983",
+    iso4757: true,
     recessType: "H",
     ...panScrewDimensions.M3,
   })
+  expect(mp.string(builder.params().string + "_iso7045").json()).toEqual(model)
+  expect(mp.string(builder.params().string + "_ISO7045").json()).toEqual(model)
+  expect(mp.string(builder.params().string + "_iso4757").json()).toEqual(model)
+  expect(
+    mp.string(builder.params().string + "_ISO4757_iso7045").json(),
+  ).toEqual(model)
+  expect(model).not.toHaveProperty("recessStandard")
+  expect(model).not.toHaveProperty("standard")
+  const { fn, ...props } = model
+  expect(panScrewModelPropsSchema.parse(props)).toEqual(props)
   expect(modelDefinitionSchema.parse(model)).toEqual(model)
   expect(panScrewModelDefinitionSchema.parse(model)).toEqual(model)
   expect(modelprinter.getModelNames()).toContain("panscrew")
-  expect(
-    mp
-      .string("PANSCREW_M3_length1.0cm_STANDARD(ISO7045:2011)_DRIVE(PHILLIPS)")
-      .json(),
-  ).toEqual(model)
+  expect(mp.string("PANSCREW_M3_length1.0cm_DRIVE(PHILLIPS)").json()).toEqual(
+    model,
+  )
   expect(
     mp
       .string(
@@ -86,7 +92,13 @@ export const assertPanScrew = () => {
   }
   for (const invalid of [
     { mystery: true },
-    { standard: "din7991" },
+    { standard: "iso7045:2011" },
+    { iso7045: false },
+    { iso4757: false },
+    { iso4757: "true" },
+    { recessStandard: "iso4757:1983" },
+    { iso7045: "true" },
+    { iso4029: true },
     { metricSize: "M7" },
     { drive: "torx" },
     { thread: "partial" },
@@ -108,7 +120,21 @@ export const assertPanScrew = () => {
     "_m3",
     "_l12mm",
     "_length12mm",
-    "_standard(iso7045)_standard(iso7045)",
+    "_iso7045_iso7045",
+    "_iso4757_iso4757",
+    "_ISO4757_iso4757",
+    "_iso4757(true)",
+    "_iso4757false",
+    "_iso4757:1983",
+    "_recessstandard(iso4757:1983)",
+    "_ISO7045_iso7045",
+    "_iso7045(true)",
+    "_iso7045(false)",
+    "_iso70451",
+    "_iso7045:2011",
+    "_iso4029",
+    "_standard(iso7045)",
+    "_standard(iso7045:2011)",
     "_drive(torx)",
     "_thread(partial)",
     "_threadhand(center)",

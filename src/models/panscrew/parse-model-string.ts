@@ -9,7 +9,6 @@ const aliases: Record<string, string> = {
   metricsize: "metricSize",
   l: "length",
   length: "length",
-  standard: "standard",
   thread: "thread",
   drive: "drive",
   threadhand: "threadHand",
@@ -46,7 +45,6 @@ const aliases: Record<string, string> = {
   headd: "headDiameter",
 }
 const selectors = new Set([
-  "standard",
   "thread",
   "drive",
   "threadHand",
@@ -64,6 +62,13 @@ export const parsePanScrewModelParams = (raw: RawModelprinterParams) => {
     throw new Error("The panscrew function does not accept an inline value")
   const props: Record<string, unknown> = {}
   for (const token of tokens) {
+    const flag = token.toLowerCase()
+    if (flag === "iso7045" || flag === "iso4757") {
+      if (flag in props)
+        throw new Error(`Property ${flag} is set more than once`)
+      props[flag] = true
+      continue
+    }
     const match =
       token.match(/^(recesst1)(.*)$/i) ?? token.match(/^([a-z]+)(.*)$/i)
     const key = match?.[1]?.toLowerCase()

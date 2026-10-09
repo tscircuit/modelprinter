@@ -47,11 +47,9 @@ test("new flags remove redundant defaults while retaining dimensional and identi
   ).toBe("plainbushing_id8mm_od12mm_l20mm")
   expect(
     mp
-      .string(
-        "hexbolt_standard(iso4017:2014)_m4_l20mm_hex_male_righthanded_fullthread",
-      )
+      .string("hexbolt_iso4017_m4_l20mm_hex_male_righthanded_fullthread")
       .params().string,
-  ).toBe("hexbolt_standard(iso4017:2014)_m4_l20mm_hex_fullthread")
+  ).toBe("hexbolt_iso4017_m4_l20mm_hex_fullthread")
 })
 
 test("mixed legacy selectors and flags reject hand conflicts and duplicate defaults", () => {

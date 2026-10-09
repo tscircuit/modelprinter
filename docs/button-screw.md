@@ -1,8 +1,10 @@
 # Button screw parameter contract
 
-`buttonscrew_standard(iso7380-1)_m3_l10mm_drive(hexsocket)` selects ISO
-7380-1:2022 (second edition). `standard(iso7380-1:2022)` is equivalent. The
-selector defaults to that edition; other editions and drive types are rejected.
+`buttonscrew_m3_l10mm` selects ISO 7380-1:2022 (second edition) by default.
+The optional value-free flag in `buttonscrew_iso7380-1_m3_l10mm` selects the
+same dimensions and normalizes to `iso73801: true`. The schemas reject false
+ISO flags and the legacy `standard` property; `standard(...)` selectors,
+other standards and drive types are rejected.
 The supported coarse-thread sizes are M3, M4, M5 and M6. Sources are ISO
 7380-1:2022 Table 1 ([official preview](https://cdn.standards.iteh.ai/samples/78699/a175805085534f98983d6c8aa583a5b0/ISO-7380-1-2022.pdf)) and the reference
 thread-length row in [Fuller Fasteners' ISO 7380-1 table](https://fullerfasteners.com/tech/iso-7380-1-specifications-hex-socket-button-head-screws/),
