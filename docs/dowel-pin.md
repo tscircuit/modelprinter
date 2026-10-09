@@ -1,8 +1,8 @@
 # ISO 8734 dowel pin
 
-`dowelpin_standard(iso8734)_d3mm_l10mm`
+`dowelpin_d3mm_l10mm`
 
-This contract pins a nominal visualization to **ISO 8734:1997**, second edition, Figure 1 and Table 1. The primary source is the [ISO preview](https://cdn.standards.iteh.ai/samples/20002/ba95529de6a64437ac7454e14dbd2ef6/ISO-8734-1997.pdf). Figure 1 appears on printed page 1 / PDF page 3, and Table 1 on printed page 2 / PDF page 4. `standard(iso8734)` and `standard(iso8734:1997)` resolve to `iso8734:1997`, the default.
+This contract defaults to a nominal visualization pinned to **ISO 8734:1997**, second edition, Figure 1 and Table 1. The primary source is the [ISO preview](https://cdn.standards.iteh.ai/samples/20002/ba95529de6a64437ac7454e14dbd2ef6/ISO-8734-1997.pdf). Figure 1 appears on printed page 1 / PDF page 3, and Table 1 on printed page 2 / PDF page 4. The optional value-free `_iso8734` flag makes that same contract explicit: `dowelpin_iso8734_d3mm_l10mm` produces identical dimensions and normalized JSON. The boolean `iso8734` property always resolves to `true`; false or valued flags, repeated flags, other standards and the former `standard(...)` selectors or `standard` property are rejected.
 
 `d`/`diameter` and `l`/`length` are required positive unit-bearing dimensions. Length is the overall distance between the flat end planes at Z=0 and Z=length, including both end leads. Supported nominal diameters and approximate axial lead lengths c, in millimeters, are:
 

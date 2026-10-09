@@ -9,13 +9,13 @@ import {
   dowelPinNominalLengths,
   getDowelPinDimensions,
 } from "../src"
-const source = "dowelpin_standard(iso8734)_d3mm_l10mm"
+const source = "dowelpin_d3mm_l10mm"
 test("dowel pin pinned public contract and schema integration", () => {
   const model = mp.string(source).json()
   if (model.fn !== "dowelpin") throw new Error("Unexpected model")
   expect(model).toEqual({
     fn: "dowelpin",
-    standard: "iso8734:1997",
+    iso8734: true,
     diameter: 3,
     length: 10,
     endLeadLength: 0.5,
@@ -28,7 +28,6 @@ test("dowel pin pinned public contract and schema integration", () => {
     fn: "dowelpin",
     d: "3mm",
     l: "10mm",
-    standard: "(iso8734)",
     string: source,
   })
   expect(getDowelPinDimensions({ diameter: 3, length: 10 })).toMatchObject({
@@ -43,12 +42,10 @@ test("dowel pin pinned public contract and schema integration", () => {
 test("dowel pin unit conversions, pinned defaults and tabulated parameter domain", () => {
   expect(
     mp
-      .string(
-        "DOWELPIN_standard(ISO8734:1997)_diameter0.3CM_length1CM_c0.05CM_endleadangle15",
-      )
+      .string("DOWELPIN_ISO8734_diameter0.3CM_length1CM_c0.05CM_endleadangle15")
       .json(),
   ).toEqual(mp.string(source).json())
-  expect(mp.string("dowelpin_d3mm_l10mm").json()).toEqual(
+  expect(mp.string("dowelpin_iso8734_d3mm_l10mm").json()).toEqual(
     mp.string(source).json(),
   )
   for (const [value, c] of Object.entries(dowelPinEndLeadLengths)) {
@@ -63,6 +60,39 @@ test("dowel pin unit conversions, pinned defaults and tabulated parameter domain
     expect(dowelPinModelPropsSchema.parse({ diameter: 1, length }).length).toBe(
       length,
     )
+})
+test("dowel pin defaults to ISO with an optional value-free boolean flag", () => {
+  const expected = mp.string(source).json()
+  if (expected.fn !== "dowelpin") throw new Error("Unexpected model")
+  expect(expected).toHaveProperty("iso8734", true)
+  expect(expected).not.toHaveProperty("standard")
+  expect(mp.string(source).params()).not.toHaveProperty("standard")
+  for (const flag of ["iso8734", "ISO8734"]) {
+    const explicit = mp.string(`${source}_${flag}`).json()
+    expect(explicit).toEqual(expected)
+    expect(modelDefinitionSchema.parse(explicit)).toEqual(expected)
+    expect(dowelPinModelDefinitionSchema.parse(explicit)).toEqual(expected)
+  }
+  expect(
+    dowelPinModelPropsSchema.parse({ diameter: 3, length: 10, iso8734: true }),
+  ).toEqual(dowelPinModelPropsSchema.parse({ diameter: 3, length: 10 }))
+  for (const token of [
+    "standard(iso8734)",
+    "standard(iso8734:1997)",
+    "standard(din7)",
+    "iso8734(true)",
+    "iso8734(false)",
+    "iso8734(1)",
+    "iso8734:1997",
+    "iso87341",
+    "iso8734false",
+    "iso8735",
+    "noiso8734",
+    "iso8734_iso8734",
+    "iso8734_ISO8734",
+  ])
+    for (const spelling of [token, token.toUpperCase()])
+      expect(() => mp.string(`${source}_${spelling}`).json()).toThrow()
 })
 test("dowel pin rejects unknown, repeated, malformed and contradictory tokens", () => {
   for (const suffix of [
@@ -90,7 +120,7 @@ test("dowel pin rejects unknown, repeated, malformed and contradictory tokens", 
     source.replace("d3mm", "d(3mm)"),
     source.replace("d3mm", "d3.5mm"),
     source.replace("l10mm", "l11mm"),
-    source.replace("standard(iso8734)", "standard(din7)"),
+    `${source}_standard(din7)`,
     source.replace("dowelpin_", "dowelpin(3)_"),
   ])
     expect(() => mp.string(value).json()).toThrow()
@@ -109,6 +139,11 @@ test("dowel pin direct schemas require finite nominal dimensions and separated f
     { endLeadAngle: 45 },
     { unknown: true },
     { standard: "din7" },
+    { standard: "iso8734" },
+    { standard: "iso8734:1997" },
+    { iso8734: false },
+    { iso8734: "true" },
+    { iso8734: 1 },
     { length: "10mmjunk" },
     { diameter: "3e0" },
   ]) {

@@ -41,10 +41,8 @@ function selectedDiameter(diameter: number) {
   return diameterValues.find((value) => near(value, diameter))
 }
 const shape = {
-  standard: z
-    .enum(["iso8734", "iso8734:1997"])
-    .default("iso8734")
-    .transform(() => "iso8734:1997" as const),
+  /** The pinned ISO contract is the default and cannot be disabled. */
+  iso8734: z.literal(true).default(true),
   diameter: length,
   /** Overall distance between the two flat end planes, including leads. */
   length,
