@@ -6,8 +6,6 @@ export const modelStringFlagCases = [
     "ends(closedground)",
   ],
   ["compressionspring_od8mm_wire1mm_l20mm_turns8", "lefthanded", "hand(left)"],
-  ["threadedrod_m6_l100mm", "lefthanded", "threadhand(left)"],
-  ["threadedrod_m6_l100mm", "fullthread", "thread(full)"],
   ["shaftcollar_bore8mm_od16mm_w8mm_m4", "setscrew", "mount(setscrew)"],
   ["shaftcollar_bore8mm_od16mm_w8mm_m4", "lefthanded", "threadhand(left)"],
   [
@@ -88,7 +86,4 @@ export const modelStringFlagCases = [
   ["panscrew_m4_l20mm", "righthanded", "threadhand(right)"],
   ["panscrew_m4_l20mm", "male", "threadgender(male)"],
   ["shaftcollar_bore8mm_od16mm_w8mm_m4", "righthanded", "threadhand(right)"],
-  ["threadedrod_m6_l100mm", "righthanded", "threadhand(right)"],
-  ["threadedrod_m6_l100mm", "flatends", "ends(flat)"],
-  ["threadedrod_m6_l100mm", "custom", "spec(custom)"],
 ] as const

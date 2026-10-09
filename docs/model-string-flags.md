@@ -1,19 +1,22 @@
 # Mechanical model string flags
 
-Prefer value-free flags for mechanical options. These aliases preserve the
-released JSON schema, so downstream renderers continue to receive the same
-properties and dimensions. Legacy strings remain accepted, with unchanged raw
-`.params()` and JSON. New flag strings are validated during `.string()`; legacy
+Prefer value-free flags for mechanical options. For models other than
+`threadedrod`, these aliases preserve the released JSON schema and legacy raw
+`.params()`. Their new flag strings are validated during `.string()`; legacy
 strings retain deferred model validation during `.json()`.
+
+`threadedrod` accepts `_lefthanded` and `_righthanded` and uses `leftHand: boolean`.
+Its fixed properties need no JSON fields or flags, and enum selectors are
+rejected. See [Threaded rod](threaded-rods.md) for its contract.
 
 | Legacy selector | Preferred syntax | Models |
 | --- | --- | --- |
 | `mount(setscrew)` | `_setscrew` | shaftcollar, rigidcoupler |
 | `mount(singleclamp)` | `_singleclamp` | clampingshaftcollar |
-| `threadhand(left)` | `_lefthanded` | threadedrod, shaftcollar, clampingshaftcollar, rigidcoupler, hexbolt, flatheadscrew, panscrew |
+| `threadhand(left)` | `_lefthanded` | shaftcollar, clampingshaftcollar, rigidcoupler, hexbolt, flatheadscrew, panscrew |
 | `hand(left)` | `_lefthanded` | compressionspring |
 | `ends(closedground)` | `_closedground` | compressionspring |
-| `thread(full)` | `_fullthread` | threadedrod, hexbolt, flatheadscrew, panscrew, buttonscrew |
+| `thread(full)` | `_fullthread` | hexbolt, flatheadscrew, panscrew, buttonscrew |
 | `drive(hex)` | `_hex` | hexbolt |
 | `drive(hexsocket)` | `_hexsocket` | flatheadscrew, buttonscrew |
 | `drive(phillips)` | `_phillips` | panscrew |
@@ -36,10 +39,12 @@ For example:
 mp.string("shaftcollar_bore8mm_od16mm_w8mm_setscrew_m4_lefthanded").json()
 mp.string("compressionspring_od8mm_wire1mm_l20mm_turns8_closedground_lefthanded").json()
 mp.string("plainbushing_id8mm_od12mm_l20mm").json()
+mp.string("threadedrod_m6_l100mm_lefthanded").json()
 ```
 
 Flags are case insensitive, model-local and value-free. Repeating a flag or
 combining it with a selector for the same property is an error, even if they
 agree. Unsupported options remain unsupported; these aliases do not add new
 geometry variants. New models should use boolean JSON properties for options
-from the outset; aliases on released models preserve their existing JSON API.
+from the outset; aliases on other released models preserve their existing JSON
+API.

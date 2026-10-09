@@ -47,11 +47,6 @@ test("new flags remove redundant defaults while retaining dimensional and identi
   ).toBe("plainbushing_id8mm_od12mm_l20mm")
   expect(
     mp
-      .string("threadedrod_m6_l100mm_flatends_custom_fullthread_righthanded")
-      .params().string,
-  ).toBe("threadedrod_m6_l100mm_fullthread")
-  expect(
-    mp
       .string(
         "hexbolt_standard(iso4017:2014)_m4_l20mm_hex_male_righthanded_fullthread",
       )
@@ -61,7 +56,6 @@ test("new flags remove redundant defaults while retaining dimensional and identi
 
 test("mixed legacy selectors and flags reject hand conflicts and duplicate defaults", () => {
   for (const base of [
-    "threadedrod_m6_l100mm",
     "shaftcollar_bore8mm_od16mm_w8mm_m4",
     "hexbolt_m4_l20mm",
   ]) {
@@ -101,7 +95,7 @@ test("flags remain model-local and preserve unsupported option validation", () =
   ])
     expect(() => mp.string(value).json()).toThrow()
   // Legacy invalid strings retain deferred validation and untouched raw params.
-  const invalidLegacy = "threadedrod_m6_l100mm_threadhand(opposed)"
+  const invalidLegacy = "shaftcollar_bore8mm_od16mm_w8mm_m4_threadhand(opposed)"
   expect(mp.string(invalidLegacy).params()).toEqual(
     parseModelStringParams(invalidLegacy),
   )
