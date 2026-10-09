@@ -67,14 +67,12 @@ test("hex nut supports each pinned size, equivalent units and visibility", () =>
 test("hex nut rejects conflicting standards, dimensions and malformed inputs", () => {
   for (const source of [
     "hexnut",
-    "hexnut_m3",
-    "hexnut_m7",
+    "hexnut_standard(iso4032)_m7",
     "hexnut_m6_m8",
     "hexnut_m6_threadpitch0",
     "hexnut_m6_threadpitch0.75mm",
     "hexnut_m6_threadpitch1mmjunk",
     "hexnut_m6_threadpitch1mm_threadpitch1mm",
-    "hexnut_m6_standard(din934)",
     "hexnut_m6_standard(iso4032:2012)",
     "hexnut_m6_standard",
     "hexnut_m6_threadhand(left)",

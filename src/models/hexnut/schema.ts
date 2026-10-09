@@ -43,7 +43,214 @@ export const hexNutDimensions = {
     mouthDiameter: 12.96,
   },
 } as const
-export const hexNutMetricSizeSchema = z.enum(["M5", "M6", "M8", "M10", "M12"])
+/** DIN 934 regular hex nuts, nominal visual envelopes in millimeters.
+ * Nominal envelopes: https://www.boltdepot.com/fastener-information/nuts-washers/Metric-Nut-Dimensions.aspx
+ * Mouth diameters are fixed visualization choices (1.08D), not tolerances.
+ */
+export const hexNutDinDimensions = {
+  "M1.6": {
+    diameter: 1.6,
+    threadPitch: 0.35,
+    acrossFlats: 3.2,
+    height: 1.3,
+    mouthDiameter: 1.728,
+  },
+  M2: {
+    diameter: 2,
+    threadPitch: 0.4,
+    acrossFlats: 4,
+    height: 1.6,
+    mouthDiameter: 2.16,
+  },
+  "M2.5": {
+    diameter: 2.5,
+    threadPitch: 0.45,
+    acrossFlats: 5,
+    height: 2,
+    mouthDiameter: 2.7,
+  },
+  M3: {
+    diameter: 3,
+    threadPitch: 0.5,
+    acrossFlats: 5.5,
+    height: 2.4,
+    mouthDiameter: 3.24,
+  },
+  "M3.5": {
+    diameter: 3.5,
+    threadPitch: 0.6,
+    acrossFlats: 6,
+    height: 2.8,
+    mouthDiameter: 3.78,
+  },
+  M4: {
+    diameter: 4,
+    threadPitch: 0.7,
+    acrossFlats: 7,
+    height: 3.2,
+    mouthDiameter: 4.32,
+  },
+  M5: {
+    diameter: 5,
+    threadPitch: 0.8,
+    acrossFlats: 8,
+    height: 4,
+    mouthDiameter: 5.4,
+  },
+  M6: {
+    diameter: 6,
+    threadPitch: 1,
+    acrossFlats: 10,
+    height: 5,
+    mouthDiameter: 6.48,
+  },
+  M7: {
+    diameter: 7,
+    threadPitch: 1,
+    acrossFlats: 11,
+    height: 5.5,
+    mouthDiameter: 7.56,
+  },
+  M8: {
+    diameter: 8,
+    threadPitch: 1.25,
+    acrossFlats: 13,
+    height: 6.5,
+    mouthDiameter: 8.64,
+  },
+  M10: {
+    diameter: 10,
+    threadPitch: 1.5,
+    acrossFlats: 17,
+    height: 8,
+    mouthDiameter: 10.8,
+  },
+  M12: {
+    diameter: 12,
+    threadPitch: 1.75,
+    acrossFlats: 19,
+    height: 10,
+    mouthDiameter: 12.96,
+  },
+  M14: {
+    diameter: 14,
+    threadPitch: 2,
+    acrossFlats: 22,
+    height: 11,
+    mouthDiameter: 15.12,
+  },
+  M16: {
+    diameter: 16,
+    threadPitch: 2,
+    acrossFlats: 24,
+    height: 13,
+    mouthDiameter: 17.28,
+  },
+  M18: {
+    diameter: 18,
+    threadPitch: 2.5,
+    acrossFlats: 27,
+    height: 15,
+    mouthDiameter: 19.44,
+  },
+  M20: {
+    diameter: 20,
+    threadPitch: 2.5,
+    acrossFlats: 30,
+    height: 16,
+    mouthDiameter: 21.6,
+  },
+  M22: {
+    diameter: 22,
+    threadPitch: 2.5,
+    acrossFlats: 32,
+    height: 18,
+    mouthDiameter: 23.76,
+  },
+  M24: {
+    diameter: 24,
+    threadPitch: 3,
+    acrossFlats: 36,
+    height: 19,
+    mouthDiameter: 25.92,
+  },
+} as const
+export const hexNutMetricSizeSchema = z.enum([
+  "M1.6",
+  "M2",
+  "M2.5",
+  "M3",
+  "M3.5",
+  "M4",
+  "M5",
+  "M6",
+  "M7",
+  "M8",
+  "M10",
+  "M12",
+  "M14",
+  "M16",
+  "M18",
+  "M20",
+  "M22",
+  "M24",
+])
+function inchNut(
+  diameter: number,
+  threadsPerInch: number,
+  acrossFlats: number,
+  height: number,
+) {
+  return {
+    diameter: diameter * 25.4,
+    threadPitch: 25.4 / threadsPerInch,
+    threadsPerInch,
+    acrossFlats: acrossFlats * 25.4,
+    height: height * 25.4,
+    mouthDiameter: diameter * 25.4 * 1.08,
+  }
+}
+/** ASME B18.2.2 regular hex nut nominal visual envelopes; UNC coarse pitches.
+ * Small numbered sizes use ASME B18.2.2 small-pattern hex envelopes.
+ * Nominal inch envelopes: Bolt Depot US Nut Size Table (hex nut and
+ * machine screw nut columns), not a maximum/tolerance table.
+ * https://www.boltdepot.com/fastener-information/nuts-washers/US-Nut-Dimensions.aspx
+ * All exported dimensions are millimeters. Mouths use the visual 1.08D rule.
+ */
+export const hexNutImperialDimensions = {
+  "#2": inchNut(0.086, 56, 3 / 16, 1 / 16),
+  "#4": inchNut(0.112, 40, 1 / 4, 3 / 32),
+  "#6": inchNut(0.138, 32, 5 / 16, 7 / 64),
+  "#8": inchNut(0.164, 32, 11 / 32, 1 / 8),
+  "#10": inchNut(0.19, 24, 3 / 8, 1 / 8),
+  "#12": inchNut(0.216, 24, 7 / 16, 5 / 32),
+  "1/4": inchNut(1 / 4, 20, 7 / 16, 7 / 32),
+  "5/16": inchNut(5 / 16, 18, 1 / 2, 17 / 64),
+  "3/8": inchNut(3 / 8, 16, 9 / 16, 21 / 64),
+  "7/16": inchNut(7 / 16, 14, 11 / 16, 3 / 8),
+  "1/2": inchNut(1 / 2, 13, 3 / 4, 7 / 16),
+  "5/8": inchNut(5 / 8, 11, 15 / 16, 35 / 64),
+  "3/4": inchNut(3 / 4, 10, 1 + 1 / 8, 41 / 64),
+  "7/8": inchNut(7 / 8, 9, 1 + 5 / 16, 3 / 4),
+  "1": inchNut(1, 8, 1 + 1 / 2, 55 / 64),
+} as const
+export const hexNutImperialSizeSchema = z.enum([
+  "#2",
+  "#4",
+  "#6",
+  "#8",
+  "#10",
+  "#12",
+  "1/4",
+  "5/16",
+  "3/8",
+  "7/16",
+  "1/2",
+  "5/8",
+  "3/4",
+  "7/8",
+  "1",
+])
 const length = z
   .union([
     z.number(),
@@ -56,35 +263,66 @@ const length = z
   .refine((value) => value > 0, "Length must be positive")
 const shape = {
   standard: z
-    .enum(["iso4032", "iso4032:2023"])
-    .default("iso4032")
-    .transform(() => "iso4032:2023" as const),
-  metricSize: hexNutMetricSizeSchema,
+    .enum(["iso4032", "iso4032:2023", "din934", "asmeb18.2.2"])
+    .optional(),
+  metricSize: hexNutMetricSizeSchema.optional(),
+  imperialSize: hexNutImperialSizeSchema.optional(),
   threadPitch: length.optional(),
   threadHand: z.literal("right").default("right"),
-  threadClass: z.literal("6H").default("6H"),
+  threadClass: z.enum(["6H", "2B"]).optional(),
   showThreads: z.boolean().default(true),
 }
-function validate(
-  props: z.output<z.ZodObject<typeof shape>>,
-  context: z.RefinementCtx,
-) {
-  if (
-    props.threadPitch !== undefined &&
-    Math.abs(
-      props.threadPitch - hexNutDimensions[props.metricSize].threadPitch,
-    ) > 1e-9
+type RawProps = z.output<z.ZodObject<typeof shape>>
+function selectedStandard(props: RawProps) {
+  if (props.standard === "iso4032") return "iso4032:2023" as const
+  return (
+    props.standard ??
+    (props.imperialSize
+      ? "asmeb18.2.2"
+      : props.metricSize && !(props.metricSize in hexNutDimensions)
+        ? "din934"
+        : "iso4032:2023")
   )
-    context.addIssue({
-      code: "custom",
-      path: ["threadPitch"],
-      message: "ISO 4032 requires the tabulated coarse pitch",
-    })
 }
-function normalize<T extends z.output<z.ZodObject<typeof shape>>>(props: T) {
+function selectedDimensions(props: RawProps) {
+  const standard = selectedStandard(props)
+  if (standard === "asmeb18.2.2")
+    return props.imperialSize
+      ? hexNutImperialDimensions[props.imperialSize]
+      : undefined
+  if (!props.metricSize) return undefined
+  return standard === "din934"
+    ? hexNutDinDimensions[props.metricSize]
+    : hexNutDimensions[props.metricSize as keyof typeof hexNutDimensions]
+}
+function validate(props: RawProps, context: z.RefinementCtx) {
+  const issue = (path: string, message: string) =>
+    context.addIssue({ code: "custom", path: [path], message })
+  if (!!props.metricSize === !!props.imperialSize)
+    issue("metricSize", "Select exactly one metric or imperial size")
+  const dims = selectedDimensions(props)
+  if (!dims)
+    issue("standard", "The selected standard does not support this size")
+  if (
+    dims &&
+    props.threadPitch !== undefined &&
+    Math.abs(props.threadPitch - dims.threadPitch) > 1e-9
+  )
+    issue("threadPitch", "Hex nuts require the tabulated coarse pitch")
+  const threadClass = selectedStandard(props) === "asmeb18.2.2" ? "2B" : "6H"
+  if (props.threadClass && props.threadClass !== threadClass)
+    issue("threadClass", `The selected standard requires ${threadClass}`)
+}
+function normalize<T extends RawProps>(props: T) {
   return {
     ...props,
-    threadPitch: hexNutDimensions[props.metricSize].threadPitch,
+    standard: selectedStandard(props),
+    threadPitch: selectedDimensions(props)!.threadPitch,
+    threadClass:
+      props.threadClass ??
+      (selectedStandard(props) === "asmeb18.2.2"
+        ? ("2B" as const)
+        : ("6H" as const)),
   }
 }
 export const hexNutModelPropsSchema = z
@@ -104,7 +342,7 @@ export type HexNutModelDefinition = z.output<typeof hexNutModelDefinitionSchema>
 /** Nominal dimensions in mm; lower mounting face is z=0, upper face z=height. */
 export function getHexNutDimensions(input: HexNutModelPropsInput) {
   const props = hexNutModelPropsSchema.parse(input)
-  const dims = hexNutDimensions[props.metricSize]
+  const dims = selectedDimensions(props)!
   const acrossCorners = (2 * dims.acrossFlats) / Math.sqrt(3)
   const boreMinorDiameter =
     dims.diameter - ((5 * Math.sqrt(3)) / 8) * dims.threadPitch
