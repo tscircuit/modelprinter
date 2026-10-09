@@ -8,14 +8,14 @@ import {
   setscrewModelDefinitionSchema,
 } from "../src"
 import { parseSetScrewModelParams } from "../src/models/setscrew/parse-model-string"
-const source = "setscrew_standard(iso4029)_m3_l6mm_hexsocket_cuppoint"
+const source = "setscrew_m3_l6mm_hexsocket_cuppoint"
 test("setscrew requested contract and public schema roundtrip", () => {
   const definition = mp.string(source).json()
   if (definition.fn !== "setscrew") throw new Error("Wrong model")
   expect(definition).toMatchObject({
     metricSize: "M3",
     length: 6,
-    standard: "iso4029:2003",
+    iso4029: true,
     leftHand: false,
     showThreads: true,
     ...setscrewDimensions.M3,
@@ -54,7 +54,16 @@ test("setscrew rejects conflicting, duplicate and malformed tokens", () => {
   for (const tail of [
     "_m3",
     "_length10mm",
-    "_standard(iso4029)_standard(iso4029)",
+    "_iso4029_iso4029",
+    "_iso4029_ISO4029",
+    "_iso4029(false)",
+    "_iso4029(true)",
+    "_iso40291",
+    "_iso4029:2003",
+    "_iso4017",
+    "_standard(iso4029)",
+    "_standard(iso4029:2003)",
+    "_headstandard(iso4029)",
     "_righthanded_lefthanded",
     "_threads_nothreads",
     "_threads_threads",
@@ -103,7 +112,11 @@ test("setscrew strict public schema and length guards", () => {
   for (const invalid of [
     { mystery: true },
     { metricSize: "M7" },
-    { standard: "iso4029:1900" },
+    { iso4029: false },
+    { iso4029: "iso4029" },
+    { iso4017: true },
+    { standard: "iso4029:2003" },
+    { headStandard: "iso4029:2003" },
     { diameter: 99 },
     { threadPitch: 0.01 },
     { hexSocket: false },
@@ -126,4 +139,20 @@ test("setscrew strict public schema and length guards", () => {
     setscrewModelPropsSchema.parse({ metricSize: "M3", length: minimum + 0.01 })
       .length,
   ).toBeCloseTo(minimum + 0.01)
+})
+
+test("setscrew ISO 4029 defaults to its value-free flag", () => {
+  const omitted = mp.string(source).json()
+  const explicit = mp.string(source + "_iso4029").json()
+  if (omitted.fn !== "setscrew" || explicit.fn !== "setscrew")
+    throw new Error("Wrong model")
+  expect(explicit).toEqual(omitted)
+  expect(
+    mp.string("setscrew_ISO4029_m3_l6mm_hexsocket_cuppoint").json(),
+  ).toEqual(omitted)
+  expect(omitted).not.toHaveProperty("standard")
+  expect(omitted).not.toHaveProperty("headStandard")
+  expect(setscrewModelDefinitionSchema.parse(explicit)).toEqual(explicit)
+  const { fn, ...props } = explicit
+  expect(setscrewModelPropsSchema.parse(props)).toEqual(props)
 })

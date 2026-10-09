@@ -6,7 +6,6 @@ const aliases: Record<string, string> = {
   metricsize: "metricSize",
   l: "length",
   length: "length",
-  standard: "standard",
   d: "diameter",
   af: "socketAcrossFlats",
   diameter: "diameter",
@@ -35,6 +34,12 @@ export function parseSetScrewModelParams(raw: RawModelprinterParams) {
     throw new Error("The setscrew function does not accept an inline value")
   const props: Record<string, unknown> = {}
   for (const token of tokens) {
+    if (token.toLowerCase() === "iso4029") {
+      if ("iso4029" in props)
+        throw new Error("Property iso4029 is set more than once")
+      props.iso4029 = true
+      continue
+    }
     const match = token.match(/^([a-z]+)(.*)$/i)
     const key = match?.[1]?.toLowerCase() ?? ""
     const value = match?.[2] ?? ""
@@ -48,11 +53,7 @@ export function parseSetScrewModelParams(raw: RawModelprinterParams) {
       property = aliases[key] ?? ""
       if (!property || !value)
         throw new Error(`Unknown or missing setscrew token ${token}`)
-      if (property === "standard") {
-        parsed = value.match(/^\(([^()]+)\)$/)?.[1]?.toLowerCase()
-        if (!parsed)
-          throw new Error("standard requires a parenthesized selector")
-      } else if (property === "metricSize") {
+      if (property === "metricSize") {
         const size =
           key === "m" ? value : value.match(/^\((m\d+)\)$/i)?.[1]?.slice(1)
         if (!size || !/^\d+$/.test(size)) throw new Error("Invalid metric size")

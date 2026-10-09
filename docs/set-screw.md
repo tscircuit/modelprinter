@@ -1,10 +1,10 @@
 # setscrew parameter contract
 
 ```ts
-mp.string("setscrew_standard(iso4029)_m3_l6mm_hexsocket_cuppoint").json()
+mp.string("setscrew_m3_l6mm_hexsocket_cuppoint").json()
 ```
 
-This family pins **ISO 4029:2003**, supporting M3, M4, M5 and M6 with coarse metric threads, a hexagonal socket and a cup point. `standard(iso4029:2003)` selects the same edition. The pinned edition was superseded by ISO 4029:2026; the unqualified selector remains pinned and does not silently follow future editions.
+This family pins **ISO 4029:2003**, supporting M3, M4, M5 and M6 with coarse metric threads, a hexagonal socket and a cup point. The ISO table applies by default; optional `_iso4029` restates it and normalizes to `iso4029: true`. The flag accepts no value, and the props and definition schemas default it to true. The pinned edition was superseded by ISO 4029:2026; this family remains pinned and does not silently follow future editions. The legacy `standard(...)` selector and `standard` property are unsupported.
 
 The primary source is [ISO 4029:2003 Figure 1 and Table 1](https://cdn.standards.iteh.ai/samples/36433/631453640d214e7682ed5a23ddee05b5/ISO-4029-2003.pdf). `setscrewDimensions` uses nominal major diameter, coarse pitch, nominal socket across-flats, the minimum socket depth for non-short screws, and maximum cup-point diameter dz. M3 has P=0.5, socket across-flats=1.5, depth=2 and dz=1.4 mm. Only lengths above the geometric minimum are accepted; this version does not model the standard's reduced socket depth for short screws.
 

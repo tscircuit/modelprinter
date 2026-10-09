@@ -64,12 +64,8 @@ export const setscrewDimensions = {
   },
 } as const
 export const setscrewMetricSizeSchema = z.enum(["M3", "M4", "M5", "M6"])
-export const setscrewStandardSchema = z
-  .enum(["iso4029", "iso4029:2003"])
-  .default("iso4029")
-  .transform(() => "iso4029:2003" as const)
 const shape = {
-  standard: setscrewStandardSchema,
+  iso4029: z.literal(true).default(true),
   metricSize: setscrewMetricSizeSchema,
   length: positiveLength,
   hexSocket: z.literal(true).default(true),
@@ -98,7 +94,7 @@ const validate = (props: Unresolved, context: z.RefinementCtx) => {
       context.addIssue({
         code: "custom",
         path: [key],
-        message: `Dimension ${key} contradicts ${props.standard} ${props.metricSize}`,
+        message: `Dimension ${key} contradicts ISO 4029:2003 ${props.metricSize}`,
       })
   }
   if (
