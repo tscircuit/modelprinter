@@ -43,16 +43,13 @@ export const threadedRodMetricSizeSchema = z.enum([
 ])
 
 const shape = {
-  spec: z.literal("custom").default("custom"),
   metricSize: threadedRodMetricSizeSchema,
   /** Overall end-plane distance, including terminal chamfers. */
   length: positiveLength,
-  thread: z.literal("full").default("full"),
-  ends: z.literal("flat").default("flat"),
   /** Equal axial and radial setbacks of the two 45-degree outer chamfers. */
   chamfer: nonnegativeLength.default(0),
   threadPitch: positiveLength.optional(),
-  threadHand: z.enum(["right", "left"]).default("right"),
+  leftHand: z.boolean().default(false),
 }
 
 type UnresolvedProps = z.output<z.ZodObject<typeof shape>>

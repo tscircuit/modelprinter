@@ -10,25 +10,21 @@ import {
   threadedRodModelPropsSchema,
 } from "../src"
 
-test("threaded rod roadmap example and public model integration", () => {
-  const source =
-    "threadedrod_spec(custom)_m6_l100mm_thread(full)_ends(flat)_chamfer0.5mm"
+test("threaded rod concise string and public model integration", () => {
+  const source = "threadedrod_m6_l100mm_chamfer0.5mm"
   const builder = mp.string(source)
   expect(builder.params()).toMatchObject({
     m: "6",
     l: "100mm",
-    spec: "(custom)",
+    string: source,
   })
   const expected = {
     fn: "threadedrod",
-    spec: "custom",
     metricSize: "M6",
     length: 100,
-    thread: "full",
-    ends: "flat",
     chamfer: 0.5,
     threadPitch: 1,
-    threadHand: "right",
+    leftHand: false,
   } as const
   expect(builder.json()).toEqual(expected)
   expect(parseModelString(source)).toEqual(expected)
@@ -55,25 +51,22 @@ test("threaded rod coarse pitch defaults and explicit fine left-hand threads", (
     expect(props).toEqual({
       metricSize: props.metricSize,
       length: 100,
-      spec: "custom",
-      thread: "full",
-      ends: "flat",
       chamfer: 0,
       threadPitch,
-      threadHand: "right",
+      leftHand: false,
     })
   }
   expect(
     mp
       .string(
-        "THREADEDROD_M2.5_length1CM_threadpitch0.025cm_threadhand(LEFT)_chamfer0.001IN",
+        "THREADEDROD_M2.5_length1CM_threadpitch0.025cm_LEFTHANDED_chamfer0.001IN",
       )
       .json(),
   ).toMatchObject({
     metricSize: "M2.5",
     length: 10,
     threadPitch: 0.25,
-    threadHand: "left",
+    leftHand: true,
     chamfer: 0.0254,
   })
   expect(
@@ -83,6 +76,56 @@ test("threaded rod coarse pitch defaults and explicit fine left-hand threads", (
       threadPitch: "0.5mm",
     }).length,
   ).toBeCloseTo(25.4)
+  for (const leftHand of [true, false]) {
+    const props = threadedRodModelPropsSchema.parse({
+      metricSize: "M6",
+      length: 100,
+      leftHand,
+    })
+    expect(props.leftHand).toBe(leftHand)
+    expect(threadedRodModelPropsSchema.parse(props)).toEqual(props)
+  }
+})
+
+test("threaded rod legacy selectors normalize to concise strings and boolean JSON", () => {
+  const cases = [
+    [
+      "threadedrod_spec(custom)_m6_l100mm_thread(full)_ends(flat)_chamfer0.5mm",
+      "threadedrod_m6_l100mm_chamfer0.5mm",
+    ],
+    [
+      "threadedrod_m6_l100mm_threadpitch0.5mm_threadhand(left)",
+      "threadedrod_m6_l100mm_threadpitch0.5mm_lefthanded",
+    ],
+    [
+      "threadedrod_m6_l100mm_custom_fullthread_flatends_righthanded",
+      "threadedrod_m6_l100mm",
+    ],
+    ["threadedrod_m6_l100mm_threadhand(right)", "threadedrod_m6_l100mm"],
+    ["threadedrod_m6_l100mm_righthanded", "threadedrod_m6_l100mm"],
+  ] as const
+  for (const [legacy, canonical] of cases) {
+    const builder = mp.string(legacy)
+    const expected = mp.string(canonical).json()
+    expect(builder.json()).toEqual(expected)
+    expect(parseModelString(legacy)).toEqual(expected)
+    expect(mp.string(legacy.toUpperCase()).json()).toEqual(expected)
+    expect(builder.params().string).toBe(canonical)
+    expect(mp.string(builder.params().string).params()).toEqual(
+      builder.params(),
+    )
+    expect(modelDefinitionSchema.parse(expected)).toEqual(expected)
+    for (const property of ["spec", "thread", "ends", "threadhand"])
+      expect(builder.params()).not.toHaveProperty(property)
+    for (const property of ["spec", "thread", "ends", "threadHand"])
+      expect(expected).not.toHaveProperty(property)
+  }
+  expect(mp.string("threadedrod_m6_l100mm_lefthanded").json()).toMatchObject({
+    leftHand: true,
+  })
+  expect(mp.string("threadedrod_m6_l100mm_righthanded").json()).toMatchObject({
+    leftHand: false,
+  })
 })
 
 test("threaded rod rejects duplicate aliases, malformed tokens and unsupported contracts", () => {
@@ -97,6 +140,18 @@ test("threaded rod rejects duplicate aliases, malformed tokens and unsupported c
     "threadpitch5mm",
     "threadpitch1mm_threadpitch0.5mm",
     "threadhand(left)_threadhand(right)",
+    "lefthanded_lefthanded",
+    "righthanded_righthanded",
+    "lefthanded_righthanded",
+    "righthanded_lefthanded",
+    "lefthanded_threadhand(left)",
+    "threadhand(left)_lefthanded",
+    "lefthanded_threadhand(right)",
+    "threadhand(right)_lefthanded",
+    "righthanded_threadhand(right)",
+    "threadhand(right)_righthanded",
+    "lefthanded(true)",
+    "righthanded1",
     "m7",
     "m6mm",
     "m6junk",
@@ -107,11 +162,20 @@ test("threaded rod rejects duplicate aliases, malformed tokens and unsupported c
     "spec(custom)junk",
     "spec(custom)(custom)",
     "spec(custom)_spec(custom)",
+    "custom_custom",
+    "custom_spec(custom)",
+    "spec(custom)_custom",
     "thread(partial)",
     "thread(full)_thread(full)",
+    "fullthread_fullthread",
+    "fullthread_thread(full)",
+    "thread(full)_fullthread",
     "ends(round)",
     "threadhand(other)",
     "ends(flat)_ends(flat)",
+    "flatends_flatends",
+    "flatends_ends(flat)",
+    "ends(flat)_flatends",
     "chamfer0.5mm_chamfer0.5mm",
     "threadpitch1mmjunk",
     "l1e2",
@@ -161,10 +225,18 @@ test("threaded rod direct schemas enforce finite complete lengths and compatible
     { threadPitch: 5 },
     { chamfer: 3 },
     { chamfer: -1 },
+    { spec: "custom" },
     { spec: "standard" },
     { thread: "partial" },
+    { thread: "full" },
     { ends: "round" },
+    { ends: "flat" },
+    { threadHand: "right" },
+    { threadHand: "left" },
     { threadHand: "both" },
+    { leftHand: "left" },
+    { leftHand: 1 },
+    { rightHand: true },
   ]) {
     const props = { metricSize: "M6", length: 100, ...extra }
     expect(() => threadedRodModelPropsSchema.parse(props)).toThrow()

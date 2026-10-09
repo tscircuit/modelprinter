@@ -1,4 +1,4 @@
-// String aliases preserve the released JSON schema used by renderers.
+// Legacy string selectors remain input aliases for the simplified contract.
 export const stringFlags = {
   lefthanded: "threadhand(left)",
   righthanded: "threadhand(right)",
@@ -7,4 +7,9 @@ export const stringFlags = {
   custom: "spec(custom)",
 } as const
 
-export const omittedStringFlags = ["righthanded", "flatends", "custom"] as const
+export const omittedStringFlags = [
+  "righthanded",
+  "flatends",
+  "custom",
+  "fullthread",
+] as const
