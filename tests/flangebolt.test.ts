@@ -149,3 +149,17 @@ test("ISO small-series wrench dimensions match the primary standard table", () =
     flangeboltDimensions.M10.headAcrossFlats,
   ]).toEqual([7, 8, 10, 13])
 })
+
+test("flangebolt angles require unitless numeric degrees", () => {
+  for (const key of ["headChamferAngle", "flangeSlopeAngle"] as const)
+    expect(() =>
+      flangeboltModelPropsSchema.parse({
+        metricSize: "M6",
+        length: 25,
+        [key]: "30mm",
+      }),
+    ).toThrow()
+  expect(() =>
+    mp.string("flangebolt_m6_l25mm_headchamferangle30mm").json(),
+  ).toThrow()
+})

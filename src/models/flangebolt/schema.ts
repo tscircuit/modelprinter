@@ -100,10 +100,10 @@ const shape = {
   flangeThickness: positiveLength.optional(),
   underHeadRadius: positiveLength.optional(),
   tipChamfer: positiveLength.optional(),
-  headChamferAngle: positiveLength.optional(),
+  headChamferAngle: z.number().finite().positive().optional(),
   headChamferDiameter: positiveLength.optional(),
   headCornerDiameter: positiveLength.optional(),
-  flangeSlopeAngle: positiveLength.optional(),
+  flangeSlopeAngle: z.number().finite().positive().optional(),
   threadRootDiameter: positiveLength.optional(),
   threadPitchDiameter: positiveLength.optional(),
 }
