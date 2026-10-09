@@ -6,7 +6,6 @@ const aliases: Record<string, string> = {
   metricsize: "metricSize",
   l: "length",
   length: "length",
-  headstandard: "headStandard",
   d: "diameter",
   af: "headAcrossFlats",
   diameter: "diameter",
@@ -44,23 +43,22 @@ export function parseFlangeBoltModelParams(raw: RawModelprinterParams) {
     const value = match?.[2] ?? ""
     let property: string
     let parsed: unknown
-    if (flags[key]) {
+    if (token.toLowerCase() === "iso4162") {
+      property = "iso4162"
+      parsed = true
+    } else if (flags[key]) {
       if (value) throw new Error(`Flag ${key} does not accept a value`)
       property = flags[key]!
       parsed = !["righthanded", "nothreads"].includes(key)
     } else {
-      if (key === "standard")
+      if (key === "standard" || key === "headstandard")
         throw new Error(
-          "Use headstandard(iso4162) for the fullthread head/flange envelope; full threading is an extension of ISO 4162",
+          "ISO 4162 is the default head/flange envelope; use the bare iso4162 flag or omit it. Full threading is an extension of ISO 4162",
         )
       property = aliases[key] ?? ""
       if (!property || !value)
         throw new Error(`Unknown or missing flangebolt token ${token}`)
-      if (property === "headStandard") {
-        parsed = value.match(/^\(([^()]+)\)$/)?.[1]?.toLowerCase()
-        if (!parsed)
-          throw new Error("headStandard requires a parenthesized selector")
-      } else if (property === "metricSize") {
+      if (property === "metricSize") {
         const size =
           key === "m" ? value : value.match(/^\((m\d+)\)$/i)?.[1]?.slice(1)
         if (!size || !/^\d+$/.test(size)) throw new Error("Invalid metric size")

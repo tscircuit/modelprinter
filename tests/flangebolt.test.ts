@@ -8,14 +8,14 @@ import {
   flangeboltModelDefinitionSchema,
 } from "../src"
 import { parseFlangeBoltModelParams } from "../src/models/flangebolt/parse-model-string"
-const source = "flangebolt_headstandard(iso4162)_m6_l25mm_fullthread_plainface"
+const source = "flangebolt_m6_l25mm_fullthread_plainface"
 test("flangebolt requested contract and public schema roundtrip", () => {
   const definition = mp.string(source).json()
   if (definition.fn !== "flangebolt") throw new Error("Wrong model")
   expect(definition).toMatchObject({
     metricSize: "M6",
     length: 25,
-    headStandard: "iso4162:2012",
+    iso4162: true,
     leftHand: false,
     showThreads: true,
     ...flangeboltDimensions.M6,
@@ -26,6 +26,12 @@ test("flangebolt requested contract and public schema roundtrip", () => {
   expect(flangeboltModelPropsSchema.parse(props)).toEqual(props)
   expect(modelprinter.getModelNames()).toContain("flangebolt")
   expect(mp.string(source.toUpperCase()).json()).toEqual(definition)
+  expect(mp.string(source + "_iso4162").json()).toEqual(definition)
+  expect(mp.string((source + "_iso4162").toUpperCase()).json()).toEqual(
+    definition,
+  )
+  expect(definition).not.toHaveProperty("standard")
+  expect(definition).not.toHaveProperty("headStandard")
 })
 test("flangebolt supported sizes, units and fixed dimensions", () => {
   for (const metricSize of ["M5", "M6", "M8", "M10"] as const) {
@@ -59,7 +65,13 @@ test("flangebolt rejects conflicting, duplicate and malformed tokens", () => {
   for (const tail of [
     "_m3",
     "_length10mm",
-    "_headstandard(iso4162)_headstandard(iso4162)",
+    "_iso4162_iso4162",
+    "_iso4162(true)",
+    "_iso4162false",
+    "_iso4162:2012",
+    "_iso4029",
+    "_standard(iso4162)",
+    "_headstandard(iso4162)",
     "_righthanded_lefthanded",
     "_threads_nothreads",
     "_threads_threads",
@@ -108,7 +120,11 @@ test("flangebolt strict public schema and length guards", () => {
   for (const invalid of [
     { mystery: true },
     { metricSize: "M7" },
-    { headStandard: "iso4162:1900" },
+    { standard: "iso4162" },
+    { headStandard: "iso4162:2012" },
+    { iso4162: false },
+    { iso4162: "true" },
+    { iso4029: true },
     { diameter: 99 },
     { threadPitch: 0.01 },
     { fullThread: false },
@@ -132,13 +148,6 @@ test("flangebolt strict public schema and length guards", () => {
       length: minimum + 0.01,
     }).length,
   ).toBeCloseTo(minimum + 0.01)
-})
-test("fullthread envelope requires headstandard selector", () => {
-  expect(() =>
-    mp
-      .string("flangebolt_standard(iso4162)_m6_l25mm_fullthread_plainface")
-      .json(),
-  ).toThrow("headstandard")
 })
 
 test("ISO small-series wrench dimensions match the primary standard table", () => {

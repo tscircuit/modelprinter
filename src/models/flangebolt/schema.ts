@@ -80,12 +80,8 @@ export const flangeboltDimensions = {
   },
 } as const
 export const flangeboltMetricSizeSchema = z.enum(["M5", "M6", "M8", "M10"])
-export const flangeboltStandardSchema = z
-  .enum(["iso4162", "iso4162:2012"])
-  .default("iso4162")
-  .transform(() => "iso4162:2012" as const)
 const shape = {
-  headStandard: flangeboltStandardSchema,
+  iso4162: z.literal(true).default(true),
   metricSize: flangeboltMetricSizeSchema,
   length: positiveLength,
   fullThread: z.literal(true).default(true),
@@ -118,7 +114,7 @@ const validate = (props: Unresolved, context: z.RefinementCtx) => {
       context.addIssue({
         code: "custom",
         path: [key],
-        message: `Dimension ${key} contradicts ${props.headStandard} ${props.metricSize}`,
+        message: `Dimension ${key} contradicts ISO 4162:2012 ${props.metricSize}`,
       })
   }
   if (props.length <= dimensions.underHeadRadius + dimensions.tipChamfer)

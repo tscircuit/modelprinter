@@ -1,10 +1,10 @@
 # flangebolt parameter contract
 
 ```ts
-mp.string("flangebolt_headstandard(iso4162)_m6_l25mm_fullthread_plainface").json()
+mp.string("flangebolt_m6_l25mm_fullthread_plainface").json()
 ```
 
-This family pins the **head and flange envelope** to ISO 4162:2012, supporting M5, M6, M8 and M10. `headstandard(iso4162:2012)` selects the same edition. It deliberately uses `headstandard`, because the requested fully threaded M6 x 25 variant extends ISO 4162's standard 18 mm thread length. `standard(iso4162)` is rejected with a message directing callers to the head selector. This is nominal assembly geometry, not a claim that a fully threaded fastener complies with every ISO 4162 requirement.
+This family defaults to the **head and flange envelope** from ISO 4162:2012, supporting M5, M6, M8 and M10. The optional value-free `_iso4162` flag selects the same default; both forms normalize to `iso4162: true`. Legacy `standard(...)` and `headstandard(...)` selectors are rejected. The requested fully threaded M6 x 25 variant extends ISO 4162's standard 18 mm thread length. This is nominal assembly geometry, not a claim that a fully threaded fastener complies with every ISO 4162 requirement.
 
 Sources are [ISO 4162:2012 Figures 1–3](https://cdn.standards.iteh.ai/samples/56451/10d71b8d8c634e9790d4ddcf4c296cc2/ISO-4162-2012.pdf) and [Table 1 in the identical GOST ISO 4162-2014 adoption](https://normadocs.ru/gost_iso_4162-2014), cross-checked against [ISO 4162:1990 Table 1](https://cdn.standards.iteh.ai/samples/9930/4458a50ec55c410f9210163fb48ad761/ISO-4162-1990.pdf). `flangeboltDimensions` uses nominal thread diameter/pitch and across-flats, maximum head height/flange diameter, minimum flange thickness and minimum under-head radius. The M5/M6/M8/M10 head across-flats values are 7/8/10/13 mm. M6 has an 8 mm hex, a 13.6 mm flange and a 6.8 mm total head height; these are the small-series ISO envelope, not the larger DIN 6921 envelope.
 
