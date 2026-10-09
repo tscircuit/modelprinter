@@ -8,6 +8,12 @@ export function parseFlangeNutModelParams(raw: RawModelprinterParams) {
     throw new Error("Expected flangenut without an inline argument")
   const props: Record<string, unknown> = { fn: "flangenut" }
   for (const token of tokens.slice(1)) {
+    if (token.toLowerCase() === "iso4161") {
+      if ("iso4161" in props)
+        throw new Error('Duplicate flange nut property "iso4161"')
+      props.iso4161 = true
+      continue
+    }
     const match = token.match(/^([a-z]+)(.*)$/i)
     if (!match) throw new Error(`Invalid flange nut token "${token}"`)
     const name = match[1]!.toLowerCase(),
@@ -18,11 +24,6 @@ export function parseFlangeNutModelParams(raw: RawModelprinterParams) {
         throw new Error("m requires a unitless metric designation")
       property = "metricSize"
       parsed = `M${value}`
-    } else if (name === "standard") {
-      if (!/^\([^()]+\)$/.test(value))
-        throw new Error("standard requires one parenthesized argument")
-      property = "standard"
-      parsed = value.slice(1, -1).toLowerCase()
     } else if (name === "threadpitch") {
       property = "threadPitch"
       parsed = value

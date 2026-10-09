@@ -8,11 +8,11 @@ import {
   mp,
 } from "../src"
 
-test("flange nut example pins ISO 4161:2012 and the plainface contract", () => {
-  const model = mp.string("flangenut_standard(iso4161)_m6_plainface").json()
+test("flange nut defaults to ISO 4161:2012 and the plainface contract", () => {
+  const model = mp.string("flangenut_m6_plainface").json()
   expect(model).toEqual({
     fn: "flangenut",
-    standard: "iso4161:2012",
+    iso4161: true,
     metricSize: "M6",
     plainFace: true,
     threadPitch: 1,
@@ -21,6 +21,11 @@ test("flange nut example pins ISO 4161:2012 and the plainface contract", () => {
     showThreads: true,
   })
   expect(modelDefinitionSchema.parse(model)).toEqual(model)
+  expect(mp.string("flangenut_iso4161_m6_plainface").json()).toEqual(model)
+  expect(mp.string("FLANGENUT_M6_ISO4161_PLAINFACE").json()).toEqual(model)
+  expect(flangeNutModelPropsSchema.parse({ metricSize: "M6" })).toEqual(
+    flangeNutModelPropsSchema.parse({ metricSize: "M6", iso4161: true }),
+  )
   expect(modelprinter.getModelNames()).toContain("flangenut")
   expect(getFlangeNutDimensions({ metricSize: "M6" })).toMatchObject({
     diameter: 6,
@@ -72,7 +77,7 @@ test("flange nut supports every pinned size, complete units and schema roundtrip
   expect(
     mp
       .string(
-        "FLANGENUT_STANDARD(ISO4161:2012)_M6_THREADPITCH0.1CM_RIGHTHANDED_PLAINFACE_NOTHREADS",
+        "FLANGENUT_ISO4161_M6_THREADPITCH0.1CM_RIGHTHANDED_PLAINFACE_NOTHREADS",
       )
       .json(),
   ).toMatchObject({ threadPitch: 1, showThreads: false, plainFace: true })
@@ -87,6 +92,15 @@ test("flange nut rejects contradictory, duplicate and malformed tokens", () => {
     "flangenut_m6mm",
     "flangenut_m6_m8",
     "flangenut_m6_m6",
+    "flangenut_m6_iso4161_iso4161",
+    "flangenut_m6_iso4161_ISO4161",
+    "flangenut_m6_iso4161(true)",
+    "flangenut_m6_iso4161(false)",
+    "flangenut_m6_iso4161= true",
+    "flangenut_m6_iso4161:2012",
+    "flangenut_m6_iso41611",
+    "flangenut_m6_iso4029",
+    "flangenut_m6_standard(iso4161)",
     "flangenut_m6_standard(iso4161)_standard(iso4161:2012)",
     "flangenut_m6_standard(iso4161:1999)",
     "flangenut_m6_standard",
@@ -111,6 +125,11 @@ test("flange nut rejects contradictory, duplicate and malformed tokens", () => {
   ])
     expect(() => mp.string(source).json(), source).toThrow()
   for (const props of [
+    { metricSize: "M6", iso4161: false },
+    { metricSize: "M6", iso4161: "true" },
+    { metricSize: "M6", iso4029: true },
+    { metricSize: "M6", standard: "iso4161" },
+    { metricSize: "M6", standard: "iso4161:2012" },
     { metricSize: "M6", plainFace: false },
     { metricSize: "M6", rightHanded: false },
     { metricSize: "M6", rightHanded: "right" },

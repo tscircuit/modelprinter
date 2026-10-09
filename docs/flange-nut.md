@@ -1,8 +1,9 @@
 # Flange nuts
 
-`flangenut_standard(iso4161)_m6_plainface` selects a right-hand, coarse through
-thread and a smooth flange bearing face. `standard(iso4161:2012)` is equivalent;
-omitting the standard selects this pinned edition. Supported designations are
+`flangenut_m6_plainface` selects a right-hand, coarse through thread and a smooth
+flange bearing face using ISO 4161:2012 by default. The optional value-free flag
+`flangenut_iso4161_m6_plainface` produces the same normalized contract. The old
+`standard(...)` selector is unsupported. Supported designations are
 M5, M6, M8, M10, M12, M14, M16 and M20. M14 is the edition's discouraged size.
 The value-free flags `plainface`, `righthanded`, `threads` and `nothreads` are
 optional. Repeated flags, both visibility flags, unknown tokens, inline function
@@ -11,7 +12,7 @@ arguments, other standards, serrated faces and dimensional overrides fail.
 The public props and definition schemas are strict. Lengths normalize to mm;
 an explicit `threadPitch` must equal the tabulated coarse pitch. String pitches
 accept complete decimal lengths with mm, cm, m, in, inch, mil, ft or feet units.
-The schemas preserve normalized `plainFace: true`, `rightHanded: true`,
+The schemas preserve normalized `iso4161: true`, `plainFace: true`, `rightHanded: true`,
 `threadClass: "6H"` and `showThreads`; contradictory JSON values fail. Thread
 class identifies the selected series without applying its manufacturing
 allowances or tolerances.

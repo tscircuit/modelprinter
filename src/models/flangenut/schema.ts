@@ -117,7 +117,7 @@ const positiveLength = z
   .pipe(modelLengthSchema)
   .refine((value) => value > 0, "Length must be positive")
 const shape = {
-  standard: z.enum(["iso4161", "iso4161:2012"]).default("iso4161:2012"),
+  iso4161: z.literal(true).default(true),
   metricSize: flangeNutMetricSizeSchema,
   plainFace: z.literal(true).default(true),
   threadPitch: positiveLength.optional(),
@@ -142,7 +142,6 @@ function validate(props: RawProps, context: z.RefinementCtx) {
 function normalize<T extends RawProps>(props: T) {
   return {
     ...props,
-    standard: "iso4161:2012" as const,
     threadPitch: flangeNutDimensions[props.metricSize].threadPitch,
   }
 }
