@@ -140,3 +140,12 @@ test("fullthread envelope requires headstandard selector", () => {
       .json(),
   ).toThrow("headstandard")
 })
+
+test("ISO small-series wrench dimensions match the primary standard table", () => {
+  expect([
+    flangeboltDimensions.M5.headAcrossFlats,
+    flangeboltDimensions.M6.headAcrossFlats,
+    flangeboltDimensions.M8.headAcrossFlats,
+    flangeboltDimensions.M10.headAcrossFlats,
+  ]).toEqual([7, 8, 10, 13])
+})
