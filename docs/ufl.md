@@ -1,7 +1,10 @@
 # U.FL receptacle
 
-`ufl` describes an unmated surface mount U.FL receptacle. The body and coaxial
-axis are centered at X=0, Y=0; Z=0 is the board surface, and mating is along +Z.
+`ufl` describes an unmated surface mount U.FL receptacle. The origin is the
+copper land-pattern bounding-box center; Z=0 is the board surface, and mating
+is along +Z. The body and coaxial axis align with the ground pad centers,
+at X=+0.45 mm, Y=0 for the default footprint. Custom pad dimensions recalculate
+this offset analytically, preserving CAD alignment after component placement.
 Ground terminals lie on +/-Y, and the signal terminal lies on -X.
 `ufl3` selects the same three-terminal model; other pin counts are invalid.
 
@@ -17,5 +20,5 @@ also available as [the Hirose catalog distributed by LCSC](https://atta.szlcsc.c
 Pad controls match the compact footprint tokens. `p` is the ground pad center
 spacing (default 3 mm), `pw`/`ph` are ground pad width/height (2.2/1.1 mm),
 `signalw`/`signalh` are signal pad width/height (1.5/1.1 mm), and `signalx` is
-the signal pad X center (-1.25 mm). Changing pad controls adjusts solder
+the signal pad X center relative to the coaxial axis (-1.25 mm). Changing pad controls adjusts solder
 terminal placement and size while retaining the nominal receptacle body.

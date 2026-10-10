@@ -39,10 +39,22 @@ export type UflModelDefinition = z.output<typeof uflModelDefinitionSchema>
 /** Unmated SMT receptacle: +Z mating axis; ground terminals on +/-Y, RF on -X. */
 export function getUflDimensions(input: UflModelPropsInput = {}) {
   const p = uflModelPropsSchema.parse(input)
+  const minX = Math.min(
+    -p.groundPadWidth / 2,
+    p.signalPadX - p.signalPadWidth / 2,
+  )
+  const maxX = Math.max(
+    p.groundPadWidth / 2,
+    p.signalPadX + p.signalPadWidth / 2,
+  )
+  // PCB component placement uses the land-pattern bounding-box center. The
+  // coaxial axis stays aligned with the ground pads in this centered frame.
+  const bodyCenterX = -(minX + maxX) / 2
   const groundDepth = Math.min(p.groundPadHeight, 0.3)
   const signalDepth = Math.min(p.signalPadWidth, 0.3)
   return {
     ...p,
+    bodyCenterX,
     baseWidth: 2.6,
     baseLength: 2.6,
     baseHeight: 0.35,
@@ -57,11 +69,12 @@ export function getUflDimensions(input: UflModelPropsInput = {}) {
     terminalThickness: 0.1,
     groundTerminalWidth: Math.min(p.groundPadWidth, 1.8),
     groundTerminalDepth: groundDepth,
+    groundTerminalX: bodyCenterX,
     groundTerminalY: (p.groundPitch - groundDepth) / 2,
     signalTerminalWidth: signalDepth,
     signalTerminalHeight: Math.min(p.signalPadHeight, 0.6),
-    signalTerminalX: p.signalPadX - signalDepth / 2,
-    rearTabX: 1.4,
+    signalTerminalX: p.signalPadX - signalDepth / 2 + bodyCenterX,
+    rearTabX: 1.4 + bodyCenterX,
     rearTabWidth: 0.3,
     rearTabHeight: 0.6,
     bottomZ: 0,

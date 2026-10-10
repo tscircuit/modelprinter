@@ -38,8 +38,16 @@ test("U.FL receptacle contract preserves pad tokens, units, outline and validati
     bottomZ: 0,
     topZ: 1.25,
     groundTerminalY: 1.35,
-    signalTerminalX: -1.4,
+    signalTerminalX: -0.95,
   })
+  expect(getUflDimensions().bodyCenterX).toBeCloseTo(0.45, 8)
+  expect(
+    getUflDimensions({
+      groundPadWidth: 2,
+      signalPadX: -1.3,
+      signalPadWidth: 1.4,
+    }).bodyCenterX,
+  ).toBeCloseTo(0.5, 8)
   for (const source of [
     "ufl4",
     "ufl_p0mm",
