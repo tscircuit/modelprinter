@@ -14,16 +14,10 @@ const lengths = {
 } as const
 
 const flags = {
+  custom: "custom",
   roundhead: "roundHead",
   flattail: "flatTail",
   unset: "unset",
-} as const
-
-const selectors = {
-  spec: { property: "specification", value: "custom", resolved: "custom" },
-  head: { property: "roundHead", value: "round", resolved: true },
-  tail: { property: "flatTail", value: "flat", resolved: true },
-  state: { property: "unset", value: "unset", resolved: true },
 } as const
 
 export function parseSolidRivetModelParams(raw: RawModelprinterParams) {
@@ -47,12 +41,6 @@ export function parseSolidRivetModelParams(raw: RawModelprinterParams) {
       if (value) throw new Error(`Solid rivet flag "${name}" takes no value`)
       property = flags[name as keyof typeof flags]
       parsed = true
-    } else if (Object.hasOwn(selectors, name)) {
-      const selector = selectors[name as keyof typeof selectors]
-      if (value.toLowerCase() !== `(${selector.value})`)
-        throw new Error(`Solid rivet ${name} requires (${selector.value})`)
-      property = selector.property
-      parsed = selector.resolved
     } else throw new Error(`Unknown solid rivet token "${token}"`)
 
     if (Object.hasOwn(props, property))

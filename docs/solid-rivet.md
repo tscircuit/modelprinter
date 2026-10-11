@@ -11,8 +11,8 @@ import { getSolidRivetDimensions, mp } from "@tscircuit/modelprinter"
 
 mp.string("solidrivet_d3mm_l10mm_headod5.5mm_headh2.2mm_roundhead_flattail_unset").json()
 
-// The original roadmap selectors are accepted as equivalent input.
-mp.string("solidrivet_spec(custom)_d3mm_l10mm_head(round)_headod5.5mm_headh2.2mm_tail(flat)_state(unset)").json()
+// Fixed construction options are bare boolean flags.
+mp.string("solidrivet_custom_d3mm_l10mm_roundhead_headod5.5mm_headh2.2mm_flattail_unset").json()
 
 getSolidRivetDimensions({ diameter: 3, length: 10, headDiameter: 5.5, headHeight: 2.2 })
 ```
@@ -23,10 +23,10 @@ getSolidRivetDimensions({ diameter: 3, length: 10, headDiameter: 5.5, headHeight
 | `length` | Required | `l`, `length` | Under-head length, excluding the head |
 | `headDiameter` | Required | `headod`, `headdiameter` | Head diameter at the bearing plane |
 | `headHeight` | Required | `headh`, `headheight` | Spherical-cap height above the bearing plane |
-| `specification` | `"custom"` | `spec(custom)` | Explicitly dimensioned custom construction |
-| `roundHead` | `true` | `roundhead`, `head(round)` | Spherical-cap head |
-| `flatTail` | `true` | `flattail`, `tail(flat)` | Flat unpeened tail |
-| `unset` | `true` | `unset`, `state(unset)` | Rivet before installation/deformation |
+| `custom` | `true` | `custom` | Explicitly dimensioned custom construction |
+| `roundHead` | `true` | `roundhead` | Spherical-cap head |
+| `flatTail` | `true` | `flattail` | Flat unpeened tail |
+| `unset` | `true` | `unset` | Rivet before installation/deformation |
 
 All four dimensions are required; no fastener size is inferred. Lengths accept
 finite numbers in millimeters or complete numeric strings with optional `mm`,

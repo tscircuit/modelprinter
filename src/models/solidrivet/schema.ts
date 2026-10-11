@@ -13,7 +13,7 @@ const positiveLength = z
   .refine((value) => value > 0, "Length must be positive")
 
 const shape = {
-  specification: z.literal("custom").default("custom"),
+  custom: z.literal(true).default(true),
   diameter: positiveLength,
   /** Under-head shank length; the head is additional to this length. */
   length: positiveLength,

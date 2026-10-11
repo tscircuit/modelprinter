@@ -15,11 +15,11 @@ const base = "solidrivet_d3mm_l10mm_headod5.5mm_headh2.2mm"
 
 test("solid rivet roadmap example, flags, public schemas and registry agree", () => {
   const roadmap =
-    "solidrivet_spec(custom)_d3mm_l10mm_head(round)_headod5.5mm_headh2.2mm_tail(flat)_state(unset)"
+    "solidrivet_custom_d3mm_l10mm_roundhead_headod5.5mm_headh2.2mm_flattail_unset"
   const expected: SolidRivetModelDefinition = {
     fn: "solidrivet",
     ...required,
-    specification: "custom",
+    custom: true,
     roundHead: true,
     flatTail: true,
     unset: true,
@@ -30,7 +30,7 @@ test("solid rivet roadmap example, flags, public schemas and registry agree", ()
   expect(mp.string(roadmap).params()).toMatchObject({
     fn: "solidrivet",
     d: "3mm",
-    head: "(round)",
+    roundhead: true,
   })
   expect(parseModelString(roadmap)).toEqual(expected)
   expect(modelDefinitionSchema.parse(expected)).toEqual(expected)
@@ -80,7 +80,7 @@ test("solid rivet normalizes units and case without mutating props", () => {
   expect(
     mp
       .string(
-        "SOLIDRIVET_DIAMETER0.3CM_LENGTH0.01M_HEADDIAMETER5.5MM_HEADHEIGHT2.2MM_ROUNDHEAD_FLATTAIL_UNSET_SPEC(CUSTOM)",
+        "SOLIDRIVET_DIAMETER0.3CM_LENGTH0.01M_HEADDIAMETER5.5MM_HEADHEIGHT2.2MM_ROUNDHEAD_FLATTAIL_UNSET_CUSTOM",
       )
       .json(),
   ).toEqual(mp.string(base).json())
