@@ -91,7 +91,7 @@ export async function assertModelRegistryGeneration() {
     await symlink(
       fileURLToPath(new URL("../../node_modules", import.meta.url)),
       join(temporary, "node_modules"),
-      "dir",
+      process.platform === "win32" ? "junction" : "dir",
     )
     const first = await generateModelRegistry(options)
     expect<unknown>(first.changed).toBe(true)
