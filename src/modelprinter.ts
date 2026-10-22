@@ -18,6 +18,7 @@ export const string = (value: string) => {
   return {
     params: () => params,
     json: () => modelParamsToJson(params),
+    drawing: () => registry.drawing(params),
   }
 }
 

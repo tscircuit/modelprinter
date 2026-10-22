@@ -1,3 +1,4 @@
+import { modelDrawingSchema, type ModelDrawing } from "./model-drawing"
 import type { z } from "zod"
 import {
   parseModelStringParams,
@@ -78,6 +79,8 @@ export type ModelRegistration<
   readonly parse: (params: RawModelprinterParams) => z.output<NoInfer<Schema>>
   /** Optional model-local expansion of shorthand into a canonical string. */
   readonly normalizeString?: (value: string) => string
+  /** Optional pure metadata callback, given this model's validated definition. */
+  readonly getDrawing?: (definition: z.output<NoInfer<Schema>>) => ModelDrawing
 }
 
 /** Preserve the literal name and schema output without widening either. */
@@ -94,7 +97,12 @@ export function defineModel<
 
 /** Explicit registrations belong to this instance, never to globalThis. */
 export class ModelRegistry {
-  private readonly models = new Map<string, ModelRegistration>()
+  private readonly models = new Map<
+    string,
+    Omit<ModelRegistration, "getDrawing"> & {
+      getDrawing?: (definition: RegisteredModelDefinition) => ModelDrawing
+    }
+  >()
 
   register<
     const Name extends string,
@@ -117,6 +125,12 @@ export class ModelRegistry {
       typeof model.normalizeString !== "function"
     )
       throw new Error("Model string normalizer must be a function")
+    if (
+      model.getDrawing !== undefined &&
+      typeof model.getDrawing !== "function"
+    )
+      throw new Error("Model drawing callback must be a function")
+    const getDrawing = model.getDrawing
     // Snapshot the descriptor so later changes to its object cannot replace
     // an instance's registered parser or name.
     this.models.set(model.name, {
@@ -124,6 +138,11 @@ export class ModelRegistry {
       schema: model.schema,
       parse: model.parse,
       normalizeString: model.normalizeString,
+      // Only this descriptor's parser result reaches its callback. Erase the
+      // model-specific schema at registry storage, not in the public descriptor.
+      getDrawing: getDrawing
+        ? (definition) => getDrawing(definition as z.output<Schema>)
+        : undefined,
     })
   }
 
@@ -144,6 +163,13 @@ export class ModelRegistry {
         `Normalizer for "${model.name}" must preserve the model name`,
       )
     return normalized
+  }
+
+  drawing(params: RawModelprinterParams): ModelDrawing | undefined {
+    const definition = this.parse(params)
+    const getDrawing = this.models.get(params.fn)!.getDrawing
+    if (!getDrawing) return undefined
+    return modelDrawingSchema.parse(getDrawing(definition))
   }
 
   parse(params: RawModelprinterParams): RegisteredModelDefinition {
