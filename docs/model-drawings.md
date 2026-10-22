@@ -1,9 +1,13 @@
 # Model drawing references
 
-Modelprinter can provide semantic measurement references alongside a model's
-parameter contract. This metadata contains no meshes, rendered images, paper
-layout, or renderer dependencies. Geometry generation and visual demonstrations
-remain in jscad-electronics and the drawing exporter.
+Modelprinter supplies optional drawing metadata alongside a model's parameter
+contract. Models explicitly name their geometric edges. Separate boolean view
+presets request inferred overall measurements; an inferred width is never an
+imaginary edge named `overall_width`.
+
+This metadata contains no meshes, rendered images, paper layout, or renderer
+dependencies. Geometry generation and visual demonstrations remain downstream in
+jscad-electronics and the drawing exporter.
 
 ```ts
 import { mp } from "@tscircuit/modelprinter"
@@ -13,10 +17,10 @@ const definition = stock.json()
 const drawing = stock.drawing()
 ```
 
-`.json()` retains its existing output. `.drawing()` is optional metadata: it
-returns `undefined` for models that have no drawing contract, and validates the
-model's parameters before invoking a registered drawing callback. The first
-supported model is `rectangulartube`. Its helper is also public:
+`.json()` retains its existing output. `.drawing()` returns `undefined` for models
+that have no drawing contract. It validates the model's parameters before
+invoking its registered callback. The first provider is `rectangulartube`; its
+helper is also public:
 
 ```ts
 import { getRectangularTubeDrawing } from "@tscircuit/modelprinter"
@@ -29,60 +33,101 @@ const drawing = getRectangularTubeDrawing({
 })
 ```
 
-Named edges are authored analytic reference segments. Each has a stable `name`
-and `start`/`end` points. Coordinates are model-local, right-handed CAD XYZ in
-millimeters with +Z up; points acquire rotation and translation when core places
-the model. A segment may be a nominal-envelope datum rather than an edge of the
-final mesh or a B-rep topological edge. Names never depend on tessellation,
-triangle order, or inferred vertex indices.
+## Named model edges
 
-For rectangular tube, the cross-section is centered on XY and the cut ends are
-Z=0 and Z=length. The 40 × 20 × 80 mm stock above provides:
+Every named edge has a stable `name` and `start`/`end` points explicitly defined
+by the model. Names are identifiers such as `outer_top`; a dimension references
+one with the scoped selector `.outer_top`. References resolve only against the
+selected model's declared names. Bare labels such as `outer_top`, undeclared
+selectors, duplicate names, and zero-length segments are rejected.
 
-| Reference | Start (mm) | End (mm) | Nominal measurement |
+Coordinates are model-local, right-handed CAD XYZ in millimeters with +Z up.
+Points acquire rotation and translation when core places the model. The
+rectangular tube's cross-section is centered on XY and its cut ends lie at Z=0
+and Z=length. For sharp 40 × 20 × 80 mm stock:
+
+| Defined edge | Start (mm) | End (mm) | Edge length |
 | --- | --- | --- | --- |
-| `overall_width` | (−20, 10, 0) | (20, 10, 0) | 40 mm |
-| `overall_height` | (−20, −10, 0) | (−20, 10, 0) | 20 mm |
-| `overall_length` | (20, −10, 0) | (20, −10, 80) | 80 mm |
-| `wall_thickness` | (0, 7, 0) | (0, 10, 0) | 3 mm |
+| `outer_top` | (−20, 10, 0) | (20, 10, 0) | 40 mm |
+| `outer_left` | (−20, −10, 0) | (−20, 10, 0) | 20 mm |
+| `outer_right_longitudinal` | (20, −10, 0) | (20, −10, 80) | 80 mm |
 
-These coordinates update from the normalized parameters. Rounded tubes retain
-the same semantic names and nominal envelope spans: `overall_width` and
-`overall_height` do not shrink to the straight portions between rounded corners.
-They measure the nominal stock dimensions, not tessellated feature lengths.
+The model updates these edges from normalized parameters. A rounded profile's
+cross-section straight edges stop at the corner tangencies. With a 4 mm outer
+radius, `outer_top` is (−16, 10, 0) → (16, 10, 0), a 32 mm edge; `outer_left` is
+(−20, −6, 0) → (−20, 6, 0), a 12 mm edge. The longitudinal reference follows the
+outer-right lower tangent at X=20, Y=−6, from Z=0 to Z=80. It is an authored
+analytic surface-boundary reference, not a promise about triangle indices or a
+particular renderer's B-rep topology.
 
-`views` supplies suggested end (`z+`) and side (`y-`) views, with dimension intents
-referencing those edge names. Each intent has `edgeRef`, `orientation`, `offset`,
-and `precision`. Orientations are `horizontal`, `vertical`, or `aligned`
-(default). Offset is signed paper-space mm after projection (default 8); it
-positions the dimension line and never changes the measured value. Precision is
-the number of decimal places from 0 to 6 (default 1). The metadata does not fix a
-viewport size, projection scale, dimension text, or units label.
+There is no named wall-thickness midpoint span: that would be a measurement datum
+rather than a model edge. No overall envelope span is presented as an actual
+straight edge when rounded corners shorten it.
 
-The intended authoring flow lets core expose these names on the selected model
-so dimension TSX can remain conventional:
+The declaration and usage are distinct:
+
+```ts
+// The model explicitly defines this edge in its drawing metadata.
+const namedEdge = {
+  name: "outer_top",
+  start: { x: -20, y: 10, z: 0 },
+  end: { x: 20, y: 10, z: 0 },
+}
+```
+
+```tsx
+// Future core resolves this selector against the selected stock model.
+<assembly.drawing.partview partRef=".stock" name="end" direction="z+"
+  width="80mm" height="60mm">
+  <assembly.drawing.dimension edgeRef=".outer_top" offset="10mm" />
+</assembly.drawing.partview>
+```
+
+This illustrates the dimension proposal. Modelprinter does not register TSX
+components or resolve Circuit JSON IDs; those remain downstream core work.
+
+## Inferred view dimensions
+
+Each dimension intent must select exactly one of:
+
+| Intent | Meaning |
+| --- | --- |
+| `edgeRef: ".outer_top"` | Measure a named edge the selected model explicitly defines. |
+| `widthOfView: true` | Infer the horizontal span of the complete projected view. |
+| `heightOfView: true` | Infer the vertical span of the complete projected view. |
+
+A `false` preset, multiple selectors, or no selector is invalid. The stock-tube
+provider suggests width and height presets for its end (`z+`) view, plus a height
+preset for its side (`y-`) view. These infer the nominal projected envelope even
+when a rounded profile has shorter straight edges.
 
 ```tsx
 <assembly.drawing.partview partRef=".stock" name="end" direction="z+"
   width="80mm" height="60mm">
-  <assembly.drawing.dimension edgeRef="overall_width"
-    orientation="horizontal" offset="10mm" />
-  <assembly.drawing.dimension edgeRef="overall_height"
-    orientation="vertical" offset="10mm" />
+  <assembly.drawing.dimension widthOfView offset="10mm" />
+  <assembly.drawing.dimension heightOfView offset="10mm" />
 </assembly.drawing.partview>
 ```
 
-This illustrates the dimension proposal; modelprinter does not register TSX
-elements, place a model, transform references into world coordinates, or resolve
-Circuit JSON IDs. Those are downstream core responsibilities. The exporter
-projects resolved references and renders extension lines, arrows, and measured
-values. Initial references are straight segments; circles, diameters, radii,
-angular dimensions, tolerances, and mesh topology naming remain follow-up work.
+Metadata canonicalizes width to horizontal orientation and height to vertical.
+The schema accepts those matching canonical orientations on re-parse, and rejects
+conflicting orientations. Explicit edge intents support `horizontal`, `vertical`,
+or `aligned` (default). Offset is signed paper-space mm after projection (default
+8); it positions the dimension line without changing its value. Precision is 0–6
+decimal places (default 1). Suggested views do not fix viewport size, paper scale,
+measurement text, or units labels. A provider may expose presets with an empty
+`namedEdges` array; view inference does not require inventing reference names.
+
+Core will transform the explicitly declared edges to world coordinates and emit
+resolved dimension records. The drawing exporter projects edges or view bounds
+and draws extension lines, arrows, and measured values. Initial edge references
+are straight segments; circles, diameters, radii, angular dimensions, tolerances,
+and automatic topology naming remain follow-up work.
 
 ## Add metadata to a model
 
 Implement a pure helper beside the model's schema and export it from the model's
-public `index.ts`. Add an optional typed callback to its registration descriptor:
+public `index.ts`. Add a typed callback to its registration descriptor:
 
 ```ts
 export const model = defineModel({
@@ -93,8 +138,8 @@ export const model = defineModel({
 })
 ```
 
-The callback receives that model's validated definition. Metadata must have
-unique nonempty edge and view names, finite nonzero segments, and dimension
-references resolving to an edge in the same contract. The registry validates and
+The callback receives the model's validated definition. Metadata must have unique
+nonempty edge/view names, finite nonzero segments, and explicit edge selectors
+that resolve to a declared name in that contract. The registry validates and
 copies the result with `modelDrawingSchema`; it snapshots the callback when
-registered, so changing a descriptor cannot change another registry's contract.
+registered so modifying a descriptor does not change another registry's contract.

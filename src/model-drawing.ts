@@ -10,11 +10,18 @@ const modelDrawingPointSchema = z
 
 /** Authored reference segment in model-local right-handed CAD coordinates,
  * millimeters, +Z up. Endpoints are points and pick up placement translation.
- * A segment may be a nominal-envelope datum, not a final mesh or B-rep edge.
+ * Models explicitly define these analytic features; names are not inferred
+ * measurements and never depend on mesh triangle or vertex indices.
  */
 export const modelNamedEdgeSchema = z
   .object({
-    name: z.string().trim().min(1),
+    name: z
+      .string()
+      .trim()
+      .regex(
+        /^[A-Za-z_][A-Za-z0-9_-]*$/,
+        "Named edge names must be identifiers usable in a scoped selector",
+      ),
     start: modelDrawingPointSchema,
     end: modelDrawingPointSchema,
   })
@@ -26,19 +33,62 @@ export const modelNamedEdgeSchema = z
   )
 export type ModelNamedEdge = z.output<typeof modelNamedEdgeSchema>
 
-/** Dimension intent. offset is a signed distance in paper mm after projection;
- * measured values come from the reference segment, never from this offset.
+/** Dimension intent. offset is signed paper mm after projection, not a value.
+ * Explicit edge selectors name a model-defined edge; booleans request inferred
+ * width/height of the complete projected view instead of inventing an edge name.
  */
 export const modelDrawingDimensionSchema = z
   .object({
-    edgeRef: z.string().trim().min(1),
-    orientation: z
-      .enum(["horizontal", "vertical", "aligned"])
-      .default("aligned"),
+    edgeRef: z
+      .string()
+      .trim()
+      .regex(
+        /^\.[A-Za-z_][A-Za-z0-9_-]*$/,
+        "edgeRef must be a scoped named-edge selector such as .outer_top",
+      )
+      .optional(),
+    widthOfView: z.literal(true).optional(),
+    heightOfView: z.literal(true).optional(),
+    orientation: z.enum(["horizontal", "vertical", "aligned"]).optional(),
     offset: z.number().finite().default(8),
     precision: z.number().int().min(0).max(6).default(1),
   })
   .strict()
+  .superRefine((dimension, context) => {
+    const choices = [
+      dimension.edgeRef,
+      dimension.widthOfView,
+      dimension.heightOfView,
+    ].filter((choice) => choice !== undefined).length
+    if (choices !== 1)
+      context.addIssue({
+        code: "custom",
+        message: "Specify exactly one of edgeRef, widthOfView or heightOfView",
+      })
+    const inferredOrientation = dimension.widthOfView
+      ? "horizontal"
+      : dimension.heightOfView
+        ? "vertical"
+        : undefined
+    if (
+      inferredOrientation &&
+      dimension.orientation !== undefined &&
+      dimension.orientation !== inferredOrientation
+    )
+      context.addIssue({
+        code: "custom",
+        path: ["orientation"],
+        message: `This view dimension requires ${inferredOrientation} orientation`,
+      })
+  })
+  .transform((dimension) => ({
+    ...dimension,
+    orientation: dimension.widthOfView
+      ? ("horizontal" as const)
+      : dimension.heightOfView
+        ? ("vertical" as const)
+        : (dimension.orientation ?? ("aligned" as const)),
+  }))
 export type ModelDrawingDimension = z.output<typeof modelDrawingDimensionSchema>
 
 export const modelDrawingViewSchema = z
@@ -55,7 +105,7 @@ export type ModelDrawingView = z.output<typeof modelDrawingViewSchema>
  */
 export const modelDrawingSchema = z
   .object({
-    namedEdges: z.array(modelNamedEdgeSchema).min(1),
+    namedEdges: z.array(modelNamedEdgeSchema),
     views: z.array(modelDrawingViewSchema).min(1),
   })
   .strict()
@@ -80,7 +130,7 @@ export const modelDrawingSchema = z
         })
       viewNames.add(view.name)
       for (const [dimensionIndex, dimension] of view.dimensions.entries())
-        if (!edgeNames.has(dimension.edgeRef))
+        if (dimension.edgeRef && !edgeNames.has(dimension.edgeRef.slice(1)))
           context.addIssue({
             code: "custom",
             path: ["views", viewIndex, "dimensions", dimensionIndex, "edgeRef"],

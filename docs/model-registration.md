@@ -48,8 +48,9 @@ The registry snapshots the hook alongside the parser; adding a model-specific
 normalizer does not require another central-parser edit.
 
 A descriptor may also supply `getDrawing(definition)`, a pure metadata callback
-whose input is its schema's validated output. It returns authored named reference
-segments and suggested view/dimension intents; the registry validates that output
+whose input is its schema's validated output. It returns explicitly named model
+edges and suggested view/dimension intents; inferred width/height dimensions use
+boolean presets rather than invented edge names. The registry validates that output
 with `modelDrawingSchema`. Models without the hook retain their existing JSON
 contracts and return `undefined` from `.drawing()`. See
 [model drawing references](model-drawings.md) for the coordinate frame, datum

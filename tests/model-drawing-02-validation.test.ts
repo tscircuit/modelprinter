@@ -5,7 +5,7 @@ import {
   modelNamedEdgeSchema,
 } from "../src"
 
-test("drawing metadata validates finite nonzero named segments and unambiguous dimension refs", () => {
+test("drawing refs resolve declared edges while view presets need no invented edge", () => {
   const drawing = getRectangularTubeDrawing({
     width: 40,
     height: 20,
@@ -15,6 +15,7 @@ test("drawing metadata validates finite nonzero named segments and unambiguous d
   const edge = drawing.namedEdges[0]!
   for (const patch of [
     { name: " " },
+    { name: ".outer_top" },
     { start: { x: Infinity, y: 10, z: 0 } },
     { end: edge.start },
     { extra: "unsupported" },
@@ -24,21 +25,15 @@ test("drawing metadata validates finite nonzero named segments and unambiguous d
     )
   for (const patch of [
     { namedEdges: [...drawing.namedEdges, edge] },
-    { namedEdges: [] },
     { views: [...drawing.views, drawing.views[0]] },
     { views: [] },
-    {
-      views: [
-        { name: "end", direction: "z+", dimensions: [{ edgeRef: "missing" }] },
-      ],
-    },
     { views: [{ name: "end", direction: "front", dimensions: [] }] },
     {
       views: [
         {
           name: "end",
           direction: "z+",
-          dimensions: [{ edgeRef: edge.name, precision: 7 }],
+          dimensions: [{ edgeRef: ".outer_top", precision: 7 }],
         },
       ],
     },
@@ -47,7 +42,7 @@ test("drawing metadata validates finite nonzero named segments and unambiguous d
         {
           name: "end",
           direction: "z+",
-          dimensions: [{ edgeRef: edge.name, offset: NaN }],
+          dimensions: [{ edgeRef: ".outer_top", offset: NaN }],
         },
       ],
     },
@@ -55,23 +50,59 @@ test("drawing metadata validates finite nonzero named segments and unambiguous d
     expect(modelDrawingSchema.safeParse({ ...drawing, ...patch }).success).toBe(
       false,
     )
+  // Models may provide inferred dimensions before they define named edges.
+  expect(
+    modelDrawingSchema.parse({ ...drawing, namedEdges: [] }).namedEdges,
+  ).toEqual([])
+  for (const dimension of [
+    {},
+    { edgeRef: "outer_top" },
+    { edgeRef: ".missing" },
+    { edgeRef: ".overall_width" },
+    { edgeRef: ".outer_top", widthOfView: true },
+    { widthOfView: true, heightOfView: true },
+    { widthOfView: false },
+    { widthOfView: true, orientation: "vertical" },
+    { heightOfView: true, orientation: "aligned" },
+  ])
+    expect(
+      modelDrawingSchema.safeParse({
+        namedEdges: drawing.namedEdges,
+        views: [{ name: "end", direction: "z+", dimensions: [dimension] }],
+      }).success,
+    ).toBe(false)
+  const presets = modelDrawingSchema.parse({
+    namedEdges: [],
+    views: [
+      {
+        name: "end",
+        direction: "z+",
+        dimensions: [{ widthOfView: true }, { heightOfView: true }],
+      },
+    ],
+  })
+  expect(presets.views[0]!.dimensions).toEqual([
+    { widthOfView: true, orientation: "horizontal", offset: 8, precision: 1 },
+    { heightOfView: true, orientation: "vertical", offset: 8, precision: 1 },
+  ])
+  expect(modelDrawingSchema.parse(presets)).toEqual(presets)
   const defaulted = modelDrawingSchema.parse({
-    namedEdges: [{ ...edge, name: " overall_width " }],
+    namedEdges: [{ ...edge, name: " outer_top " }],
     views: [
       {
         name: " end ",
         direction: "z+",
-        dimensions: [{ edgeRef: " overall_width " }],
+        dimensions: [{ edgeRef: " .outer_top " }],
       },
     ],
   })
-  expect(defaulted.namedEdges[0]!.name).toBe("overall_width")
+  expect(defaulted.namedEdges[0]!.name).toBe("outer_top")
   expect(defaulted.views[0]).toEqual({
     name: "end",
     direction: "z+",
     dimensions: [
       {
-        edgeRef: "overall_width",
+        edgeRef: ".outer_top",
         orientation: "aligned",
         offset: 8,
         precision: 1,

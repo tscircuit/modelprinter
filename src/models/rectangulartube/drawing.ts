@@ -5,13 +5,15 @@ import {
 } from "./schema"
 
 /** Parametric stock-tube references in model-local CAD mm, +Z up, centered on
- * XY with cut ends at Z=0 and Z=length. Overall spans use the nominal envelope;
- * for rounded profiles they are dimension datums, not topological edge claims.
+ * XY with cut ends at Z=0 and Z=length. Cross-section edges stop at the corner
+ * tangencies; rounded profiles never expose an overall envelope span as an edge.
+ * The longitudinal reference follows the outer-right lower tangent. Width/height
+ * presets measure projected view bounds independently of these explicit features.
  */
 export function getRectangularTubeDrawing(
   input: RectangularTubeModelPropsInput,
 ): ModelDrawing {
-  const { width, height, length, wallThickness } =
+  const { width, height, length, outerRadius } =
     getRectangularTubeDimensions(input)
   const left = -width / 2
   const right = width / 2
@@ -20,24 +22,19 @@ export function getRectangularTubeDrawing(
   return modelDrawingSchema.parse({
     namedEdges: [
       {
-        name: "overall_width",
-        start: { x: left, y: top, z: 0 },
-        end: { x: right, y: top, z: 0 },
+        name: "outer_top",
+        start: { x: left + outerRadius, y: top, z: 0 },
+        end: { x: right - outerRadius, y: top, z: 0 },
       },
       {
-        name: "overall_height",
-        start: { x: left, y: bottom, z: 0 },
-        end: { x: left, y: top, z: 0 },
+        name: "outer_left",
+        start: { x: left, y: bottom + outerRadius, z: 0 },
+        end: { x: left, y: top - outerRadius, z: 0 },
       },
       {
-        name: "overall_length",
-        start: { x: right, y: bottom, z: 0 },
-        end: { x: right, y: bottom, z: length },
-      },
-      {
-        name: "wall_thickness",
-        start: { x: 0, y: top - wallThickness, z: 0 },
-        end: { x: 0, y: top, z: 0 },
+        name: "outer_right_longitudinal",
+        start: { x: right, y: bottom + outerRadius, z: 0 },
+        end: { x: right, y: bottom + outerRadius, z: length },
       },
     ],
     views: [
@@ -45,18 +42,14 @@ export function getRectangularTubeDrawing(
         name: "end",
         direction: "z+",
         dimensions: [
-          { edgeRef: "overall_width", orientation: "horizontal", offset: 10 },
-          { edgeRef: "overall_height", orientation: "vertical", offset: 10 },
-          { edgeRef: "wall_thickness", orientation: "vertical", offset: -8 },
+          { widthOfView: true, offset: 10 },
+          { heightOfView: true, offset: 10 },
         ],
       },
       {
         name: "side",
         direction: "y-",
-        dimensions: [
-          { edgeRef: "overall_width", orientation: "horizontal", offset: -10 },
-          { edgeRef: "overall_length", orientation: "vertical", offset: -10 },
-        ],
+        dimensions: [{ heightOfView: true, offset: -10 }],
       },
     ],
   })

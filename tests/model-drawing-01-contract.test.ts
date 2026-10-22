@@ -1,31 +1,26 @@
 import { expect, test } from "bun:test"
 import { getRectangularTubeDrawing, mp } from "../src"
 
-test("stock-tube drawing references follow normalized dimensions and preserve model JSON", () => {
+test("stock-tube drawing declares actual edges and infers overall measurements from views", () => {
   const model = mp.string("rectangulartube_w40mm_h20mm_wall3mm_l80mm")
   const definition = model.json()
   const original = structuredClone(definition)
   const drawing = model.drawing()!
   expect(drawing.namedEdges).toEqual([
     {
-      name: "overall_width",
+      name: "outer_top",
       start: { x: -20, y: 10, z: 0 },
       end: { x: 20, y: 10, z: 0 },
     },
     {
-      name: "overall_height",
+      name: "outer_left",
       start: { x: -20, y: -10, z: 0 },
       end: { x: -20, y: 10, z: 0 },
     },
     {
-      name: "overall_length",
+      name: "outer_right_longitudinal",
       start: { x: 20, y: -10, z: 0 },
       end: { x: 20, y: -10, z: 80 },
-    },
-    {
-      name: "wall_thickness",
-      start: { x: 0, y: 7, z: 0 },
-      end: { x: 0, y: 10, z: 0 },
     },
   ])
   expect(
@@ -35,24 +30,11 @@ test("stock-tube drawing references follow normalized dimensions and preserve mo
     { name: "side", direction: "y-" },
   ])
   expect(drawing.views[0]!.dimensions).toEqual([
-    {
-      edgeRef: "overall_width",
-      orientation: "horizontal",
-      offset: 10,
-      precision: 1,
-    },
-    {
-      edgeRef: "overall_height",
-      orientation: "vertical",
-      offset: 10,
-      precision: 1,
-    },
-    {
-      edgeRef: "wall_thickness",
-      orientation: "vertical",
-      offset: -8,
-      precision: 1,
-    },
+    { widthOfView: true, orientation: "horizontal", offset: 10, precision: 1 },
+    { heightOfView: true, orientation: "vertical", offset: 10, precision: 1 },
+  ])
+  expect(drawing.views[1]!.dimensions).toEqual([
+    { heightOfView: true, orientation: "vertical", offset: -10, precision: 1 },
   ])
   expect(
     getRectangularTubeDrawing({
@@ -79,12 +61,32 @@ test("stock-tube drawing references follow normalized dimensions and preserve mo
     larger.namedEdges.map(({ start, end }) =>
       Math.hypot(end.x - start.x, end.y - start.y, end.z - start.z),
     ),
-  ).toEqual([60, 30, 120, 4])
-  expect(
-    mp
-      .string("rectangulartube_w40mm_h20mm_wall3mm_l80mm_outerr4mm_innerr1mm")
-      .drawing()!.namedEdges,
-  ).toEqual(drawing.namedEdges)
+  ).toEqual([50, 20, 120])
+  const rounded = mp
+    .string("rectangulartube_w40mm_h20mm_wall3mm_l80mm_outerr4mm_innerr1mm")
+    .drawing()!
+  expect(rounded.namedEdges).toEqual([
+    {
+      name: "outer_top",
+      start: { x: -16, y: 10, z: 0 },
+      end: { x: 16, y: 10, z: 0 },
+    },
+    {
+      name: "outer_left",
+      start: { x: -20, y: -6, z: 0 },
+      end: { x: -20, y: 6, z: 0 },
+    },
+    {
+      name: "outer_right_longitudinal",
+      start: { x: 20, y: -6, z: 0 },
+      end: { x: 20, y: -6, z: 80 },
+    },
+  ])
+  // Bounds dimensions remain view presets, not imaginary model edges.
+  expect(rounded.views).toEqual(drawing.views)
+  expect(drawing.namedEdges.some(({ name }) => name === "wall_thickness")).toBe(
+    false,
+  )
   expect(() =>
     getRectangularTubeDrawing({
       width: 40,
