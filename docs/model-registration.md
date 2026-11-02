@@ -93,3 +93,11 @@ defaults, units, and invalid or conflicting parameters. Keep reusable
 assertions in `tests/fixtures` and avoid `describe` blocks. Run `bun test`,
 `bun run typecheck`, `bun run format:check`, and `bun run build` before
 submitting. Geometry and visual snapshots belong in `tscircuit/jscad-electronics`.
+
+A model may additionally provide `matchesString(value)` to recognize shorthand
+whose first token has another spelling. The registry consults these matchers
+only when the raw function name is unregistered, rejects ambiguous matches,
+and invokes the chosen model's `normalizeString`. Expansion must still return
+that model's canonical name. Recognition and defaults stay in the model folder;
+existing models without matchers retain their parsing behavior. Socket-head
+bolts use this for `m3bolt` and `bolt_m3`, both M3 x 10 mm by default.

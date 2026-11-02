@@ -76,6 +76,8 @@ export type ModelRegistration<
   readonly schema: Schema
   /** Validate and normalize raw parameters with the model's schema. */
   readonly parse: (params: RawModelprinterParams) => z.output<NoInfer<Schema>>
+  /** Recognize alternate function spellings before model-local normalization. */
+  readonly matchesString?: (value: string) => boolean
   /** Optional model-local expansion of shorthand into a canonical string. */
   readonly normalizeString?: (value: string) => string
 }
@@ -124,6 +126,7 @@ export class ModelRegistry {
       schema: model.schema,
       parse: model.parse,
       normalizeString: model.normalizeString,
+      matchesString: model.matchesString,
     })
   }
 
@@ -132,7 +135,17 @@ export class ModelRegistry {
   }
 
   normalize(params: RawModelprinterParams): RawModelprinterParams {
-    const model = this.models.get(params.fn)
+    const direct = this.models.get(params.fn)
+    const aliases = direct
+      ? []
+      : [...this.models.values()].filter((model) =>
+          model.matchesString?.(params.string),
+        )
+    if (aliases.length > 1)
+      throw new Error(
+        `Model string "${params.string}" matches multiple registered models`,
+      )
+    const model = direct ?? aliases[0]
     if (!model?.normalizeString) return params
     const value = model.normalizeString(params.string)
     if (typeof value !== "string")
