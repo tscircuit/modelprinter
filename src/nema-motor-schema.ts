@@ -274,6 +274,9 @@ const resolve = (
           ? (p.bodyCornerChamfer ?? d.bodyCornerChamfer)
           : (p.faceCornerChamfer ?? d.faceCornerChamfer))
   const defaultRearRadius = Math.min(4, rearCornerChamfer / Math.SQRT2 / 4)
+  // Keep NEMA23's wire exit on the front (-Y) side without turning its
+  // rectangular rear screw pattern. Other frames retain their wire sides.
+  const defaultWireAngle = p.nemaSize === 23 ? 270 : p.nemaSize === 34 ? 90 : 0
   return {
     nemaSize: p.nemaSize,
     noWires: p.noWires === true,
@@ -281,8 +284,7 @@ const resolve = (
     ...(p.wireConnection !== undefined
       ? { wireConnection: p.wireConnection }
       : {}),
-    wireSideAngle:
-      (((p.wireSideAngle ?? (p.nemaSize === 34 ? 90 : 0)) % 360) + 360) % 360,
+    wireSideAngle: (((p.wireSideAngle ?? defaultWireAngle) % 360) + 360) % 360,
     wireLength: p.wireLength ?? (p.nemaSize === 34 ? 25 : 6),
     wireDiameter: p.wireDiameter ?? (p.nemaSize === 34 ? 2 : 1.2),
     wireCount: p.wireCount ?? 4,
