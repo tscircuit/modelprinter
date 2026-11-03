@@ -2,6 +2,8 @@ import { expect, test } from "bun:test"
 import { getJstMotorConnector } from "../src"
 
 test("PH/SH distinguish the socket mouth from the seated plug tip", () => {
+  expect(getJstMotorConnector(undefined)).toBeUndefined()
+  expect(getJstMotorConnector("none")).toBeUndefined()
   for (const family of ["ph", "sh"]) {
     for (const pins of [2, 6, family === "ph" ? 16 : 15]) {
       const header = getJstMotorConnector(`jst-${family}-${pins}`)!

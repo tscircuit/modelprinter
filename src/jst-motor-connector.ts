@@ -8,8 +8,8 @@ import { z } from "zod"
  * https://www.jst-mfg.com/product/pdf/eng/ePH.pdf
  * https://www.jst-mfg.com/product/pdf/eng/eSH.pdf
  */
-export function getJstMotorConnector(wireConnection: string) {
-  const match = /^jst-(ph|sh)-([1-9][0-9]*)$/.exec(wireConnection)
+export function getJstMotorConnector(wireConnection: string | undefined) {
+  const match = /^jst-(ph|sh)-([1-9][0-9]*)$/.exec(wireConnection ?? "")
   if (!match) return undefined
   const pinCount = Number(match[2])
   const isPh = match[1] === "ph"
