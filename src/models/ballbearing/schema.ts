@@ -60,7 +60,10 @@ function resolve(input: Input, context: z.RefinementCtx) {
       : ballBearingStandardSizes[input.code]
   const kinds = ["Open", "Shielded", "Sealed"] as const
   const globals = kinds.filter((kind) => input[`bothSides${kind}`] === true)
-  if (globals.length > 1)
+  const globalSpecified = kinds.some(
+    (kind) => input[`bothSides${kind}`] !== undefined,
+  )
+  if (globals.length > 1 || (globalSpecified && globals.length === 0))
     context.addIssue({ code: "custom", message: "Both-side flags conflict" })
   const selectFace = (side: "top" | "bottom") => {
     const selected = kinds.filter(

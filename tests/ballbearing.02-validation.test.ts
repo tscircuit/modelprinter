@@ -66,6 +66,12 @@ test("ball bearing rejects conflicting designations, malformed/duplicate tokens 
     { code: "609" },
     { closure: "open" },
     { bothSidesOpen: true, bothSidesSealed: true },
+    { bothSidesOpen: false },
+    {
+      bothSidesOpen: false,
+      bothSidesShielded: false,
+      bothSidesSealed: false,
+    },
     { topSideOpen: true, topSideSealed: true },
     { bottomSideOpen: true, bottomSideShielded: true },
     { topSideOpen: false },
