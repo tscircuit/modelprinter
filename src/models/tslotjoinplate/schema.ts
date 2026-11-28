@@ -7,16 +7,10 @@ const shape = {
   width: positive.default(20),
   thickness: positive.default(4),
   slotCount: z.number().int().min(2).max(64).default(4),
-  /** Capsule width and overall longitudinal length, including both semicircular ends. */
   slot: z.tuple([positive, positive]).default([5, 10]),
-  /** Center-to-center longitudinal spacing between adjacent collinear slots. */
   pitch: positive.default(20),
 }
 
-/** Flat straight rectangular T-slot splice plate centered on XY (X spans ±length/2,
- * Y spans ±width/2), mounting face at Z=0, material extending to +thickness,
- * with collinear longitudinal capsule through-slots centered along Y=0.
- */
 export const tSlotJoinPlateModelPropsSchema = z
   .object(shape)
   .strict()

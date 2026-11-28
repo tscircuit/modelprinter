@@ -14,7 +14,7 @@ const lengths = {
   pitch: "pitch",
 } as const
 
-export function parseTSlotJoinPlateModelParams(raw: RawModelprinterParams) {
+export function parseTSlotJoinPlateModelString(raw: RawModelprinterParams) {
   const tokens = splitModelStringTokens(raw.string)
   if (raw.fn !== "tslotjoinplate" || tokens[0]?.toLowerCase() !== raw.fn) {
     throw new Error("Expected tslotjoinplate without an inline argument")
